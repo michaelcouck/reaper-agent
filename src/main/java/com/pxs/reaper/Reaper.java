@@ -23,7 +23,7 @@ public class Reaper {
     private int iterations;
     private final Random random = new Random(31);
 
-    public Reaper(final int iterations) {
+    Reaper(final int iterations) {
         this.iterations = iterations;
         THREAD.initialize();
         addNativeLibrariesToPath();

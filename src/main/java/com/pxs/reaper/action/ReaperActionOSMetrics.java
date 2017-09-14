@@ -1,22 +1,23 @@
 package com.pxs.reaper.action;
 
-import com.google.gson.Gson;
-import com.pxs.reaper.Reaper;
 import com.pxs.reaper.model.Metrics;
 import com.pxs.reaper.toolkit.OS;
-import com.pxs.reaper.toolkit.THREAD;
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.log4j.Logger;
 import org.hyperic.sigar.*;
 
 import javax.websocket.*;
+import java.io.IOException;
 import java.net.URI;
 
 @ClientEndpoint
-public class ReaperActionOSMetrics extends ReaperAAction implements Runnable {
+public class ReaperActionOSMetrics implements ReaperAction, Runnable {
 
     private static final long SLEEP_TIME = 1000;
 
     private static SigarProxy SIGAR_PROXY_CACHE;
+
+    private final Logger logger = Logger.getLogger(this.getClass());
 
     private final URI uri = URI.create("ws://reaper-microservice-reaper.b9ad.pro-us-east-1.openshiftapps.com/reaper-websocket");
 
@@ -30,7 +31,9 @@ public class ReaperActionOSMetrics extends ReaperAAction implements Runnable {
     }
 
     @Override
+    @SuppressWarnings("unused")
     public void run() {
+        Session session = null;
         try {
             Cpu cpu = cpu(SIGAR_PROXY_CACHE);
             CpuPerc cpuPerc = cpuPerc(SIGAR_PROXY_CACHE);
@@ -56,19 +59,45 @@ public class ReaperActionOSMetrics extends ReaperAAction implements Runnable {
                     .tcp(tcp)
                     .build();
 
-            Gson gson = new Gson();
             WebSocketContainer container = ContainerProvider.getWebSocketContainer();
-            Session session = container.connectToServer(this, uri);
+            session = container.connectToServer(this, uri);
             RemoteEndpoint.Async async = session.getAsyncRemote();
-            async.sendText(gson.toJson(metrics));
+            async.sendText(GSON.toJson(metrics));
             logger.info(ToStringBuilder.reflectionToString(metrics));
         } catch (final Exception e) {
-            logger.error("Exception in reaper : ", e);
             throw new RuntimeException(e);
         } finally {
             SigarProxyCache.clear(SIGAR_PROXY_CACHE);
-            THREAD.destroy(Reaper.class.getSimpleName());
+            if (session != null) {
+                try {
+                    session.close();
+                } catch (final IOException e) {
+                    logger.error("Exception closing session in OS reaper : ", e);
+                }
+            }
         }
+    }
+
+    @OnOpen
+    public void onOpen(final Session session) throws IOException {
+        logger.debug("Session opened : " + session.getId());
+    }
+
+    @OnMessage
+    @SuppressWarnings("UnusedParameters")
+    public void onMessage(final String message, final Session session) throws IOException {
+        logger.info("Got message : " + message);
+    }
+
+    @OnClose
+    public void onClose(final Session session) {
+        logger.debug("Session closed : " + session.getId());
+    }
+
+    @OnError
+    public void onError(final Session session, final Throwable throwable) {
+        logger.error("Error in session : " + session.getId(), throwable);
+        onClose(session);
     }
 
     private Who[] who(final SigarProxy sigarProxy) throws SigarException {

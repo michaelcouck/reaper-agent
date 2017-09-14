@@ -9,8 +9,9 @@ import org.hyperic.sigar.*;
 
 @Getter
 @Builder
-@JsonInclude(JsonInclude.Include.NON_NULL)
 @ToString
+@SuppressWarnings("unused")
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Metrics {
 
     private Cpu cpu;

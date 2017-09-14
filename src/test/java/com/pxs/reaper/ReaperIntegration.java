@@ -6,7 +6,7 @@ public class ReaperIntegration {
 
     @Test
     public void reap() {
-        Reaper reaper = new Reaper(1);
+        Reaper reaper = new Reaper(10);
         reaper.reap();
     }
 
