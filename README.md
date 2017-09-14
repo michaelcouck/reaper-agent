@@ -1,1 +1,1 @@
-Reaper agent to collect machine metrics.
+The reaper-agent is a metrics gathering agent for posting meterics to the monitoring and alerting micro service.
