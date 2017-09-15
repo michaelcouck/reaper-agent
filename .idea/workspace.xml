@@ -3,12 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="bd62903f-a1e2-4bbc-b844-3470de15f16c" name="Default" comment="Added the Sigar libraries and the base logic to collect the metrics on the agent.">
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.gitignore" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/com/pxs/reaper/ReaperDummy.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/compiler.xml" afterPath="$PROJECT_DIR$/.idea/compiler.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pom.xml" afterPath="$PROJECT_DIR$/pom.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reaper-agent.iml" afterPath="$PROJECT_DIR$/reaper-agent.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/pxs/reaper/action/ReaperActionJMXMetrics.java" afterPath="$PROJECT_DIR$/src/main/java/com/pxs/reaper/action/ReaperActionJMXMetrics.java" />
     </list>
     <ignored path="reaper-agent.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -87,8 +82,8 @@
       <file leaf-file-name="pom.xml" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/pom.xml">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="462">
-              <caret line="27" column="46" selection-start-line="27" selection-start-column="46" selection-end-line="27" selection-end-column="46" />
+            <state relative-caret-position="506">
+              <caret line="29" column="0" selection-start-line="29" selection-start-column="0" selection-end-line="29" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -888,7 +883,7 @@
       <workItem from="1505207416786" duration="353000" />
       <workItem from="1505207805408" duration="590000" />
       <workItem from="1505208436046" duration="30000" />
-      <workItem from="1505473352697" duration="2814000" />
+      <workItem from="1505473352697" duration="2868000" />
     </task>
     <task id="LOCAL-00001" summary="Added the Sigar libraries and the base logic to collect the metrics on the agent.">
       <created>1505207625193</created>
@@ -897,7 +892,14 @@
       <option name="project" value="LOCAL" />
       <updated>1505207625193</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Added the Sigar libraries and the base logic to collect the metrics on the agent.">
+      <created>1505487532789</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1505487532789</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -933,7 +935,7 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="28074000" />
+    <option name="totallyTimeSpent" value="28128000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-9" y="-9" width="1938" height="1050" extended-state="6" />
@@ -1412,8 +1414,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/pom.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="462">
-          <caret line="27" column="46" selection-start-line="27" selection-start-column="46" selection-end-line="27" selection-end-column="46" />
+        <state relative-caret-position="506">
+          <caret line="29" column="0" selection-start-line="29" selection-start-column="0" selection-end-line="29" selection-end-column="0" />
           <folding />
         </state>
       </provider>
