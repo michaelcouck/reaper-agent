@@ -2,12 +2,14 @@ package com.pxs.reaper.action;
 
 import org.apache.log4j.Logger;
 
+import javax.management.Notification;
+import javax.management.NotificationListener;
 import javax.websocket.*;
 import java.io.IOException;
 import java.net.URI;
 
 @ClientEndpoint
-public class ReaperActionJMXMetrics implements ReaperAction, Runnable {
+public class ReaperActionJMXMetrics implements ReaperAction, NotificationListener, Runnable {
 
     private final Logger logger = Logger.getLogger(this.getClass());
 
@@ -55,4 +57,7 @@ public class ReaperActionJMXMetrics implements ReaperAction, Runnable {
         logger.error("Error in session : " + session.getId(), throwable);
     }
 
+    @Override
+    public void handleNotification(final Notification notification, final Object handback) {
+    }
 }

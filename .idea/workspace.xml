@@ -2,9 +2,13 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="bd62903f-a1e2-4bbc-b844-3470de15f16c" name="Default" comment="Added the Sigar libraries and the base logic to collect the metrics on the agent.">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__junit_junit_3_8_1.xml" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.gitignore" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/com/pxs/reaper/ReaperDummy.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/compiler.xml" afterPath="$PROJECT_DIR$/.idea/compiler.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pom.xml" afterPath="$PROJECT_DIR$/pom.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reaper-agent.iml" afterPath="$PROJECT_DIR$/reaper-agent.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/pxs/reaper/action/ReaperActionJMXMetrics.java" afterPath="$PROJECT_DIR$/src/main/java/com/pxs/reaper/action/ReaperActionJMXMetrics.java" />
     </list>
     <ignored path="reaper-agent.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -29,28 +33,30 @@
       <file leaf-file-name="Reaper.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/pxs/reaper/Reaper.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1782">
-              <caret line="95" column="56" selection-start-line="95" selection-start-column="56" selection-end-line="95" selection-end-column="56" />
+            <state relative-caret-position="1736">
+              <caret line="79" column="1" selection-start-line="79" selection-start-column="1" selection-end-line="79" selection-end-column="1" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ReaperDummy.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/pxs/reaper/ReaperDummy.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="154">
+              <caret line="7" column="40" selection-start-line="7" selection-start-column="40" selection-end-line="7" selection-end-column="40" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="WebSocketContainer.class" pinned="false" current-in-tab="false">
-        <entry file="jar://C:/Data/maven-local-repo/javax/websocket/javax.websocket-api/1.1/javax.websocket-api-1.1.jar!/javax/websocket/WebSocketContainer.class">
+      <file leaf-file-name="ReaperActionJMXMetrics.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/pxs/reaper/action/ReaperActionJMXMetrics.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="242">
-              <caret line="21" column="91" selection-start-line="21" selection-start-column="4" selection-end-line="21" selection-end-column="91" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ContainerProvider.class" pinned="false" current-in-tab="false">
-        <entry file="jar://C:/Data/maven-local-repo/javax/websocket/javax.websocket-api/1.1/javax.websocket-api-1.1.jar!/javax/websocket/ContainerProvider.class">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="506">
-              <caret line="28" column="29" selection-start-line="28" selection-start-column="12" selection-end-line="28" selection-end-column="29" />
+            <state relative-caret-position="734">
+              <caret line="61" column="0" selection-start-line="61" selection-start-column="0" selection-end-line="61" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -59,18 +65,18 @@
       <file leaf-file-name="Metrics.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/pxs/reaper/model/Metrics.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="242">
-              <caret line="16" column="12" selection-start-line="16" selection-start-column="12" selection-end-line="16" selection-end-column="12" />
+            <state relative-caret-position="264">
+              <caret line="17" column="12" selection-start-line="17" selection-start-column="12" selection-end-line="17" selection-end-column="12" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ReaperTest.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="ReaperTest.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/test/java/com/pxs/reaper/ReaperTest.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="455">
-              <caret line="27" column="0" selection-start-line="27" selection-start-column="0" selection-end-line="27" selection-end-column="0" />
+            <state relative-caret-position="301">
+              <caret line="19" column="13" selection-start-line="19" selection-start-column="13" selection-end-line="19" selection-end-column="13" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -78,11 +84,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="pom.xml" pinned="false" current-in-tab="false">
+      <file leaf-file-name="pom.xml" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/pom.xml">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2552">
-              <caret line="116" column="31" selection-start-line="116" selection-start-column="31" selection-end-line="116" selection-end-column="31" />
+            <state relative-caret-position="462">
+              <caret line="27" column="46" selection-start-line="27" selection-start-column="46" selection-end-line="27" selection-end-column="46" />
               <folding />
             </state>
           </provider>
@@ -123,8 +129,10 @@
         <option value="$PROJECT_DIR$/src/test/java/com/pxs/ReaperTest.java" />
         <option value="$PROJECT_DIR$/src/main/resources/log4j.properties" />
         <option value="$PROJECT_DIR$/src/main/java/com/pxs/reaper/Reaper.java" />
-        <option value="$PROJECT_DIR$/pom.xml" />
         <option value="$PROJECT_DIR$/src/test/java/com/pxs/reaper/ReaperTest.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/pxs/reaper/action/ReaperActionJMXMetrics.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/pxs/reaper/ReaperDummy.java" />
+        <option value="$PROJECT_DIR$/pom.xml" />
       </list>
     </option>
   </component>
@@ -181,6 +189,8 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scratches" />
+      <pane id="Scope" />
       <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
@@ -304,10 +314,38 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="reaper-agent" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="reaper-agent" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="reaper" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="action" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
         </subPane>
       </pane>
-      <pane id="Scope" />
-      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -321,6 +359,7 @@
     <property name="project.structure.last.edited" value="Artifacts" />
     <property name="project.structure.proportion" value="0.0" />
     <property name="project.structure.side.proportion" value="0.34565365" />
+    <property name="ignore_missing_gitignore" value="true" />
   </component>
   <component name="RecentsManager">
     <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
@@ -516,6 +555,27 @@
       <envs />
       <properties />
       <listeners />
+      <method />
+    </configuration>
+    <configuration default="true" type="BashConfigurationType" factoryName="Bash">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="INTERPRETER_PATH" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SCRIPT_NAME" value="" />
+      <option name="PARAMETERS" value="" />
+      <module name="" />
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="true" type="BatchConfigurationType" factoryName="Batch">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs />
+      <module name="" />
+      <option name="SCRIPT_NAME" value="" />
+      <option name="PARAMETERS" value="" />
       <method />
     </configuration>
     <configuration default="true" type="Cold Fusion runner description" factoryName="Cold Fusion" custom_browser="" web_path="">
@@ -828,6 +888,7 @@
       <workItem from="1505207416786" duration="353000" />
       <workItem from="1505207805408" duration="590000" />
       <workItem from="1505208436046" duration="30000" />
+      <workItem from="1505473352697" duration="2814000" />
     </task>
     <task id="LOCAL-00001" summary="Added the Sigar libraries and the base logic to collect the metrics on the agent.">
       <created>1505207625193</created>
@@ -872,7 +933,7 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="25260000" />
+    <option name="totallyTimeSpent" value="28074000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-9" y="-9" width="1938" height="1050" extended-state="6" />
@@ -880,14 +941,15 @@
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32919955" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Java Enterprise" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
-      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32975295" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.16272825" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.35400227" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
@@ -902,7 +964,6 @@
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32919955" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
     </layout>
@@ -935,29 +996,13 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/test/java/com/pxs/reaper/ReaperTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/pom.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2552">
-          <caret line="116" column="31" selection-start-line="116" selection-start-column="31" selection-end-line="116" selection-end-column="31" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/pxs/reaper/Reaper.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1782">
           <caret line="95" column="56" selection-start-line="95" selection-start-column="56" selection-end-line="95" selection-end-column="56" />
-          <folding />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -1007,7 +1052,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1782">
           <caret line="95" column="56" selection-start-line="95" selection-start-column="56" selection-end-line="95" selection-end-column="56" />
-          <folding />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -1057,7 +1104,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -1091,7 +1140,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1496">
           <caret line="68" column="0" selection-start-line="68" selection-start-column="0" selection-end-line="68" selection-end-column="0" />
-          <folding />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -1124,7 +1175,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1452">
           <caret line="68" column="0" selection-start-line="68" selection-start-column="0" selection-end-line="68" selection-end-column="0" />
-          <folding />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -1157,7 +1210,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="198">
           <caret line="9" column="38" selection-start-line="9" selection-start-column="38" selection-end-line="9" selection-end-column="38" />
-          <folding />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -1183,14 +1238,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/.gitignore">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="22">
-          <caret line="1" column="0" selection-start-line="1" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -1292,18 +1342,36 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/pxs/reaper/model/Metrics.java">
+    <entry file="jar://C:/Data/maven-local-repo/javax/websocket/javax.websocket-api/1.1/javax.websocket-api-1.1.jar!/javax/websocket/WebSocketContainer.class">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="242">
-          <caret line="16" column="12" selection-start-line="16" selection-start-column="12" selection-end-line="16" selection-end-column="12" />
+          <caret line="21" column="91" selection-start-line="21" selection-start-column="4" selection-end-line="21" selection-end-column="91" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/pom.xml">
+    <entry file="file://$PROJECT_DIR$/.gitignore">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2552">
-          <caret line="116" column="31" selection-start-line="116" selection-start-column="31" selection-end-line="116" selection-end-column="31" />
+        <state relative-caret-position="22">
+          <caret line="1" column="0" selection-start-line="1" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/test/java/com/pxs/reaper/ReaperTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="301">
+          <caret line="19" column="13" selection-start-line="19" selection-start-column="13" selection-end-line="19" selection-end-column="13" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/pxs/reaper/model/Metrics.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="264">
+          <caret line="17" column="12" selection-start-line="17" selection-start-column="12" selection-end-line="17" selection-end-column="12" />
           <folding />
         </state>
       </provider>
@@ -1316,29 +1384,37 @@
         </state>
       </provider>
     </entry>
-    <entry file="jar://C:/Data/maven-local-repo/javax/websocket/javax.websocket-api/1.1/javax.websocket-api-1.1.jar!/javax/websocket/WebSocketContainer.class">
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/pxs/reaper/action/ReaperActionJMXMetrics.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="242">
-          <caret line="21" column="91" selection-start-line="21" selection-start-column="4" selection-end-line="21" selection-end-column="91" />
+        <state relative-caret-position="734">
+          <caret line="61" column="0" selection-start-line="61" selection-start-column="0" selection-end-line="61" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/pxs/reaper/Reaper.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1782">
-          <caret line="95" column="56" selection-start-line="95" selection-start-column="56" selection-end-line="95" selection-end-column="56" />
+        <state relative-caret-position="1736">
+          <caret line="79" column="1" selection-start-line="79" selection-start-column="1" selection-end-line="79" selection-end-column="1" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/pxs/reaper/ReaperDummy.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="154">
+          <caret line="7" column="40" selection-start-line="7" selection-start-column="40" selection-end-line="7" selection-end-column="40" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/java/com/pxs/reaper/ReaperTest.java">
+    <entry file="file://$PROJECT_DIR$/pom.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="455">
-          <caret line="27" column="0" selection-start-line="27" selection-start-column="0" selection-end-line="27" selection-end-column="0" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
+        <state relative-caret-position="462">
+          <caret line="27" column="46" selection-start-line="27" selection-start-column="46" selection-end-line="27" selection-end-column="46" />
+          <folding />
         </state>
       </provider>
     </entry>
