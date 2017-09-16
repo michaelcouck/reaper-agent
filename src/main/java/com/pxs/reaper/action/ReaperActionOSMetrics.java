@@ -24,10 +24,14 @@ public class ReaperActionOSMetrics implements ReaperAction, Runnable {
     private final Session session;
     private final URI uri = URI.create("ws://reaper-microservice-reaper.b9ad.pro-us-east-1.openshiftapps.com/reaper-websocket");
 
-    public ReaperActionOSMetrics() throws IOException, DeploymentException {
+    public ReaperActionOSMetrics() {
         Sigar sigar = new Sigar();
         WebSocketContainer container = ContainerProvider.getWebSocketContainer();
-        session = container.connectToServer(this, uri);
+        try {
+            session = container.connectToServer(this, uri);
+        } catch (final DeploymentException | IOException e) {
+            throw new RuntimeException("Error connecting to : " + uri, e);
+        }
         SIGAR_PROXY_CACHE = SigarProxyCache.newInstance(sigar, (int) SLEEP_TIME);
     }
 
