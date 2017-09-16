@@ -14,6 +14,9 @@ import java.net.URI;
 
 import java.io.File;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @RunWith(JMockit.class)
 public class ReaperTest {
 
@@ -30,6 +33,8 @@ public class ReaperTest {
             return webSocketContainer;
         }
     }
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(ReaperTest.class);
 
     @Test
     public void reap() throws SigarException {
