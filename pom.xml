@@ -92,6 +92,29 @@
                     <target>1.8</target>
                 </configuration>
             </plugin>
+
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.6</version>
+                <configuration>
+                    <tasks>
+                        <copy todir="/deployments/lib">
+                            <fileset dir="${project.basedir}/target/lib">
+                                <include name="*.jar"/>
+                            </fileset>
+                        </copy>
+                    </tasks>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
         </plugins>
     </build>
 
