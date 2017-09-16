@@ -13,6 +13,7 @@ import java.net.URI;
 @ClientEndpoint
 public class ReaperActionOSMetrics implements ReaperAction, Runnable {
 
+    private static long COUNTER = 0;
     private static final long SLEEP_TIME = 1000;
 
     private static SigarProxy SIGAR_PROXY_CACHE;
@@ -63,7 +64,9 @@ public class ReaperActionOSMetrics implements ReaperAction, Runnable {
             session = container.connectToServer(this, uri);
             RemoteEndpoint.Async async = session.getAsyncRemote();
             async.sendText(GSON.toJson(metrics));
-            logger.info(ToStringBuilder.reflectionToString(metrics));
+            if (COUNTER++ % 1000 == 0) {
+                logger.info("Metrics sent : " + ToStringBuilder.reflectionToString(metrics));
+            }
         } catch (final Exception e) {
             throw new RuntimeException(e);
         } finally {
