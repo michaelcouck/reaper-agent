@@ -74,7 +74,7 @@ public class Reaper {
     }
 
     public static void main(final String[] args) throws SigarException {
-        new Reaper(10).reap();
+        new Reaper(-1).reap();
     }
 
 }
