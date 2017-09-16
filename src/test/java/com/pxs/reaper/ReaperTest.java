@@ -12,6 +12,8 @@ import javax.websocket.*;
 import java.io.IOException;
 import java.net.URI;
 
+import java.io.File;
+
 @RunWith(JMockit.class)
 public class ReaperTest {
 
@@ -31,6 +33,9 @@ public class ReaperTest {
 
     @Test
     public void reap() throws SigarException {
+        String pwd = new File(".").getAbsolutePath();
+        String message = "Build path : " + pwd;
+        LOGGER.error(message);
         new ContainerProviderMock();
         new Reaper(10).reap();
     }
