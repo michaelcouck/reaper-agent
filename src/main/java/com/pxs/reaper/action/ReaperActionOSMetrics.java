@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.net.URI;
 
 @ClientEndpoint
+@SuppressWarnings("FieldCanBeLocal")
 public class ReaperActionOSMetrics implements ReaperAction, Runnable {
 
     private static long COUNTER = 0;
@@ -20,21 +21,19 @@ public class ReaperActionOSMetrics implements ReaperAction, Runnable {
 
     private final Logger logger = Logger.getLogger(this.getClass());
 
+    private final Session session;
     private final URI uri = URI.create("ws://reaper-microservice-reaper.b9ad.pro-us-east-1.openshiftapps.com/reaper-websocket");
 
-    public ReaperActionOSMetrics() {
-        setupSigar();
-    }
-
-    private void setupSigar() {
+    public ReaperActionOSMetrics() throws IOException, DeploymentException {
         Sigar sigar = new Sigar();
+        WebSocketContainer container = ContainerProvider.getWebSocketContainer();
+        session = container.connectToServer(this, uri);
         SIGAR_PROXY_CACHE = SigarProxyCache.newInstance(sigar, (int) SLEEP_TIME);
     }
 
     @Override
     @SuppressWarnings("unused")
     public void run() {
-        Session session = null;
         try {
             Cpu cpu = cpu(SIGAR_PROXY_CACHE);
             CpuPerc cpuPerc = cpuPerc(SIGAR_PROXY_CACHE);
@@ -60,8 +59,6 @@ public class ReaperActionOSMetrics implements ReaperAction, Runnable {
                     .tcp(tcp)
                     .build();
 
-            WebSocketContainer container = ContainerProvider.getWebSocketContainer();
-            session = container.connectToServer(this, uri);
             RemoteEndpoint.Async async = session.getAsyncRemote();
             async.sendText(GSON.toJson(metrics));
             if (COUNTER++ % 1000 == 0) {

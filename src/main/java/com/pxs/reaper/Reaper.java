@@ -31,11 +31,12 @@ public class Reaper {
 
     @SuppressWarnings({"unchecked", "InfiniteLoopStatement"})
     void reap() {
+        ReaperActionOSMetrics reaperActionOSMetrics = new ReaperActionOSMetrics();
         while (true) {
             if (iterations-- == 0) {
                 break;
             }
-            Future<Void> future = (Future<Void>) THREAD.submit(Reaper.class.getSimpleName(), new ReaperActionOSMetrics());
+            Future<Void> future = (Future<Void>) THREAD.submit(Reaper.class.getSimpleName(), reaperActionOSMetrics);
             THREAD.waitForFuture(future, SLEEP_TIME);
             THREAD.sleep(SLEEP_TIME);
             assert future != null;
