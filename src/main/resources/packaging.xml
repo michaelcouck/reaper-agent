@@ -30,10 +30,10 @@
             </includes>
         </fileSet>
         <fileSet>
-            <directory>src/main/resources/lib</directory>
-            <outputDirectory>reaper/lib</outputDirectory>
+            <directory>target</directory>
+            <outputDirectory>reaper</outputDirectory>
             <includes>
-                <include>*</include>
+                <include>*.jar</include>
             </includes>
         </fileSet>
         <fileSet>
@@ -41,13 +41,9 @@
             <outputDirectory>reaper/lib</outputDirectory>
             <includes>
                 <include>*.jar</include>
-            </includes>
-        </fileSet>
-        <fileSet>
-            <directory>target</directory>
-            <outputDirectory>reaper</outputDirectory>
-            <includes>
-                <include>*.jar</include>
+                <include>*.so</include>
+                <include>*.dll</include>
+                <include>*.dylib</include>
             </includes>
         </fileSet>
     </fileSets>
