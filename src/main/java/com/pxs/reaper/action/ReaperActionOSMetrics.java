@@ -72,13 +72,7 @@ public class ReaperActionOSMetrics implements ReaperAction, Runnable {
             throw new RuntimeException(e);
         } finally {
             SigarProxyCache.clear(SIGAR_PROXY_CACHE);
-            if (session != null) {
-                try {
-                    session.close();
-                } catch (final IOException e) {
-                    logger.error("Exception closing session in OS reaper : ", e);
-                }
-            }
+            // TODO: If the session is closed or disconnected, create it again
         }
     }
 
