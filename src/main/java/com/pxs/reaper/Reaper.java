@@ -1,5 +1,6 @@
 package com.pxs.reaper;
 
+import com.pxs.reaper.action.ReaperActionJMXMetrics;
 import com.pxs.reaper.action.ReaperActionOSMetrics;
 import com.pxs.reaper.toolkit.FILE;
 import com.pxs.reaper.toolkit.OS;
@@ -7,9 +8,13 @@ import com.pxs.reaper.toolkit.THREAD;
 import org.apache.log4j.Logger;
 import org.hyperic.sigar.SigarException;
 
+import javax.annotation.PostConstruct;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 import java.util.Random;
 import java.util.concurrent.Future;
 
@@ -23,23 +28,34 @@ public class Reaper {
     private int iterations;
     private final Random random = new Random(31);
 
-    Reaper(final int iterations) {
+    Reaper(final int iterations) throws IOException {
         this.iterations = iterations;
         THREAD.initialize();
         addNativeLibrariesToPath();
+        postConstruct();
     }
 
-    @SuppressWarnings({"unchecked", "InfiniteLoopStatement"})
+    @PostConstruct
+    public void postConstruct() throws IOException {
+        InputStream inputStream = Reaper.class.getResourceAsStream("/reaper.properties");
+        Properties properties = new Properties();
+        properties.load(inputStream);
+    }
+
+    @SuppressWarnings({"unchecked", "InfiniteLoopStatement", "ConstantConditions"})
     void reap() {
         ReaperActionOSMetrics reaperActionOSMetrics = new ReaperActionOSMetrics();
+        ReaperActionJMXMetrics reaperActionJMXMetrics = new ReaperActionJMXMetrics();
+        Future<Void> future;
         while (true) {
             if (iterations-- == 0) {
                 break;
             }
-            Future<Void> future = (Future<Void>) THREAD.submit(Reaper.class.getSimpleName(), reaperActionOSMetrics);
+            future = (Future<Void>) THREAD.submit(Reaper.class.getSimpleName(), reaperActionOSMetrics);
+            THREAD.waitForFuture(future, SLEEP_TIME);
+            future = (Future<Void>) THREAD.submit(Reaper.class.getSimpleName(), reaperActionOSMetrics);
             THREAD.waitForFuture(future, SLEEP_TIME);
             THREAD.sleep(SLEEP_TIME);
-            assert future != null;
             if (!future.isDone()) {
                 LOGGER.warn("ReaperAction not finished : " + future.toString());
             }
@@ -48,6 +64,7 @@ public class Reaper {
         }
     }
 
+    @SuppressWarnings("WeakerAccess")
     void addNativeLibrariesToPath() {
         String javaLibraryPathKey = "java.library.path";
         String javaLibraryPath = System.getProperty(javaLibraryPathKey);
@@ -64,6 +81,7 @@ public class Reaper {
         LOGGER.info("Java library path : " + javaLibraryPath);
     }
 
+    @SuppressWarnings("WeakerAccess")
     String addNativeLibrariesToPath(final String javaLibraryPath, final String nativeLibraries, final String separator) {
         List<File> files = FILE.findFilesRecursively(new File("."), new ArrayList<>(), nativeLibraries);
         StringBuilder stringBuilder = new StringBuilder(javaLibraryPath);
@@ -74,7 +92,7 @@ public class Reaper {
         return stringBuilder.toString();
     }
 
-    public static void main(final String[] args) throws SigarException {
+    public static void main(final String[] args) throws SigarException, IOException {
         new Reaper(-1).reap();
     }
 

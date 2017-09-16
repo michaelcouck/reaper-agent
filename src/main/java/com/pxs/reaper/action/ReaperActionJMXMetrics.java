@@ -9,31 +9,27 @@ import java.io.IOException;
 import java.net.URI;
 
 @ClientEndpoint
+@SuppressWarnings({"FieldCanBeLocal", "unused"})
 public class ReaperActionJMXMetrics implements ReaperAction, NotificationListener, Runnable {
 
     private final Logger logger = Logger.getLogger(this.getClass());
 
+    private final Session session;
     private final URI uri = URI.create("ws://reaper-microservice-reaper.b9ad.pro-us-east-1.openshiftapps.com/reaper-websocket");
+
+    public ReaperActionJMXMetrics() {
+        WebSocketContainer container = ContainerProvider.getWebSocketContainer();
+        try {
+            session = container.connectToServer(this, uri);
+        } catch (final DeploymentException | IOException e) {
+            throw new RuntimeException("Error connecting to : " + uri, e);
+        }
+    }
 
     @Override
     public void run() {
-        WebSocketContainer container = ContainerProvider.getWebSocketContainer();
-        Session session = null;
-        try {
-            session = container.connectToServer(this, uri);
-            RemoteEndpoint.Async async = session.getAsyncRemote();
-            async.sendText(GSON.toJson("bla..."));
-        } catch (final DeploymentException | IOException e) {
-            throw new RuntimeException(e);
-        } finally {
-            if (session != null) {
-                try {
-                    session.close();
-                } catch (final IOException e) {
-                    logger.error("Exception closing session in JMX reaper : ", e);
-                }
-            }
-        }
+        RemoteEndpoint.Async async = session.getAsyncRemote();
+        // async.sendText(GSON.toJson("bla..."));
     }
 
     @OnOpen
