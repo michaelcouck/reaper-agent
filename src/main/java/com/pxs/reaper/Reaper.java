@@ -3,97 +3,89 @@ package com.pxs.reaper;
 import com.pxs.reaper.action.ReaperActionJMXMetrics;
 import com.pxs.reaper.action.ReaperActionOSMetrics;
 import com.pxs.reaper.toolkit.FILE;
-import com.pxs.reaper.toolkit.OS;
 import com.pxs.reaper.toolkit.THREAD;
-import org.apache.log4j.Logger;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.hyperic.sigar.SigarException;
+import org.jeasy.props.annotations.Property;
 
-import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
-import java.util.Random;
 import java.util.concurrent.Future;
 
+import static org.jeasy.props.PropertiesInjectorBuilder.aNewPropertiesInjector;
+
+@Slf4j
+@Setter
+@Getter
 @SuppressWarnings("unused")
 public class Reaper {
 
-    private static final Logger LOGGER = Logger.getLogger(Reaper.class);
+    public static final String REAPER_PROPERTIES = "reaper.properties";
 
-    private static final long SLEEP_TIME = 1000;
-
+    @Property(source = REAPER_PROPERTIES, key = "sleep-time")
+    private int sleepTime;
+    @Property(source = REAPER_PROPERTIES, key = "iterations")
     private int iterations;
-    private final Random random = new Random(31);
+    @Property(source = REAPER_PROPERTIES, key = "reaper-web-socket-uri")
+    private String reaperWebSocketUri;
 
-    Reaper(final int iterations) throws IOException {
-        this.iterations = iterations;
+    public Reaper() throws IOException {
+        aNewPropertiesInjector().injectProperties(this);
         THREAD.initialize();
         addNativeLibrariesToPath();
-        postConstruct();
     }
 
-    @PostConstruct
-    public void postConstruct() throws IOException {
-        InputStream inputStream = Reaper.class.getResourceAsStream("/reaper.properties");
-        Properties properties = new Properties();
-        properties.load(inputStream);
-    }
-
-    @SuppressWarnings({"unchecked", "InfiniteLoopStatement", "ConstantConditions"})
     void reap() {
-        ReaperActionOSMetrics reaperActionOSMetrics = new ReaperActionOSMetrics();
-        ReaperActionJMXMetrics reaperActionJMXMetrics = new ReaperActionJMXMetrics();
-        Future<Void> future;
+        ReaperActionOSMetrics reaperActionOSMetrics = new ReaperActionOSMetrics(sleepTime, reaperWebSocketUri);
+        ReaperActionJMXMetrics reaperActionJMXMetrics = new ReaperActionJMXMetrics(reaperWebSocketUri);
+        Future<?> future;
         while (true) {
             if (iterations-- == 0) {
                 break;
             }
-            future = (Future<Void>) THREAD.submit(Reaper.class.getSimpleName(), reaperActionOSMetrics);
-            THREAD.waitForFuture(future, SLEEP_TIME);
-            future = (Future<Void>) THREAD.submit(Reaper.class.getSimpleName(), reaperActionOSMetrics);
-            THREAD.waitForFuture(future, SLEEP_TIME);
-            THREAD.sleep(SLEEP_TIME);
+            future = THREAD.submit(ReaperActionOSMetrics.class.getSimpleName(), reaperActionOSMetrics);
+            THREAD.waitForFuture(future, sleepTime);
+            future = THREAD.submit(ReaperActionJMXMetrics.class.getSimpleName(), reaperActionJMXMetrics);
+            THREAD.waitForFuture(future, sleepTime);
+            THREAD.sleep(sleepTime);
+            assert future != null;
             if (!future.isDone()) {
-                LOGGER.warn("ReaperAction not finished : " + future.toString());
+                log.warn("ReaperAction not finished : " + future.toString());
             }
             // TODO: Check for exceptions and stop actions if too many exceptions...
             // TODO: Retry at longer intervals when high exception count...
         }
     }
 
+    /**
+     * Adds the native libraries folder to the path and returns the library folder path. Also appends
+     * the native library path to the system property {@code Constant.javaLibraryPathKey}.
+     *
+     * @return the path to the native libraries for all the operating systems
+     */
     @SuppressWarnings("WeakerAccess")
-    void addNativeLibrariesToPath() {
-        String javaLibraryPathKey = "java.library.path";
-        String javaLibraryPath = System.getProperty(javaLibraryPathKey);
-        if (OS.isOs("Linux")) {
-            javaLibraryPath = addNativeLibrariesToPath(javaLibraryPath, ".so", ":");
-        } else if (OS.isOs("Windows")) {
-            javaLibraryPath = addNativeLibrariesToPath(javaLibraryPath, ".dll", ";");
-        } else if (OS.isOs("Mac")) {
-            javaLibraryPath = addNativeLibrariesToPath(javaLibraryPath, ".dylib", ";");
-        } else {
-            throw new RuntimeException("Operating system not supported : " + OS.os());
-        }
-        System.setProperty(javaLibraryPathKey, javaLibraryPath);
-        LOGGER.info("Java library path : " + javaLibraryPath);
-    }
+    String addNativeLibrariesToPath() {
+        String javaLibraryPath = System.getProperty(Constant.javaLibraryPathKey);
 
-    @SuppressWarnings("WeakerAccess")
-    String addNativeLibrariesToPath(final String javaLibraryPath, final String nativeLibraries, final String separator) {
-        List<File> files = FILE.findFilesRecursively(new File("."), new ArrayList<>(), nativeLibraries);
         StringBuilder stringBuilder = new StringBuilder(javaLibraryPath);
-        for (final File file : files) {
-            stringBuilder.append(separator);
-            stringBuilder.append(file.getAbsolutePath());
+        File linuxLoadModule = FILE.findFileRecursively(new File("."), "libsigar-amd64-linux.so");
+        if (linuxLoadModule == null) {
+            throw new RuntimeException("Native libraries not found, please put 'lib' folder relative to agent start directory");
         }
-        return stringBuilder.toString();
+        File libDirectory = linuxLoadModule.getParentFile();
+        stringBuilder.append(File.pathSeparator);
+        stringBuilder.append(FILE.cleanFilePath(libDirectory.getAbsolutePath()));
+        stringBuilder.append(File.pathSeparator);
+
+        System.setProperty(Constant.javaLibraryPathKey, stringBuilder.toString());
+
+        return libDirectory.getAbsolutePath();
     }
 
     public static void main(final String[] args) throws SigarException, IOException {
-        new Reaper(-1).reap();
+        new Reaper().reap();
     }
 
 }

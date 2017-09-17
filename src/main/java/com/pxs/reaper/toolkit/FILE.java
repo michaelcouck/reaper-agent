@@ -460,9 +460,7 @@ public final class FILE {
      */
     public static void setContents(final String filePath, final InputStream inputStream) {
         File file = FILE.getOrCreateFile(new File(filePath));
-        // OutputStream outputStream = null;
         try (OutputStream outputStream = new FileOutputStream(file)) {
-            // outputStream = new FileOutputStream(file);
             IOUtils.copyLarge(inputStream, outputStream);
         } catch (final IOException e) {
             throw new RuntimeException("Exception writing the file to the", e);
@@ -705,7 +703,7 @@ public final class FILE {
      * characters, back spaces and the like, that interfere with the normal working of the
      * file system.
      *
-     * @param path the path to clea, perhaps something like 'file:C:\\path\\.\\some\\more'
+     * @param path the path to clean, perhaps something like 'file:\\path\\.\\some\\more', will return /path/to/file
      * @return the path that can be used as an absolute path on the file system
      */
     public static String cleanFilePath(final String path) {

@@ -1,22 +1,27 @@
 package com.pxs.reaper;
 
+import lombok.extern.slf4j.Slf4j;
 import mockit.Mock;
 import mockit.MockUp;
 import mockit.integration.junit4.JMockit;
+import org.apache.commons.lang.StringUtils;
 import org.hyperic.sigar.SigarException;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
+import org.mockito.internal.util.reflection.Whitebox;
 
 import javax.websocket.*;
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.util.Arrays;
 
-import java.io.File;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+@Slf4j
 @RunWith(JMockit.class)
 public class ReaperTest {
 
@@ -24,25 +29,36 @@ public class ReaperTest {
     public static class ContainerProviderMock extends MockUp<ContainerProvider> {
         @Mock
         public WebSocketContainer getWebSocketContainer() throws IOException, DeploymentException {
-            WebSocketContainer webSocketContainer = Mockito.mock(WebSocketContainer.class);
-            Session session = Mockito.mock(Session.class);
-            RemoteEndpoint.Async async = Mockito.mock(RemoteEndpoint.Async.class);
+            WebSocketContainer webSocketContainer = mock(WebSocketContainer.class);
+            Session session = mock(Session.class);
+            RemoteEndpoint.Async async = mock(RemoteEndpoint.Async.class);
 
-            Mockito.when(webSocketContainer.connectToServer(Mockito.any(Reaper.class), Mockito.any(URI.class))).thenReturn(session);
-            Mockito.when(session.getAsyncRemote()).thenReturn(async);
+            when(webSocketContainer.connectToServer(any(Reaper.class), any(URI.class))).thenReturn(session);
+            when(session.getAsyncRemote()).thenReturn(async);
             return webSocketContainer;
         }
     }
-    
-    private static final Logger LOGGER = LoggerFactory.getLogger(ReaperTest.class);
 
     @Test
-    public void reap() throws SigarException {
-        String pwd = new File(".").getAbsolutePath();
-        String message = "Build path : " + pwd;
-        LOGGER.error(message);
+    public void reap() throws SigarException, IOException {
         new ContainerProviderMock();
-        new Reaper(10).reap();
+        Reaper reaper = new Reaper();
+        Whitebox.setInternalState(reaper, "iterations", 1);
+        reaper.reap();
+        // TODO: What is the result of this call, i.e. functional output
+    }
+
+    @Test
+    public void addNativeLibrariesToPath() throws IOException {
+        String linuxLoadModule = "libsigar-amd64-linux.so";
+        String javaLibraryPath = new Reaper().addNativeLibrariesToPath();
+        String[] paths = StringUtils.split(javaLibraryPath, File.pathSeparatorChar);
+        for (final String path : paths) {
+            if (Arrays.deepToString(new File(path).list()).contains(linuxLoadModule)) {
+                return;
+            }
+        }
+        Assert.fail("Should contain the link libraries");
     }
 
 }

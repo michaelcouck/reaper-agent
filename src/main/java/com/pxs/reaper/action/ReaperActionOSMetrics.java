@@ -2,41 +2,37 @@ package com.pxs.reaper.action;
 
 import com.pxs.reaper.model.Metrics;
 import com.pxs.reaper.toolkit.OS;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.log4j.Logger;
 import org.hyperic.sigar.*;
 
 import javax.websocket.*;
 import java.io.IOException;
 import java.net.URI;
 
+@Slf4j
 @ClientEndpoint
-@SuppressWarnings("FieldCanBeLocal")
 public class ReaperActionOSMetrics implements ReaperAction, Runnable {
 
     private static long COUNTER = 0;
-    private static final long SLEEP_TIME = 1000;
 
     private static SigarProxy SIGAR_PROXY_CACHE;
 
-    private final Logger logger = Logger.getLogger(this.getClass());
-
     private final Session session;
-    private final URI uri = URI.create("ws://reaper-microservice-reaper.b9ad.pro-us-east-1.openshiftapps.com/reaper-websocket");
 
-    public ReaperActionOSMetrics() {
+    public ReaperActionOSMetrics(final int sleepTime, final String reaperWebSocketUri) {
         Sigar sigar = new Sigar();
         WebSocketContainer container = ContainerProvider.getWebSocketContainer();
+        URI uri = URI.create(reaperWebSocketUri);
         try {
             session = container.connectToServer(this, uri);
         } catch (final DeploymentException | IOException e) {
             throw new RuntimeException("Error connecting to : " + uri, e);
         }
-        SIGAR_PROXY_CACHE = SigarProxyCache.newInstance(sigar, (int) SLEEP_TIME);
+        SIGAR_PROXY_CACHE = SigarProxyCache.newInstance(sigar, sleepTime);
     }
 
     @Override
-    @SuppressWarnings("unused")
     public void run() {
         try {
             Cpu cpu = cpu(SIGAR_PROXY_CACHE);
@@ -48,8 +44,6 @@ public class ReaperActionOSMetrics implements ReaperAction, Runnable {
             NetStat netStat = netStat(SIGAR_PROXY_CACHE);
             ProcStat procStat = procStat(SIGAR_PROXY_CACHE);
             Tcp tcp = tcp(SIGAR_PROXY_CACHE);
-            Uptime uptime = upTime(SIGAR_PROXY_CACHE);
-            Who[] whos = who(SIGAR_PROXY_CACHE);
 
             Metrics metrics = Metrics.builder()
                     .cpu(cpu)
@@ -66,7 +60,7 @@ public class ReaperActionOSMetrics implements ReaperAction, Runnable {
             RemoteEndpoint.Async async = session.getAsyncRemote();
             async.sendText(GSON.toJson(metrics));
             if (COUNTER++ % 1000 == 0) {
-                logger.info("Metrics sent : " + ToStringBuilder.reflectionToString(metrics));
+                log.info("Metrics sent : " + ToStringBuilder.reflectionToString(metrics));
             }
         } catch (final Exception e) {
             throw new RuntimeException(e);
@@ -78,30 +72,32 @@ public class ReaperActionOSMetrics implements ReaperAction, Runnable {
 
     @OnOpen
     public void onOpen(final Session session) throws IOException {
-        logger.debug("Session opened : " + session.getId());
+        log.debug("Session opened : " + session.getId());
     }
 
     @OnMessage
     @SuppressWarnings("UnusedParameters")
     public void onMessage(final String message, final Session session) throws IOException {
-        logger.info("Got message : " + message);
+        log.info("Got message : " + message);
     }
 
     @OnClose
     public void onClose(final Session session) {
-        logger.debug("Session closed : " + session.getId());
+        log.debug("Session closed : " + session.getId());
     }
 
     @OnError
     public void onError(final Session session, final Throwable throwable) {
-        logger.error("Error in session : " + session.getId(), throwable);
+        log.error("Error in session : " + session.getId(), throwable);
         onClose(session);
     }
 
+    @SuppressWarnings("unused")
     private Who[] who(final SigarProxy sigarProxy) throws SigarException {
         return sigarProxy.getWhoList();
     }
 
+    @SuppressWarnings("unused")
     private Uptime upTime(final SigarProxy sigarProxy) throws SigarException {
         return sigarProxy.getUptime();
     }
