@@ -145,17 +145,22 @@
                     </execution>
                 </executions>
             </plugin>
+            <!--
+                This plugin is necessary to copy the dependencies to the lib directory
+                in the deployments directory for OpenShift because seemingly it is impossible
+                to actually have these artifacts copied by OpenShift it's self.
+            -->
             <plugin>
                 <artifactId>maven-antrun-plugin</artifactId>
                 <version>1.6</version>
                 <configuration>
                     <tasks>
-                        <copy todir="target/lib">
+                        <copy todir="target/lib" failonerror="false">
                             <fileset dir="${project.basedir}/src/main/resources/lib">
                                 <include name="*.*"/>
                             </fileset>
                         </copy>
-                        <copy todir="/deployments/lib">
+                        <copy todir="/deployments/lib" failonerror="false">
                             <fileset dir="${project.basedir}/target/lib">
                                 <include name="*.*"/>
                             </fileset>

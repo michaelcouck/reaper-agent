@@ -1,9 +1,7 @@
 package com.pxs.reaper.action;
 
-import com.google.gson.Gson;
-
+/**
+ * Tagging interface for actions.
+ */
 interface ReaperAction {
-
-    Gson GSON = new Gson();
-
 }
