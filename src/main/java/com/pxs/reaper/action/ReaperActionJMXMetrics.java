@@ -1,6 +1,6 @@
 package com.pxs.reaper.action;
 
-import com.pxs.reaper.model.*;
+import com.pxs.reaper.model.Metrics;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -9,7 +9,7 @@ import javax.management.remote.JMXConnector;
 import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
 import java.io.IOException;
-import java.lang.management.*;
+import java.util.HashMap;
 import java.util.Set;
 
 /**
@@ -47,122 +47,49 @@ public class ReaperActionJMXMetrics implements ReaperAction, Runnable {
     private MBeanServerConnection mbeanConn;
     private long retryInterval = 0;
 
-    @Override
-    @SuppressWarnings("unused")
-    public void run() {
+    public ReaperActionJMXMetrics() {
         if (mbeanConn == null) {
             getJMXConnection();
-            if (mbeanConn == null) {
-                return;
-            }
+        }
+    }
+
+    @Override
+    public void run() {
+        if (mbeanConn == null) {
+            return;
         }
         Set<ObjectName> beanSet;
+        metrics.setAttributes(new HashMap<>());
         try {
             beanSet = mbeanConn.queryNames(null, null);
             for (final ObjectName objectName : beanSet) {
-                System.out.println("Object name : " + objectName);
+                log.debug("Object name : {}", objectName);
                 ObjectInstance objectInstance = mbeanConn.getObjectInstance(objectName);
-
                 MBeanInfo mBeanInfo = mbeanConn.getMBeanInfo(objectInstance.getObjectName());
-                System.out.println("        : " + mBeanInfo.getDescription());
-
                 MBeanAttributeInfo[] mBeanAttributeInfos = mBeanInfo.getAttributes();
                 for (final MBeanAttributeInfo mBeanAttributeInfo : mBeanAttributeInfos) {
-                    System.out.println("            : " + mBeanAttributeInfo.toString());
+                    if (operationSupported(objectName, mBeanAttributeInfo)) {
+                        log.debug("            : {}", mBeanAttributeInfo.toString());
+                        metrics.getAttributes().put(mBeanAttributeInfo.getName(),
+                                mbeanConn.getAttribute(objectName, mBeanAttributeInfo.getName()));
+                    }
                 }
-                MBeanOperationInfo[] mBeanOperationInfos = mBeanInfo.getOperations();
-                for (final MBeanOperationInfo mBeanOperationInfo : mBeanOperationInfos) {
-                    // System.out.println(mBeanOperationInfo.toString());
-                }
-
-                // mbeanConn.invoke(objectName, "", null, null);
-                // getThreadMXBeanMetrics(metrics, (ThreadMXBean) objectInstance);
-                // getMemoryPoolMXBeanMetrics(objectName.toString(), metrics, (MemoryPoolMXBean) objectInstance);
             }
-        } catch (final IOException | InstanceNotFoundException | ReflectionException e) {
+        } catch (final IOException | InstanceNotFoundException | ReflectionException | IntrospectionException |
+                AttributeNotFoundException | MBeanException e) {
             log.error("Exception accessing the MBeans in the JVM, no metrics delivered for the JVM then : ", e);
-        } catch (IntrospectionException e) {
-            e.printStackTrace();
         }
     }
 
-    private void getClassLoadingMXBeanMetrics(final Metrics metrics, final ClassLoadingMXBean classLoadingMXBean) {
-        ClassPool classPool = ClassPool.builder()
-                .loadedClassCount(classLoadingMXBean.getLoadedClassCount())
-                .totalLoadedClassCount(classLoadingMXBean.getTotalLoadedClassCount())
-                .unloadedClassCount(classLoadingMXBean.getUnloadedClassCount())
-                .build();
-        metrics.setClassPool(classPool);
-    }
-
-    private void getGarbageCollectorMXBeanMetrics(final Metrics metrics, final GarbageCollectorMXBean garbageCollectorMXBean) {
-        GarbageCollection garbageCollection = GarbageCollection.builder()
-                .collectionCount(garbageCollectorMXBean.getCollectionCount())
-                .collectionTime(garbageCollectorMXBean.getCollectionTime())
-                .build();
-        metrics.setGarbageCollection(garbageCollection);
-    }
-
-    private void getThreadMXBeanMetrics(final Metrics metrics, final ThreadMXBean threadMXBean) {
-        ThreadPool threadPool = ThreadPool.builder().build();
-        ThreadInfo[] threadInfos = threadMXBean.dumpAllThreads(true, true);
-        for (final ThreadInfo threadInfo : threadInfos) {
-            threadPool.setBlockedCount(threadPool.getBlockedCount() + threadInfo.getBlockedCount());
-            threadPool.setBlockedTime(threadPool.getBlockedTime() + threadInfo.getBlockedTime());
-            MonitorInfo[] monitorInfos = threadInfo.getLockedMonitors();
-            for (final MonitorInfo monitorInfo : monitorInfos) {
-                threadPool.setLockedStackDepth(threadPool.getLockedStackDepth() + monitorInfo.getLockedStackDepth());
-            }
-            threadPool.getThreadStates().add(threadInfo.getThreadState());
-            threadPool.setWaitedCount(threadPool.getWaitedCount() + threadInfo.getWaitedCount());
-            threadPool.setWaitedTime(threadPool.getWaitedTime() + threadInfo.getWaitedTime());
-            if (threadInfo.isInNative()) {
-                threadPool.setInNative(threadPool.getInNative() + 1);
-            }
-            if (threadInfo.isSuspended()) {
-                threadPool.setSuspended(threadPool.getSuspended() + 1);
-            }
+    private boolean operationSupported(final ObjectName objectName, final MBeanAttributeInfo mBeanAttributeInfo)
+            throws AttributeNotFoundException, MBeanException, ReflectionException, InstanceNotFoundException, IOException {
+        String supported = "true";
+        if (mBeanAttributeInfo.getDescription().startsWith("CollectionUsageThreshold")) {
+            supported = mbeanConn.getAttribute(objectName, "CollectionUsageThresholdSupported").toString();
+        } else if (mBeanAttributeInfo.getDescription().startsWith("UsageThreshold")) {
+            supported = mbeanConn.getAttribute(objectName, "UsageThresholdSupported").toString();
         }
-        metrics.setThreadPool(threadPool);
-    }
-
-    private void getBufferPoolMXBeanMetrics(final String name, final Metrics metrics, final BufferPoolMXBean bufferPoolMXBean) {
-        BufferPool bufferPool = BufferPool.builder()
-                .count(bufferPoolMXBean.getCount())
-                .memoryUsed(bufferPoolMXBean.getMemoryUsed())
-                .totalCapacity(bufferPoolMXBean.getTotalCapacity())
-                .build();
-        if (name.contains("mapped")) {
-            metrics.setMapped(bufferPool);
-        } else {
-            metrics.setBufferPoolMXBean(bufferPool);
-        }
-    }
-
-    private void getMemoryPoolMXBeanMetrics(final String name, final Metrics metrics, final MemoryPoolMXBean memoryPoolMXBean) {
-        MemoryPool memoryPool = MemoryPool.builder()
-                .build();
-
-        // Ignored for now
-        /*memoryPoolMXBean.getPeakUsage().getCommitted();
-        memoryPoolMXBean.getCollectionUsage().getCommitted();*/
-        /*memoryPoolMXBean.getCollectionUsageThreshold();
-        memoryPoolMXBean.getCollectionUsageThresholdCount();*/
-        /*memoryPoolMXBean.isCollectionUsageThresholdExceeded();*/
-        /*memoryPoolMXBean.getType();*/
-
-        memoryPoolMXBean.getUsage().getInit();
-        memoryPoolMXBean.getUsage().getUsed();
-        memoryPoolMXBean.getUsage().getMax();
-        memoryPoolMXBean.getUsage().getCommitted();
-
-        memoryPoolMXBean.getUsageThreshold();
-        memoryPoolMXBean.getUsageThresholdCount();
-        memoryPoolMXBean.isUsageThresholdExceeded();
-
-        if (name.toLowerCase().contains("metaspace")) {
-            metrics.setMetaspace(memoryPool);
-        }
+        return Boolean.valueOf(supported);
     }
 
     private void getJMXConnection() {

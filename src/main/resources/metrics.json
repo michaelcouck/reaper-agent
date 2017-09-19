@@ -1,0 +1,1017 @@
+{
+  "cpu": {
+    "user": 4551951,
+    "sys": 2568351,
+    "nice": 0,
+    "idle": 60725181,
+    "wait": 0,
+    "irq": 1260081,
+    "softIrq": 0,
+    "stolen": 0,
+    "total": 169614754
+  },
+  "cpuPerc": {
+    "user": 0.3670505758637957,
+    "sys": 0.20330495743615423,
+    "nice": 0.0,
+    "idle": 0.4296444667000501,
+    "wait": 0.0,
+    "irq": 0.0,
+    "softIrq": 0.0,
+    "stolen": 0.0,
+    "combined": 0.5703555332999499
+  },
+  "swap": {
+    "total": 17242116096,
+    "used": 6293278720,
+    "free": 10948837376,
+    "pageIn": 192069632,
+    "pageOut": 66127
+  },
+  "loadAverage": [],
+  "mem": {
+    "total": 8464723968,
+    "ram": 8072,
+    "used": 5592293376,
+    "free": 2872430592,
+    "actualUsed": 5400219648,
+    "actualFree": 3064504320,
+    "usedPercent": 63.79676015916128,
+    "freePercent": 36.20323984083872
+  },
+  "netInfo": {
+    "defaultGateway": "0.0.0.0",
+    "hostName": "BGC-BE-08966829",
+    "domainName": "BGC.NET",
+    "primaryDns": "192.168.43.1",
+    "secondaryDns": ""
+  },
+  "netStat": {
+    "tcpStates": [
+      0,
+      42,
+      0,
+      0,
+      0,
+      0,
+      8,
+      0,
+      0,
+      0,
+      29,
+      0,
+      0,
+      0
+    ],
+    "tcpInboundTotal": 2,
+    "tcpOutboundTotal": 48,
+    "allInboundTotal": 2,
+    "allOutboundTotal": 48
+  },
+  "procStat": {
+    "total": 101,
+    "idle": 0,
+    "running": 101,
+    "sleeping": 0,
+    "stopped": 0,
+    "zombie": 0,
+    "threads": 1508
+  },
+  "tcp": {
+    "activeOpens": 3270,
+    "passiveOpens": 1058,
+    "attemptFails": 40,
+    "estabResets": 955,
+    "currEstab": 42,
+    "inSegs": 1166325,
+    "outSegs": 1177303,
+    "retransSegs": 406,
+    "inErrs": 0,
+    "outRsts": 992
+  },
+  "attributes": {
+    "ImplementationVersion": "1.8.0_131-b11",
+    "MemoryManagerNames": [
+      "MarkSweepCompact"
+    ],
+    "VmVersion": "25.131-b11",
+    "CurrentThreadCpuTimeSupported": true,
+    "Count": 0,
+    "PeakUsage": {
+      "contents": {
+        "committed": 357957632,
+        "init": 357957632,
+        "max": 715849728,
+        "used": 137602032
+      }
+    },
+    "TotalCompilationTime": 153,
+    "Name": "Metaspace Manager",
+    "MemoryPoolNames": [
+      "Metaspace"
+    ],
+    "ObjectPendingFinalizationCount": 0,
+    "ThreadCpuTimeSupported": true,
+    "SystemCpuLoad": -1.0,
+    "Version": "6.1",
+    "DaemonThreadCount": 14,
+    "SpecVendor": "Oracle Corporation",
+    "UnloadedClassCount": 0,
+    "SpecificationVersion": "1.4",
+    "ThreadContentionMonitoringEnabled": false,
+    "TotalStartedThreadCount": 18,
+    "CommittedVirtualMemorySize": 565039104,
+    "StartTime": 1505820074186,
+    "SystemLoadAverage": -1.0,
+    "SpecName": "Java Virtual Machine Specification",
+    "CollectionUsageThresholdCount": 0,
+    "AllThreadIds": [
+      23,
+      22,
+      21,
+      20,
+      19,
+      18,
+      17,
+      16,
+      15,
+      13,
+      12,
+      11,
+      7,
+      5,
+      4,
+      3,
+      2,
+      1
+    ],
+    "ThreadAllocatedMemoryEnabled": true,
+    "ProcessCpuLoad": 0.0,
+    "CurrentThreadCpuTime": 46800300,
+    "TotalLoadedClassCount": 2307,
+    "UsageThresholdExceeded": false,
+    "CollectionUsageThreshold": 0,
+    "ProcessCpuTime": 1528809800,
+    "Valid": true,
+    "CollectionUsageThresholdSupported": true,
+    "AvailableProcessors": 4,
+    "CollectionUsage": {
+      "contents": {
+        "committed": 357957632,
+        "init": 357957632,
+        "max": 715849728,
+        "used": 137602032
+      }
+    },
+    "ObjectMonitorUsageSupported": true,
+    "CollectionUsageThresholdExceeded": false,
+    "ImplementationVendor": "Oracle Corporation",
+    "ImplementationName": "JMX",
+    "ClassPath": "C:\\Data\\intellij\\ideaIU-2016.2.5.win\\lib\\idea_rt.jar;C:\\Data\\intellij\\ideaIU-2016.2.5.win\\plugins\\junit\\lib\\junit-rt.jar;C:\\Program Files (x86)\\Java\\JDK8\\jre\\lib\\charsets.jar;C:\\Program Files (x86)\\Java\\JDK8\\jre\\lib\\deploy.jar;C:\\Program Files (x86)\\Java\\JDK8\\jre\\lib\\ext\\access-bridge-32.jar;C:\\Program Files (x86)\\Java\\JDK8\\jre\\lib\\ext\\cldrdata.jar;C:\\Program Files (x86)\\Java\\JDK8\\jre\\lib\\ext\\dnsns.jar;C:\\Program Files (x86)\\Java\\JDK8\\jre\\lib\\ext\\jaccess.jar;C:\\Program Files (x86)\\Java\\JDK8\\jre\\lib\\ext\\jfxrt.jar;C:\\Program Files (x86)\\Java\\JDK8\\jre\\lib\\ext\\localedata.jar;C:\\Program Files (x86)\\Java\\JDK8\\jre\\lib\\ext\\nashorn.jar;C:\\Program Files (x86)\\Java\\JDK8\\jre\\lib\\ext\\sunec.jar;C:\\Program Files (x86)\\Java\\JDK8\\jre\\lib\\ext\\sunjce_provider.jar;C:\\Program Files (x86)\\Java\\JDK8\\jre\\lib\\ext\\sunmscapi.jar;C:\\Program Files (x86)\\Java\\JDK8\\jre\\lib\\ext\\sunpkcs11.jar;C:\\Program Files (x86)\\Java\\JDK8\\jre\\lib\\ext\\zipfs.jar;C:\\Program Files (x86)\\Java\\JDK8\\jre\\lib\\javaws.jar;C:\\Program Files (x86)\\Java\\JDK8\\jre\\lib\\jce.jar;C:\\Program Files (x86)\\Java\\JDK8\\jre\\lib\\jfr.jar;C:\\Program Files (x86)\\Java\\JDK8\\jre\\lib\\jfxswt.jar;C:\\Program Files (x86)\\Java\\JDK8\\jre\\lib\\jsse.jar;C:\\Program Files (x86)\\Java\\JDK8\\jre\\lib\\management-agent.jar;C:\\Program Files (x86)\\Java\\JDK8\\jre\\lib\\plugin.jar;C:\\Program Files (x86)\\Java\\JDK8\\jre\\lib\\resources.jar;C:\\Program Files (x86)\\Java\\JDK8\\jre\\lib\\rt.jar;C:\\Users\\id851622\\workspace\\reaper-agent\\target\\test-classes;C:\\Users\\id851622\\workspace\\reaper-agent\\target\\classes;C:\\Data\\maven-local-repo\\org\\fusesource\\sigar\\1.6.4\\sigar-1.6.4.jar;C:\\Data\\maven-local-repo\\log4j\\log4j\\1.2.16\\log4j-1.2.16.jar;C:\\Data\\maven-local-repo\\junit\\junit\\4.12\\junit-4.12.jar;C:\\Data\\maven-local-repo\\org\\hamcrest\\hamcrest-core\\1.3\\hamcrest-core-1.3.jar;C:\\Data\\maven-local-repo\\org\\slf4j\\slf4j-api\\1.6.4\\slf4j-api-1.6.4.jar;C:\\Data\\maven-local-repo\\org\\slf4j\\slf4j-log4j12\\1.6.4\\slf4j-log4j12-1.6.4.jar;C:\\Data\\maven-local-repo\\com\\google\\code\\gson\\gson\\2.7\\gson-2.7.jar;C:\\Data\\maven-local-repo\\org\\mockito\\mockito-core\\1.10.19\\mockito-core-1.10.19.jar;C:\\Data\\maven-local-repo\\org\\objenesis\\objenesis\\2.1\\objenesis-2.1.jar;C:\\Data\\maven-local-repo\\org\\projectlombok\\lombok\\1.16.12\\lombok-1.16.12.jar;C:\\Data\\maven-local-repo\\com\\fasterxml\\jackson\\core\\jackson-databind\\2.8.3\\jackson-databind-2.8.3.jar;C:\\Data\\maven-local-repo\\com\\fasterxml\\jackson\\core\\jackson-annotations\\2.8.0\\jackson-annotations-2.8.0.jar;C:\\Data\\maven-local-repo\\com\\fasterxml\\jackson\\core\\jackson-core\\2.8.3\\jackson-core-2.8.3.jar;C:\\Data\\maven-local-repo\\commons-lang\\commons-lang\\2.6\\commons-lang-2.6.jar;C:\\Data\\maven-local-repo\\javax\\websocket\\javax.websocket-api\\1.1\\javax.websocket-api-1.1.jar;C:\\Data\\maven-local-repo\\commons-io\\commons-io\\1.3.2\\commons-io-1.3.2.jar;C:\\Data\\maven-local-repo\\org\\glassfish\\tyrus\\bundles\\tyrus-standalone-client\\1.12\\tyrus-standalone-client-1.12.jar;C:\\Data\\maven-local-repo\\org\\glassfish\\tyrus\\tyrus-container-grizzly-client\\1.12\\tyrus-container-grizzly-client-1.12.jar;C:\\Data\\maven-local-repo\\org\\glassfish\\grizzly\\grizzly-framework\\2.3.22\\grizzly-framework-2.3.22.jar;C:\\Data\\maven-local-repo\\org\\glassfish\\grizzly\\grizzly-http-server\\2.3.22\\grizzly-http-server-2.3.22.jar;C:\\Data\\maven-local-repo\\org\\glassfish\\grizzly\\grizzly-http\\2.3.22\\grizzly-http-2.3.22.jar;C:\\Data\\maven-local-repo\\org\\glassfish\\tyrus\\tyrus-client\\1.12\\tyrus-client-1.12.jar;C:\\Data\\maven-local-repo\\org\\glassfish\\tyrus\\tyrus-core\\1.12\\tyrus-core-1.12.jar;C:\\Data\\maven-local-repo\\org\\glassfish\\tyrus\\tyrus-spi\\1.12\\tyrus-spi-1.12.jar;C:\\Data\\maven-local-repo\\commons-collections\\commons-collections\\3.2.2\\commons-collections-3.2.2.jar;C:\\Data\\maven-local-repo\\org\\jeasy\\easy-props\\2.0.0\\easy-props-2.0.0.jar;C:\\Data\\maven-local-repo\\commons-beanutils\\commons-beanutils\\1.9.2\\commons-beanutils-1.9.2.jar;C:\\Data\\maven-local-repo\\commons-logging\\commons-logging\\1.1.1\\commons-logging-1.1.1.jar;C:\\Data\\maven-local-repo\\org\\jmockit\\jmockit\\1.13\\jmockit-1.13.jar;C:\\Users\\id851622\\workspace\\reaper-agent/ser/serenity.jar",
+    "MBeanServerId": "BGC-BE-08966829_1505820074406",
+    "Verbose": false,
+    "CollectionCount": 1,
+    "CurrentThreadUserTime": 46800300,
+    "UsageThreshold": 0,
+    "PeakThreadCount": 18,
+    "ManagementSpecVersion": "1.2",
+    "LoggerNames": [
+      "sun.rmi.client.call",
+      "global",
+      "com.ikokoon.toolkit.Toolkit",
+      "com.pxs.reaper.Reaper",
+      "javax.management.monitor",
+      "com.ikokoon.serenity.persistence.DataBaseOdb",
+      "sun.rmi.loader",
+      "com.pxs.reaper.toolkit.THREAD",
+      "com.ikokoon.serenity.process.Listener",
+      "javax.management.remote.misc",
+      "org.jeasy.props.processors.DBPropertyAnnotationProcessor",
+      "org.jeasy.props.processors.PropertyAnnotationProcessor",
+      "org.jeasy.props.processors.ManifestPropertyAnnotationProcessor",
+      "javax.management",
+      "javax.management.remote.timeout",
+      "com.ikokoon.serenity.Collector",
+      "sun.management.jmxremote",
+      "javax.management.snmp",
+      "sun.rmi.transport.tcp",
+      "com.pxs.reaper.toolkit.FILE",
+      "javax.management.notification",
+      "sun.rmi.server.ref",
+      "javax.management.snmp.daemon",
+      "com.ikokoon.serenity.Transformer",
+      "sun.rmi.client.ref",
+      "sun.rmi.dgc",
+      "javax.management.modelmbean",
+      "com.ikokoon.serenity.Configuration",
+      "javax.management.remote.rmi",
+      "javax.management.misc",
+      "javax.management.mlet",
+      "com.ikokoon.serenity.persistence.DataBaseRam",
+      "sun.rmi.server.call",
+      "javax.management.timer",
+      "sun.rmi.transport.tcp.proxy",
+      "sun.rmi.runtime",
+      "sun.rmi.transport.misc",
+      "com.ikokoon.serenity.persistence.IDataBase$DataBaseManager",
+      "com.ikokoon.serenity.Profiler",
+      "javax.management.relation",
+      "org.jeasy.props.processors.SystemPropertyAnnotationProcessor",
+      "org.jeasy.props.MBeanRegistrar",
+      "java.io.serialization",
+      "org.jeasy.props.processors.JNDIPropertyAnnotationProcessor",
+      "com.pxs.reaper.action.ReaperActionOSMetrics",
+      "org.jeasy.props.processors.I18NPropertyAnnotationProcessor",
+      "com.pxs.reaper.action.ReaperActionJMXMetrics",
+      "",
+      "javax.management.mbeanserver"
+    ],
+    "FreeSwapSpaceSize": 10971889664,
+    "BootClassPath": "C:\\Program Files (x86)\\Java\\JDK8\\jre\\lib\\resources.jar;C:\\Program Files (x86)\\Java\\JDK8\\jre\\lib\\rt.jar;C:\\Program Files (x86)\\Java\\JDK8\\jre\\lib\\sunrsasign.jar;C:\\Program Files (x86)\\Java\\JDK8\\jre\\lib\\jsse.jar;C:\\Program Files (x86)\\Java\\JDK8\\jre\\lib\\jce.jar;C:\\Program Files (x86)\\Java\\JDK8\\jre\\lib\\charsets.jar;C:\\Program Files (x86)\\Java\\JDK8\\jre\\lib\\jfr.jar;C:\\Program Files (x86)\\Java\\JDK8\\jre\\classes;C:\\Users\\id851622\\workspace\\reaper-agent\\ser\\serenity.jar;C:\\Users\\id851622\\workspace\\reaper-agent\\ser\\lib\\log4j-1.2.17.jar;C:\\Users\\id851622\\workspace\\reaper-agent\\ser\\lib\\asm-5.0.3.jar;C:\\Users\\id851622\\workspace\\reaper-agent\\ser\\lib\\asm-commmons-5.0.3.jar;C:\\Users\\id851622\\workspace\\reaper-agent\\ser\\lib\\neodatis-odb-1.9-beta-1.jar;C:\\Users\\id851622\\workspace\\reaper-agent\\ser\\lib\\java2html-5.0.0.jar;C:\\Users\\id851622\\workspace\\reaper-agent\\ser\\lib\\dom4j-1.6.1.jar;C:\\Users\\id851622\\workspace\\reaper-agent\\ser\\lib\\jfreechart-1.0.9.jar;C:\\Users\\id851622\\workspace\\reaper-agent\\ser\\lib\\jcommon-1.0.9.jar;C:\\Users\\id851622\\workspace\\reaper-agent\\ser\\lib\\slf4j-api-1.7.7.jar;C:\\Users\\id851622\\workspace\\reaper-agent\\ser\\lib\\slf4j-jdk14-1.7.7.jar",
+    "VmVendor": "Oracle Corporation",
+    "TotalSwapSpaceSize": 17242116096,
+    "SpecificationVendor": "Oracle Corporation",
+    "CompilationTimeMonitoringSupported": true,
+    "TotalCapacity": 0,
+    "DiagnosticOptions": [
+      {
+        "contents": {
+          "name": "HeapDumpBeforeFullGC",
+          "origin": "DEFAULT",
+          "value": "false",
+          "writeable": true
+        }
+      },
+      {
+        "contents": {
+          "name": "HeapDumpAfterFullGC",
+          "origin": "DEFAULT",
+          "value": "false",
+          "writeable": true
+        }
+      },
+      {
+        "contents": {
+          "name": "HeapDumpOnOutOfMemoryError",
+          "origin": "DEFAULT",
+          "value": "false",
+          "writeable": true
+        }
+      },
+      {
+        "contents": {
+          "name": "HeapDumpPath",
+          "origin": "DEFAULT",
+          "value": "",
+          "writeable": true
+        }
+      },
+      {
+        "contents": {
+          "name": "CMSAbortablePrecleanWaitMillis",
+          "origin": "DEFAULT",
+          "value": "100",
+          "writeable": true
+        }
+      },
+      {
+        "contents": {
+          "name": "CMSWaitDuration",
+          "origin": "DEFAULT",
+          "value": "2000",
+          "writeable": true
+        }
+      },
+      {
+        "contents": {
+          "name": "CMSTriggerInterval",
+          "origin": "DEFAULT",
+          "value": "-1",
+          "writeable": true
+        }
+      },
+      {
+        "contents": {
+          "name": "PrintGC",
+          "origin": "DEFAULT",
+          "value": "false",
+          "writeable": true
+        }
+      },
+      {
+        "contents": {
+          "name": "PrintGCDetails",
+          "origin": "DEFAULT",
+          "value": "false",
+          "writeable": true
+        }
+      },
+      {
+        "contents": {
+          "name": "PrintGCDateStamps",
+          "origin": "DEFAULT",
+          "value": "false",
+          "writeable": true
+        }
+      },
+      {
+        "contents": {
+          "name": "PrintGCTimeStamps",
+          "origin": "DEFAULT",
+          "value": "false",
+          "writeable": true
+        }
+      },
+      {
+        "contents": {
+          "name": "PrintGCID",
+          "origin": "DEFAULT",
+          "value": "false",
+          "writeable": true
+        }
+      },
+      {
+        "contents": {
+          "name": "PrintClassHistogramBeforeFullGC",
+          "origin": "DEFAULT",
+          "value": "false",
+          "writeable": true
+        }
+      },
+      {
+        "contents": {
+          "name": "PrintClassHistogramAfterFullGC",
+          "origin": "DEFAULT",
+          "value": "false",
+          "writeable": true
+        }
+      },
+      {
+        "contents": {
+          "name": "PrintClassHistogram",
+          "origin": "DEFAULT",
+          "value": "false",
+          "writeable": true
+        }
+      },
+      {
+        "contents": {
+          "name": "MinHeapFreeRatio",
+          "origin": "DEFAULT",
+          "value": "40",
+          "writeable": true
+        }
+      },
+      {
+        "contents": {
+          "name": "MaxHeapFreeRatio",
+          "origin": "DEFAULT",
+          "value": "70",
+          "writeable": true
+        }
+      },
+      {
+        "contents": {
+          "name": "PrintConcurrentLocks",
+          "origin": "DEFAULT",
+          "value": "false",
+          "writeable": true
+        }
+      },
+      {
+        "contents": {
+          "name": "UnlockCommercialFeatures",
+          "origin": "DEFAULT",
+          "value": "false",
+          "writeable": true
+        }
+      }
+    ],
+    "MemoryUsed": 0,
+    "BootClassPathSupported": true,
+    "Usage": {
+      "contents": {
+        "committed": 357957632,
+        "init": 357957632,
+        "max": 715849728,
+        "used": 137602032
+      }
+    },
+    "UsageThresholdCount": 0,
+    "InputArguments": [
+      "-ea",
+      "-javaagent:C:\\Users\\id851622\\workspace\\reaper-agent/ser/serenity.jar",
+      "-Djava.awt.headless\u003dtrue",
+      "-Dwrite.classes\u003dfalse",
+      "-Dclean.classes\u003dtrue",
+      "-Dincluded.packages\u003dikube",
+      "-Dexcluded.packages\u003dMock:Test:Integration:toolkit:scanner:database:model:ikube.action.enums:FileVerifier",
+      "-Dincluded.adapters\u003dcoverage:complexity:dependency",
+      "-Xverify:none",
+      "-Xms512m",
+      "-Xmx1024m",
+      "-Dcom.sun.management.jmxremote",
+      "-Dcom.sun.management.jmxremote.port\u003d8500",
+      "-Dcom.sun.management.jmxremote.local.only\u003dfalse",
+      "-Dcom.sun.management.jmxremote.authenticate\u003dfalse",
+      "-Dcom.sun.management.jmxremote.ssl\u003dfalse",
+      "-Didea.launcher.port\u003d7532",
+      "-Didea.launcher.bin.path\u003dC:\\Data\\intellij\\ideaIU-2016.2.5.win\\bin",
+      "-Didea.junit.sm_runner",
+      "-Dfile.encoding\u003dUTF-8"
+    ],
+    "CollectionTime": 125,
+    "Uptime": 1177,
+    "ThreadAllocatedMemorySupported": true,
+    "VmName": "Java HotSpot(TM) Client VM",
+    "FreePhysicalMemorySize": 2878402560,
+    "Arch": "x86",
+    "UsageThresholdSupported": true,
+    "NonHeapMemoryUsage": {
+      "contents": {
+        "committed": 9764864,
+        "init": 163840,
+        "max": -1,
+        "used": 9472288
+      }
+    },
+    "ObjectName": {},
+    "TotalPhysicalMemorySize": 8464723968,
+    "LibraryPath": "C:\\Program Files (x86)\\Java\\JDK8\\bin;C:\\WINDOWS\\Sun\\Java\\bin;C:\\WINDOWS\\system32;C:\\WINDOWS;C:\\ProgramData\\Oracle\\Java\\javapath;C:\\Oracle\\ic1120_32\\bin;C:\\Oracle\\ic1120_32;C:\\Oracle\\ic1120;C:\\Oracle\\ic1120\\bin;C:\\Program Files (x86)\\Intel\\iCLS Client\\;C:\\Program Files\\Intel\\iCLS Client\\;C:\\WINDOWS\\system32;C:\\WINDOWS;C:\\WINDOWS\\System32\\Wbem;C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\;C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\;C:\\Program Files (x86)\\Intel\\Intel(R) Management Engine Components\\DAL;C:\\Program Files\\Intel\\Intel(R) Management Engine Components\\DAL;C:\\Program Files (x86)\\Intel\\Intel(R) Management Engine Components\\IPT;C:\\Program Files\\Intel\\Intel(R) Management Engine Components\\IPT;C:\\Program Files (x86)\\RedHat\\oc\\3.4\\;C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\;C:\\Program Files\\nodejs\\;C:\\Users\\id851622\\AppData\\Roaming\\npm;C:\\Data\\apache-maven-3.5.0\\bin;C:\\Program Files (x86)\\Java\\JDK8;C:\\Users\\id851622\\workspace\\perfmon\\bin;;.;C:/Users/id851622/workspace/reaper-agent/src/main/resources/lib;",
+    "LoadedClassCount": 2307,
+    "Type": "HEAP",
+    "ThreadContentionMonitoringSupported": true,
+    "LastGcInfo": {
+      "contents": {
+        "GcThreadCount": 1,
+        "duration": 126,
+        "endTime": 945,
+        "id": 1,
+        "memoryUsageAfterGc": {
+          "[Survivor Space]": {
+            "contents": {
+              "key": "Survivor Space",
+              "value": {
+                "contents": {
+                  "committed": 17891328,
+                  "init": 17891328,
+                  "max": 35782656,
+                  "used": 0
+                }
+              }
+            }
+          },
+          "[Eden Space]": {
+            "contents": {
+              "key": "Eden Space",
+              "value": {
+                "contents": {
+                  "committed": 143130624,
+                  "init": 143130624,
+                  "max": 286326784,
+                  "used": 0
+                }
+              }
+            }
+          },
+          "[Metaspace]": {
+            "contents": {
+              "key": "Metaspace",
+              "value": {
+                "contents": {
+                  "committed": 7864320,
+                  "init": 0,
+                  "max": -1,
+                  "used": 7624912
+                }
+              }
+            }
+          },
+          "[Code Cache]": {
+            "contents": {
+              "key": "Code Cache",
+              "value": {
+                "contents": {
+                  "committed": 1146880,
+                  "init": 163840,
+                  "max": 33554432,
+                  "used": 1121408
+                }
+              }
+            }
+          },
+          "[Tenured Gen]": {
+            "contents": {
+              "key": "Tenured Gen",
+              "value": {
+                "contents": {
+                  "committed": 357957632,
+                  "init": 357957632,
+                  "max": 715849728,
+                  "used": 137602032
+                }
+              }
+            }
+          }
+        },
+        "memoryUsageBeforeGc": {
+          "[Survivor Space]": {
+            "contents": {
+              "key": "Survivor Space",
+              "value": {
+                "contents": {
+                  "committed": 17891328,
+                  "init": 17891328,
+                  "max": 35782656,
+                  "used": 17891328
+                }
+              }
+            }
+          },
+          "[Eden Space]": {
+            "contents": {
+              "key": "Eden Space",
+              "value": {
+                "contents": {
+                  "committed": 143130624,
+                  "init": 143130624,
+                  "max": 286326784,
+                  "used": 25712616
+                }
+              }
+            }
+          },
+          "[Metaspace]": {
+            "contents": {
+              "key": "Metaspace",
+              "value": {
+                "contents": {
+                  "committed": 7864320,
+                  "init": 0,
+                  "max": -1,
+                  "used": 7624912
+                }
+              }
+            }
+          },
+          "[Code Cache]": {
+            "contents": {
+              "key": "Code Cache",
+              "value": {
+                "contents": {
+                  "committed": 1146880,
+                  "init": 163840,
+                  "max": 33554432,
+                  "used": 1121408
+                }
+              }
+            }
+          },
+          "[Tenured Gen]": {
+            "contents": {
+              "key": "Tenured Gen",
+              "value": {
+                "contents": {
+                  "committed": 357957632,
+                  "init": 357957632,
+                  "max": 715849728,
+                  "used": 117922680
+                }
+              }
+            }
+          }
+        },
+        "startTime": 819
+      }
+    },
+    "ThreadCount": 18,
+    "SpecVersion": "1.8",
+    "SystemProperties": {
+      "[sun.desktop]": {
+        "contents": {
+          "key": "sun.desktop",
+          "value": "windows"
+        }
+      },
+      "[awt.toolkit]": {
+        "contents": {
+          "key": "awt.toolkit",
+          "value": "sun.awt.windows.WToolkit"
+        }
+      },
+      "[file.encoding.pkg]": {
+        "contents": {
+          "key": "file.encoding.pkg",
+          "value": "sun.io"
+        }
+      },
+      "[java.specification.version]": {
+        "contents": {
+          "key": "java.specification.version",
+          "value": "1.8"
+        }
+      },
+      "[sun.cpu.isalist]": {
+        "contents": {
+          "key": "sun.cpu.isalist",
+          "value": "pentium_pro+mmx pentium_pro pentium+mmx pentium i486 i386 i86"
+        }
+      },
+      "[sun.jnu.encoding]": {
+        "contents": {
+          "key": "sun.jnu.encoding",
+          "value": "Cp1252"
+        }
+      },
+      "[com.sun.management.jmxremote.authenticate]": {
+        "contents": {
+          "key": "com.sun.management.jmxremote.authenticate",
+          "value": "false"
+        }
+      },
+      "[java.class.path]": {
+        "contents": {
+          "key": "java.class.path",
+          "value": "C:\\Data\\intellij\\ideaIU-2016.2.5.win\\lib\\idea_rt.jar;C:\\Data\\intellij\\ideaIU-2016.2.5.win\\plugins\\junit\\lib\\junit-rt.jar;C:\\Program Files (x86)\\Java\\JDK8\\jre\\lib\\charsets.jar;C:\\Program Files (x86)\\Java\\JDK8\\jre\\lib\\deploy.jar;C:\\Program Files (x86)\\Java\\JDK8\\jre\\lib\\ext\\access-bridge-32.jar;C:\\Program Files (x86)\\Java\\JDK8\\jre\\lib\\ext\\cldrdata.jar;C:\\Program Files (x86)\\Java\\JDK8\\jre\\lib\\ext\\dnsns.jar;C:\\Program Files (x86)\\Java\\JDK8\\jre\\lib\\ext\\jaccess.jar;C:\\Program Files (x86)\\Java\\JDK8\\jre\\lib\\ext\\jfxrt.jar;C:\\Program Files (x86)\\Java\\JDK8\\jre\\lib\\ext\\localedata.jar;C:\\Program Files (x86)\\Java\\JDK8\\jre\\lib\\ext\\nashorn.jar;C:\\Program Files (x86)\\Java\\JDK8\\jre\\lib\\ext\\sunec.jar;C:\\Program Files (x86)\\Java\\JDK8\\jre\\lib\\ext\\sunjce_provider.jar;C:\\Program Files (x86)\\Java\\JDK8\\jre\\lib\\ext\\sunmscapi.jar;C:\\Program Files (x86)\\Java\\JDK8\\jre\\lib\\ext\\sunpkcs11.jar;C:\\Program Files (x86)\\Java\\JDK8\\jre\\lib\\ext\\zipfs.jar;C:\\Program Files (x86)\\Java\\JDK8\\jre\\lib\\javaws.jar;C:\\Program Files (x86)\\Java\\JDK8\\jre\\lib\\jce.jar;C:\\Program Files (x86)\\Java\\JDK8\\jre\\lib\\jfr.jar;C:\\Program Files (x86)\\Java\\JDK8\\jre\\lib\\jfxswt.jar;C:\\Program Files (x86)\\Java\\JDK8\\jre\\lib\\jsse.jar;C:\\Program Files (x86)\\Java\\JDK8\\jre\\lib\\management-agent.jar;C:\\Program Files (x86)\\Java\\JDK8\\jre\\lib\\plugin.jar;C:\\Program Files (x86)\\Java\\JDK8\\jre\\lib\\resources.jar;C:\\Program Files (x86)\\Java\\JDK8\\jre\\lib\\rt.jar;C:\\Users\\id851622\\workspace\\reaper-agent\\target\\test-classes;C:\\Users\\id851622\\workspace\\reaper-agent\\target\\classes;C:\\Data\\maven-local-repo\\org\\fusesource\\sigar\\1.6.4\\sigar-1.6.4.jar;C:\\Data\\maven-local-repo\\log4j\\log4j\\1.2.16\\log4j-1.2.16.jar;C:\\Data\\maven-local-repo\\junit\\junit\\4.12\\junit-4.12.jar;C:\\Data\\maven-local-repo\\org\\hamcrest\\hamcrest-core\\1.3\\hamcrest-core-1.3.jar;C:\\Data\\maven-local-repo\\org\\slf4j\\slf4j-api\\1.6.4\\slf4j-api-1.6.4.jar;C:\\Data\\maven-local-repo\\org\\slf4j\\slf4j-log4j12\\1.6.4\\slf4j-log4j12-1.6.4.jar;C:\\Data\\maven-local-repo\\com\\google\\code\\gson\\gson\\2.7\\gson-2.7.jar;C:\\Data\\maven-local-repo\\org\\mockito\\mockito-core\\1.10.19\\mockito-core-1.10.19.jar;C:\\Data\\maven-local-repo\\org\\objenesis\\objenesis\\2.1\\objenesis-2.1.jar;C:\\Data\\maven-local-repo\\org\\projectlombok\\lombok\\1.16.12\\lombok-1.16.12.jar;C:\\Data\\maven-local-repo\\com\\fasterxml\\jackson\\core\\jackson-databind\\2.8.3\\jackson-databind-2.8.3.jar;C:\\Data\\maven-local-repo\\com\\fasterxml\\jackson\\core\\jackson-annotations\\2.8.0\\jackson-annotations-2.8.0.jar;C:\\Data\\maven-local-repo\\com\\fasterxml\\jackson\\core\\jackson-core\\2.8.3\\jackson-core-2.8.3.jar;C:\\Data\\maven-local-repo\\commons-lang\\commons-lang\\2.6\\commons-lang-2.6.jar;C:\\Data\\maven-local-repo\\javax\\websocket\\javax.websocket-api\\1.1\\javax.websocket-api-1.1.jar;C:\\Data\\maven-local-repo\\commons-io\\commons-io\\1.3.2\\commons-io-1.3.2.jar;C:\\Data\\maven-local-repo\\org\\glassfish\\tyrus\\bundles\\tyrus-standalone-client\\1.12\\tyrus-standalone-client-1.12.jar;C:\\Data\\maven-local-repo\\org\\glassfish\\tyrus\\tyrus-container-grizzly-client\\1.12\\tyrus-container-grizzly-client-1.12.jar;C:\\Data\\maven-local-repo\\org\\glassfish\\grizzly\\grizzly-framework\\2.3.22\\grizzly-framework-2.3.22.jar;C:\\Data\\maven-local-repo\\org\\glassfish\\grizzly\\grizzly-http-server\\2.3.22\\grizzly-http-server-2.3.22.jar;C:\\Data\\maven-local-repo\\org\\glassfish\\grizzly\\grizzly-http\\2.3.22\\grizzly-http-2.3.22.jar;C:\\Data\\maven-local-repo\\org\\glassfish\\tyrus\\tyrus-client\\1.12\\tyrus-client-1.12.jar;C:\\Data\\maven-local-repo\\org\\glassfish\\tyrus\\tyrus-core\\1.12\\tyrus-core-1.12.jar;C:\\Data\\maven-local-repo\\org\\glassfish\\tyrus\\tyrus-spi\\1.12\\tyrus-spi-1.12.jar;C:\\Data\\maven-local-repo\\commons-collections\\commons-collections\\3.2.2\\commons-collections-3.2.2.jar;C:\\Data\\maven-local-repo\\org\\jeasy\\easy-props\\2.0.0\\easy-props-2.0.0.jar;C:\\Data\\maven-local-repo\\commons-beanutils\\commons-beanutils\\1.9.2\\commons-beanutils-1.9.2.jar;C:\\Data\\maven-local-repo\\commons-logging\\commons-logging\\1.1.1\\commons-logging-1.1.1.jar;C:\\Data\\maven-local-repo\\org\\jmockit\\jmockit\\1.13\\jmockit-1.13.jar;C:\\Users\\id851622\\workspace\\reaper-agent/ser/serenity.jar"
+        }
+      },
+      "[java.vm.vendor]": {
+        "contents": {
+          "key": "java.vm.vendor",
+          "value": "Oracle Corporation"
+        }
+      },
+      "[sun.arch.data.model]": {
+        "contents": {
+          "key": "sun.arch.data.model",
+          "value": "32"
+        }
+      },
+      "[user.variant]": {
+        "contents": {
+          "key": "user.variant",
+          "value": ""
+        }
+      },
+      "[java.vendor.url]": {
+        "contents": {
+          "key": "java.vendor.url",
+          "value": "http://java.oracle.com/"
+        }
+      },
+      "[user.timezone]": {
+        "contents": {
+          "key": "user.timezone",
+          "value": "Europe/Paris"
+        }
+      },
+      "[os.name]": {
+        "contents": {
+          "key": "os.name",
+          "value": "Windows 7"
+        }
+      },
+      "[java.vm.specification.version]": {
+        "contents": {
+          "key": "java.vm.specification.version",
+          "value": "1.8"
+        }
+      },
+      "[user.country]": {
+        "contents": {
+          "key": "user.country",
+          "value": "GB"
+        }
+      },
+      "[sun.java.launcher]": {
+        "contents": {
+          "key": "sun.java.launcher",
+          "value": "SUN_STANDARD"
+        }
+      },
+      "[excluded.packages]": {
+        "contents": {
+          "key": "excluded.packages",
+          "value": "Mock:Test:Integration:toolkit:scanner:database:model:ikube.action.enums:FileVerifier"
+        }
+      },
+      "[included.adapters]": {
+        "contents": {
+          "key": "included.adapters",
+          "value": "coverage:complexity:dependency"
+        }
+      },
+      "[sun.boot.library.path]": {
+        "contents": {
+          "key": "sun.boot.library.path",
+          "value": "C:\\Program Files (x86)\\Java\\JDK8\\jre\\bin"
+        }
+      },
+      "[com.sun.management.jmxremote.ssl]": {
+        "contents": {
+          "key": "com.sun.management.jmxremote.ssl",
+          "value": "false"
+        }
+      },
+      "[sun.java.command]": {
+        "contents": {
+          "key": "sun.java.command",
+          "value": "com.intellij.rt.execution.application.AppMain com.intellij.rt.execution.junit.JUnitStarter -ideVersion5 com.pxs.reaper.ReaperIntegration,reap"
+        }
+      },
+      "[com.sun.management.jmxremote]": {
+        "contents": {
+          "key": "com.sun.management.jmxremote",
+          "value": ""
+        }
+      },
+      "[sun.cpu.endian]": {
+        "contents": {
+          "key": "sun.cpu.endian",
+          "value": "little"
+        }
+      },
+      "[user.home]": {
+        "contents": {
+          "key": "user.home",
+          "value": "C:\\Users\\id851622"
+        }
+      },
+      "[user.language]": {
+        "contents": {
+          "key": "user.language",
+          "value": "en"
+        }
+      },
+      "[idea.launcher.port]": {
+        "contents": {
+          "key": "idea.launcher.port",
+          "value": "7532"
+        }
+      },
+      "[java.specification.vendor]": {
+        "contents": {
+          "key": "java.specification.vendor",
+          "value": "Oracle Corporation"
+        }
+      },
+      "[java.home]": {
+        "contents": {
+          "key": "java.home",
+          "value": "C:\\Program Files (x86)\\Java\\JDK8\\jre"
+        }
+      },
+      "[file.separator]": {
+        "contents": {
+          "key": "file.separator",
+          "value": "\\"
+        }
+      },
+      "[line.separator]": {
+        "contents": {
+          "key": "line.separator",
+          "value": "\r\n"
+        }
+      },
+      "[com.sun.management.jmxremote.local.only]": {
+        "contents": {
+          "key": "com.sun.management.jmxremote.local.only",
+          "value": "false"
+        }
+      },
+      "[java.vm.specification.vendor]": {
+        "contents": {
+          "key": "java.vm.specification.vendor",
+          "value": "Oracle Corporation"
+        }
+      },
+      "[java.specification.name]": {
+        "contents": {
+          "key": "java.specification.name",
+          "value": "Java Platform API Specification"
+        }
+      },
+      "[java.awt.graphicsenv]": {
+        "contents": {
+          "key": "java.awt.graphicsenv",
+          "value": "sun.awt.Win32GraphicsEnvironment"
+        }
+      },
+      "[java.awt.headless]": {
+        "contents": {
+          "key": "java.awt.headless",
+          "value": "true"
+        }
+      },
+      "[idea.junit.sm_runner]": {
+        "contents": {
+          "key": "idea.junit.sm_runner",
+          "value": ""
+        }
+      },
+      "[sun.boot.class.path]": {
+        "contents": {
+          "key": "sun.boot.class.path",
+          "value": "C:\\Program Files (x86)\\Java\\JDK8\\jre\\lib\\resources.jar;C:\\Program Files (x86)\\Java\\JDK8\\jre\\lib\\rt.jar;C:\\Program Files (x86)\\Java\\JDK8\\jre\\lib\\sunrsasign.jar;C:\\Program Files (x86)\\Java\\JDK8\\jre\\lib\\jsse.jar;C:\\Program Files (x86)\\Java\\JDK8\\jre\\lib\\jce.jar;C:\\Program Files (x86)\\Java\\JDK8\\jre\\lib\\charsets.jar;C:\\Program Files (x86)\\Java\\JDK8\\jre\\lib\\jfr.jar;C:\\Program Files (x86)\\Java\\JDK8\\jre\\classes;C:\\Users\\id851622\\workspace\\reaper-agent\\ser\\serenity.jar;C:\\Users\\id851622\\workspace\\reaper-agent\\ser\\lib\\log4j-1.2.17.jar;C:\\Users\\id851622\\workspace\\reaper-agent\\ser\\lib\\asm-5.0.3.jar;C:\\Users\\id851622\\workspace\\reaper-agent\\ser\\lib\\asm-commmons-5.0.3.jar;C:\\Users\\id851622\\workspace\\reaper-agent\\ser\\lib\\neodatis-odb-1.9-beta-1.jar;C:\\Users\\id851622\\workspace\\reaper-agent\\ser\\lib\\java2html-5.0.0.jar;C:\\Users\\id851622\\workspace\\reaper-agent\\ser\\lib\\dom4j-1.6.1.jar;C:\\Users\\id851622\\workspace\\reaper-agent\\ser\\lib\\jfreechart-1.0.9.jar;C:\\Users\\id851622\\workspace\\reaper-agent\\ser\\lib\\jcommon-1.0.9.jar;C:\\Users\\id851622\\workspace\\reaper-agent\\ser\\lib\\slf4j-api-1.7.7.jar;C:\\Users\\id851622\\workspace\\reaper-agent\\ser\\lib\\slf4j-jdk14-1.7.7.jar"
+        }
+      },
+      "[user.script]": {
+        "contents": {
+          "key": "user.script",
+          "value": ""
+        }
+      },
+      "[sun.management.compiler]": {
+        "contents": {
+          "key": "sun.management.compiler",
+          "value": "HotSpot Client Compiler"
+        }
+      },
+      "[java.runtime.version]": {
+        "contents": {
+          "key": "java.runtime.version",
+          "value": "1.8.0_131-b11"
+        }
+      },
+      "[user.name]": {
+        "contents": {
+          "key": "user.name",
+          "value": "id851622"
+        }
+      },
+      "[path.separator]": {
+        "contents": {
+          "key": "path.separator",
+          "value": ";"
+        }
+      },
+      "[os.version]": {
+        "contents": {
+          "key": "os.version",
+          "value": "6.1"
+        }
+      },
+      "[java.endorsed.dirs]": {
+        "contents": {
+          "key": "java.endorsed.dirs",
+          "value": "C:\\Program Files (x86)\\Java\\JDK8\\jre\\lib\\endorsed"
+        }
+      },
+      "[java.runtime.name]": {
+        "contents": {
+          "key": "java.runtime.name",
+          "value": "Java(TM) SE Runtime Environment"
+        }
+      },
+      "[file.encoding]": {
+        "contents": {
+          "key": "file.encoding",
+          "value": "UTF-8"
+        }
+      },
+      "[java.vm.name]": {
+        "contents": {
+          "key": "java.vm.name",
+          "value": "Java HotSpot(TM) Client VM"
+        }
+      },
+      "[included.packages]": {
+        "contents": {
+          "key": "included.packages",
+          "value": "ikube"
+        }
+      },
+      "[java.vendor.url.bug]": {
+        "contents": {
+          "key": "java.vendor.url.bug",
+          "value": "http://bugreport.sun.com/bugreport/"
+        }
+      },
+      "[java.io.tmpdir]": {
+        "contents": {
+          "key": "java.io.tmpdir",
+          "value": "C:\\Users\\id851622\\AppData\\Local\\Temp\\"
+        }
+      },
+      "[idea.launcher.bin.path]": {
+        "contents": {
+          "key": "idea.launcher.bin.path",
+          "value": "C:\\Data\\intellij\\ideaIU-2016.2.5.win\\bin"
+        }
+      },
+      "[com.sun.management.jmxremote.port]": {
+        "contents": {
+          "key": "com.sun.management.jmxremote.port",
+          "value": "8500"
+        }
+      },
+      "[java.version]": {
+        "contents": {
+          "key": "java.version",
+          "value": "1.8.0_131"
+        }
+      },
+      "[user.dir]": {
+        "contents": {
+          "key": "user.dir",
+          "value": "C:\\Users\\id851622\\workspace\\reaper-agent"
+        }
+      },
+      "[os.arch]": {
+        "contents": {
+          "key": "os.arch",
+          "value": "x86"
+        }
+      },
+      "[java.vm.specification.name]": {
+        "contents": {
+          "key": "java.vm.specification.name",
+          "value": "Java Virtual Machine Specification"
+        }
+      },
+      "[clean.classes]": {
+        "contents": {
+          "key": "clean.classes",
+          "value": "true"
+        }
+      },
+      "[java.awt.printerjob]": {
+        "contents": {
+          "key": "java.awt.printerjob",
+          "value": "sun.awt.windows.WPrinterJob"
+        }
+      },
+      "[sun.os.patch.level]": {
+        "contents": {
+          "key": "sun.os.patch.level",
+          "value": "Service Pack 1"
+        }
+      },
+      "[java.library.path]": {
+        "contents": {
+          "key": "java.library.path",
+          "value": "C:\\Program Files (x86)\\Java\\JDK8\\bin;C:\\WINDOWS\\Sun\\Java\\bin;C:\\WINDOWS\\system32;C:\\WINDOWS;C:\\ProgramData\\Oracle\\Java\\javapath;C:\\Oracle\\ic1120_32\\bin;C:\\Oracle\\ic1120_32;C:\\Oracle\\ic1120;C:\\Oracle\\ic1120\\bin;C:\\Program Files (x86)\\Intel\\iCLS Client\\;C:\\Program Files\\Intel\\iCLS Client\\;C:\\WINDOWS\\system32;C:\\WINDOWS;C:\\WINDOWS\\System32\\Wbem;C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\;C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\;C:\\Program Files (x86)\\Intel\\Intel(R) Management Engine Components\\DAL;C:\\Program Files\\Intel\\Intel(R) Management Engine Components\\DAL;C:\\Program Files (x86)\\Intel\\Intel(R) Management Engine Components\\IPT;C:\\Program Files\\Intel\\Intel(R) Management Engine Components\\IPT;C:\\Program Files (x86)\\RedHat\\oc\\3.4\\;C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\;C:\\Program Files\\nodejs\\;C:\\Users\\id851622\\AppData\\Roaming\\npm;C:\\Data\\apache-maven-3.5.0\\bin;C:\\Program Files (x86)\\Java\\JDK8;C:\\Users\\id851622\\workspace\\perfmon\\bin;;.;C:/Users/id851622/workspace/reaper-agent/src/main/resources/lib;"
+        }
+      },
+      "[java.vm.info]": {
+        "contents": {
+          "key": "java.vm.info",
+          "value": "mixed mode"
+        }
+      },
+      "[java.vendor]": {
+        "contents": {
+          "key": "java.vendor",
+          "value": "Oracle Corporation"
+        }
+      },
+      "[java.vm.version]": {
+        "contents": {
+          "key": "java.vm.version",
+          "value": "25.131-b11"
+        }
+      },
+      "[java.rmi.server.randomIDs]": {
+        "contents": {
+          "key": "java.rmi.server.randomIDs",
+          "value": "true"
+        }
+      },
+      "[write.classes]": {
+        "contents": {
+          "key": "write.classes",
+          "value": "false"
+        }
+      },
+      "[java.ext.dirs]": {
+        "contents": {
+          "key": "java.ext.dirs",
+          "value": "C:\\Program Files (x86)\\Java\\JDK8\\jre\\lib\\ext;C:\\WINDOWS\\Sun\\Java\\lib\\ext"
+        }
+      },
+      "[sun.io.unicode.encoding]": {
+        "contents": {
+          "key": "sun.io.unicode.encoding",
+          "value": "UnicodeLittle"
+        }
+      },
+      "[java.class.version]": {
+        "contents": {
+          "key": "java.class.version",
+          "value": "52.0"
+        }
+      }
+    },
+    "ThreadCpuTimeEnabled": true,
+    "HeapMemoryUsage": {
+      "contents": {
+        "committed": 519110656,
+        "init": 536870912,
+        "max": 1037959168,
+        "used": 165285248
+      }
+    },
+    "SpecificationName": "Java Management Extensions",
+    "SynchronizerUsageSupported": true
+  }
+}

@@ -116,7 +116,7 @@
                         <include>**/*Test.java</include>
                     </includes>
                     <!--suppress MavenModelInspection -->
-                    <argLine>-javaagent:${project.basedir}/ser/serenity.jar ${headless-parameters} ${serenity-parameters} ${memory-parameters} ${jmx-parameters}</argLine>
+                    <argLine>-javaagent:${project.basedir}/serenity/serenity.jar ${headless-parameters} ${serenity-parameters} ${memory-parameters} ${jmx-parameters}</argLine>
                 </configuration>
             </plugin>
             <plugin>

@@ -7,6 +7,8 @@ import lombok.Setter;
 import lombok.ToString;
 import org.hyperic.sigar.*;
 
+import java.util.Map;
+
 @Getter
 @Setter
 @Builder
@@ -27,25 +29,6 @@ public class Metrics {
     private ProcStat procStat;
     private Tcp tcp;
 
-    /**
-     * Model objects from the JVM management beans.
-     */
-    private MemoryPool metaspace;
-    private MemoryPool psOldGen;
-    private MemoryPool psEdenSpace;
-    private MemoryPool codeCache;
-    private MemoryPool compressedClassSpace;
-    private MemoryPool psSurvivorSpace;
-
-    private BufferPool mapped;
-    private BufferPool bufferPoolMXBean;
-
-    private ClassPool classPool;
-    private ThreadPool threadPool;
-    private GarbageCollection garbageCollection;
-
-    /*@JsonPOJOBuilder(withPrefix = "")
-    public static final class MetricsBuilder {
-    }*/
+    private Map<Object, Object> attributes;
 
 }

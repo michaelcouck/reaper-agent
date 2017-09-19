@@ -1,6 +1,9 @@
 package com.pxs.reaper;
 
+import com.google.gson.ExclusionStrategy;
+import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.pxs.reaper.action.ReaperActionJMXMetrics;
 import com.pxs.reaper.action.ReaperActionOSMetrics;
 import com.pxs.reaper.model.Metrics;
@@ -23,6 +26,7 @@ import static org.jeasy.props.PropertiesInjectorBuilder.aNewPropertiesInjector;
 @Slf4j
 @Setter
 @Getter
+@ClientEndpoint
 public class Reaper {
 
     public static final String REAPER_PROPERTIES = "reaper.properties";
@@ -54,7 +58,7 @@ public class Reaper {
 
             THREAD.submit(ReaperActionOSMetrics.class.getSimpleName(), reaperActionOSMetrics);
             THREAD.submit(ReaperActionJMXMetrics.class.getSimpleName(), reaperActionJMXMetrics);
-            THREAD.sleep(sleepTime);
+            THREAD.sleep(10000);
 
             postMetrics(metrics);
 
@@ -71,9 +75,23 @@ public class Reaper {
 
     private void postMetrics(final Metrics metrics) {
         getTransport();
-        Gson GSON = new Gson();
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.setExclusionStrategies(new ExclusionStrategy() {
+            @Override
+            public boolean shouldSkipField(final FieldAttributes fieldAttributes) {
+                String fieldName = fieldAttributes.getName();
+                return fieldName.equals("compositeType");
+            }
+
+            @Override
+            public boolean shouldSkipClass(final Class<?> clazz) {
+                return false;
+            }
+        });
+        Gson GSON = gsonBuilder.create();
         RemoteEndpoint.Async async = session.getAsyncRemote();
-        async.sendText(GSON.toJson(metrics));
+        String postage = GSON.toJson(metrics);
+        async.sendText(postage);
     }
 
     private void getTransport() {
