@@ -295,11 +295,31 @@
             <version>2.0.0</version>
         </dependency>
 
+        <!--  TODO: Exclude not used libraries... -->
+        <dependency>
+            <groupId>ikube</groupId>
+            <artifactId>ikube-com</artifactId>
+            <version>6.0.0</version>
+        </dependency>
+
         <dependency>
             <groupId>org.jmockit</groupId>
             <artifactId>jmockit</artifactId>
             <version>1.13</version>
         </dependency>
-
     </dependencies>
+
+    <repositories>
+        <repository>
+            <id>ikube</id>
+            <url>http://ikube.be/artifactory/libs-release-local/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
 </project>

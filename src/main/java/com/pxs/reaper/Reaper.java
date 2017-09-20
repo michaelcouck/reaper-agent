@@ -62,7 +62,7 @@ public class Reaper {
 
             postMetrics(metrics);
 
-            if (iterations-- == 0) {
+            if (--iterations == 0) {
                 break;
             }
             if (COUNTER++ % 1000 == 0) {
