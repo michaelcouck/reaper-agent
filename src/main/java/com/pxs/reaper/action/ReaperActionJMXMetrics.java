@@ -100,8 +100,8 @@ public class ReaperActionJMXMetrics implements ReaperAction, Runnable {
         retryInterval = System.currentTimeMillis();
 
         // We only go to the local host on port 8500
-        String url = "service:jmx:rmi:///jndi/rmi://localhost:8500/jmxrmi";
         JMXServiceURL serviceUrl;
+        String url = "service:jmx:rmi:///jndi/rmi://localhost:8500/jmxrmi";
         try {
             serviceUrl = new JMXServiceURL(url);
             JMXConnector jmxConnector = JMXConnectorFactory.connect(serviceUrl, null);
