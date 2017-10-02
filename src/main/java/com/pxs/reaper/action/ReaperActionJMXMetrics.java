@@ -5,10 +5,12 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.management.*;
+import javax.management.openmbean.CompositeDataSupport;
 import javax.management.remote.JMXConnector;
 import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Set;
 
@@ -63,13 +65,22 @@ public class ReaperActionJMXMetrics implements ReaperAction, Runnable {
         try {
             beanSet = mbeanConn.queryNames(null, null);
             for (final ObjectName objectName : beanSet) {
-                log.debug("Object name : {}", objectName);
+                log.info("Object name : {}", objectName);
                 ObjectInstance objectInstance = mbeanConn.getObjectInstance(objectName);
                 MBeanInfo mBeanInfo = mbeanConn.getMBeanInfo(objectInstance.getObjectName());
                 MBeanAttributeInfo[] mBeanAttributeInfos = mBeanInfo.getAttributes();
                 for (final MBeanAttributeInfo mBeanAttributeInfo : mBeanAttributeInfos) {
                     if (operationSupported(objectName, mBeanAttributeInfo)) {
-                        log.debug("            : {}", mBeanAttributeInfo.toString());
+                        String attributeName = mBeanAttributeInfo.getName();
+                        Object attributeValue = mbeanConn.getAttribute(objectName, mBeanAttributeInfo.getName());
+                        log.info("            : name : {}, value : {}", attributeName, attributeValue);
+                        if (attributeValue != null && CompositeDataSupport.class.isAssignableFrom(attributeValue.getClass())) {
+                            CompositeDataSupport compositeDataSupport = (CompositeDataSupport) attributeValue;
+                            Collection<?> values = compositeDataSupport.values();
+                            for (final Object value : values) {
+                                log.info("            internal value : {}", value);
+                            }
+                        }
                         metrics.getAttributes().put(mBeanAttributeInfo.getName(),
                                 mbeanConn.getAttribute(objectName, mBeanAttributeInfo.getName()));
                     }
