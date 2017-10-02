@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import javax.management.*;
 import javax.management.openmbean.CompositeDataSupport;
+import javax.management.openmbean.CompositeType;
 import javax.management.remote.JMXConnector;
 import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
@@ -89,6 +90,19 @@ public class ReaperActionJMXMetrics implements ReaperAction, Runnable {
         } catch (final IOException | InstanceNotFoundException | ReflectionException | IntrospectionException |
                 AttributeNotFoundException | MBeanException e) {
             log.error("Exception accessing the MBeans in the JVM, no metrics delivered for the JVM then : ", e);
+        }
+    }
+
+    private void collectMBeanDataFromComposite(final CompositeDataSupport compositeDataSupport, final String... ancestorNames) {
+        for (final Object value : compositeDataSupport.values()) {
+            if (value == null) {
+                continue;
+            }
+            if (CompositeType.class.isAssignableFrom(value.getClass())) {
+                CompositeType compositeType = (CompositeType) value;
+                for (final String key : compositeType.keySet()) {
+                }
+            }
         }
     }
 

@@ -2,12 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="bd62903f-a1e2-4bbc-b844-3470de15f16c" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/resources/dis/Loader.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/resources/zuul.json" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/com/pxs/reaper/Loader.java" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pom.xml" afterPath="$PROJECT_DIR$/pom.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reaper-agent.iml" afterPath="$PROJECT_DIR$/reaper-agent.iml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/pxs/reaper/action/ReaperActionJMXMetrics.java" afterPath="$PROJECT_DIR$/src/main/java/com/pxs/reaper/action/ReaperActionJMXMetrics.java" />
     </list>
     <ignored path="reaper-agent.iws" />
@@ -43,8 +38,18 @@
       <file leaf-file-name="ReaperActionJMXMetrics.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/pxs/reaper/action/ReaperActionJMXMetrics.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="394">
-              <caret line="83" column="45" selection-start-line="83" selection-start-column="32" selection-end-line="83" selection-end-column="45" />
+            <state relative-caret-position="372">
+              <caret line="102" column="65" selection-start-line="102" selection-start-column="65" selection-end-line="102" selection-end-column="65" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="CompositeType.java" pinned="false" current-in-tab="false">
+        <entry file="jar://C:/Program Files (x86)/Java/JDK8/src.zip!/javax/management/openmbean/CompositeType.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="242">
+              <caret line="121" column="48" selection-start-line="121" selection-start-column="39" selection-end-line="121" selection-end-column="48" />
               <folding />
             </state>
           </provider>
@@ -1255,7 +1260,7 @@
       <workItem from="1506785842473" duration="1691000" />
       <workItem from="1506844685719" duration="5983000" />
       <workItem from="1506940180189" duration="3508000" />
-      <workItem from="1506949744542" duration="4460000" />
+      <workItem from="1506949744542" duration="5889000" />
     </task>
     <task id="LOCAL-00001" summary="Added the Sigar libraries and the base logic to collect the metrics on the agent.">
       <created>1505207625193</created>
@@ -1306,7 +1311,14 @@
       <option name="project" value="LOCAL" />
       <updated>1505921806585</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="Extracting the JMX object data.">
+      <created>1506959386888</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1506959386888</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -1328,8 +1340,8 @@
     <history-entry file="ReaperActionJMXMetricsTest_ReaperActionJMXMetrics - 2017.10.02 at 17h 47m 53s.xml">
       <configuration name="ReaperActionJMXMetricsTest.ReaperActionJMXMetrics" configurationId="JUnit" />
     </history-entry>
-    <history-entry file="ReaperIntegration_reap - 2017.09.19 at 13h 16m 54s.xml">
-      <configuration name="ReaperIntegration.reap" configurationId="JUnit" />
+    <history-entry file="ReaperActionJMXMetricsTest_ReaperActionJMXMetrics - 2017.10.02 at 17h 55m 14s.xml">
+      <configuration name="ReaperActionJMXMetricsTest.ReaperActionJMXMetrics" configurationId="JUnit" />
     </history-entry>
     <history-entry file="ReaperIntegration_reap - 2017.09.19 at 13h 19m 17s.xml">
       <configuration name="ReaperIntegration.reap" configurationId="JUnit" />
@@ -1342,7 +1354,7 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="113502000" />
+    <option name="totallyTimeSpent" value="114931000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-9" y="-9" width="1938" height="1050" extended-state="6" />
@@ -1399,11 +1411,20 @@
     <MESSAGE value="Adding the JVM metrics." />
     <MESSAGE value="Adding the JVM metrics. Refactoring the packages and classes." />
     <MESSAGE value="Updating the communication mechanism to the collector service." />
-    <option name="LAST_COMMIT_MESSAGE" value="Updating the communication mechanism to the collector service." />
+    <MESSAGE value="Extracting the JMX object data." />
+    <option name="LAST_COMMIT_MESSAGE" value="Extracting the JMX object data." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="14" />
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/pxs/reaper/action/ReaperActionJMXMetrics.java</url>
+          <line>81</line>
+          <properties />
+          <option name="timeStamp" value="14" />
+        </line-breakpoint>
+      </breakpoints>
+      <option name="time" value="15" />
     </breakpoint-manager>
     <watches-manager />
   </component>
@@ -1412,13 +1433,6 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="jar://C:/Data/maven-local-repo/org/fusesource/sigar/1.6.4/sigar-1.6.4.jar!/org/hyperic/sigar/NetInfo.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="132">
-          <caret line="13" column="13" selection-start-line="13" selection-start-column="13" selection-end-line="13" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
     <entry file="jar://C:/Data/maven-local-repo/org/fusesource/sigar/1.6.4/sigar-1.6.4.jar!/org/hyperic/sigar/Mem.class">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="132">
@@ -1719,10 +1733,18 @@
         </state>
       </provider>
     </entry>
+    <entry file="jar://C:/Program Files (x86)/Java/JDK8/src.zip!/javax/management/openmbean/CompositeType.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="242">
+          <caret line="121" column="48" selection-start-line="121" selection-start-column="39" selection-end-line="121" selection-end-column="48" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/pxs/reaper/action/ReaperActionJMXMetrics.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="394">
-          <caret line="83" column="45" selection-start-line="83" selection-start-column="32" selection-end-line="83" selection-end-column="45" />
+        <state relative-caret-position="372">
+          <caret line="102" column="65" selection-start-line="102" selection-start-column="65" selection-end-line="102" selection-end-column="65" />
           <folding />
         </state>
       </provider>
