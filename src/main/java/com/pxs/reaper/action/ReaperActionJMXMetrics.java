@@ -11,8 +11,11 @@ import javax.management.remote.JMXConnector;
 import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
 import java.io.IOException;
+import java.lang.management.MemoryPoolMXBean;
+import java.lang.management.MemoryUsage;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -74,16 +77,19 @@ public class ReaperActionJMXMetrics implements ReaperAction, Runnable {
                     if (operationSupported(objectName, mBeanAttributeInfo)) {
                         String attributeName = mBeanAttributeInfo.getName();
                         Object attributeValue = mbeanConn.getAttribute(objectName, mBeanAttributeInfo.getName());
-                        log.info("            : name : {}, value : {}", attributeName, attributeValue);
-                        if (attributeValue != null && CompositeDataSupport.class.isAssignableFrom(attributeValue.getClass())) {
-                            CompositeDataSupport compositeDataSupport = (CompositeDataSupport) attributeValue;
-                            Collection<?> values = compositeDataSupport.values();
-                            for (final Object value : values) {
-                                log.info("            internal value : {}", value);
-                            }
+                        if (attributeValue == null) {
+                            continue;
                         }
-                        metrics.getAttributes().put(mBeanAttributeInfo.getName(),
-                                mbeanConn.getAttribute(objectName, mBeanAttributeInfo.getName()));
+                        log.info("            : name : {}, value : {}", attributeName, attributeValue);
+                        if (CompositeDataSupport.class.isAssignableFrom(attributeValue.getClass())) {
+                            CompositeDataSupport compositeDataSupport = (CompositeDataSupport) attributeValue;
+                            collectMBeanDataFromComposite(compositeDataSupport);
+                        } else if (MemoryPoolMXBean.class.isAssignableFrom(attributeValue.getClass())) {
+                            MemoryPoolMXBean memoryPoolMXBean = (MemoryPoolMXBean) attributeValue;
+                            collectMemoryPoolMXBeanMetrics(metrics, memoryPoolMXBean);
+                        }
+                        /*metrics.getAttributes().put(mBeanAttributeInfo.getName(),
+                                mbeanConn.getAttribute(objectName, mBeanAttributeInfo.getName()));*/
                     }
                 }
             }
@@ -93,15 +99,30 @@ public class ReaperActionJMXMetrics implements ReaperAction, Runnable {
         }
     }
 
-    private void collectMBeanDataFromComposite(final CompositeDataSupport compositeDataSupport, final String... ancestorNames) {
+    private void collectMemoryPoolMXBeanMetrics(final Metrics metrics, final MemoryPoolMXBean memoryPoolMXBean) {
+        Map<String, Long> memoryPoolMetrics = new HashMap<>();
+        MemoryUsage memoryUsage = memoryPoolMXBean.getPeakUsage();
+        memoryPoolMetrics.put("used", memoryUsage.getUsed());
+        memoryPoolMetrics.put("max", memoryUsage.getMax());
+        memoryPoolMetrics.put("init", memoryUsage.getInit());
+        memoryPoolMetrics.put("committed", memoryUsage.getCommitted());
+        metrics.getAttributes().put(memoryPoolMXBean.getName(), memoryPoolMetrics);
+    }
+
+    private void collectMBeanDataFromComposite(final CompositeDataSupport compositeDataSupport) {
         for (final Object value : compositeDataSupport.values()) {
             if (value == null) {
                 continue;
             }
-            if (CompositeType.class.isAssignableFrom(value.getClass())) {
+            if (CompositeDataSupport.class.isAssignableFrom(value.getClass())) {
+                collectMBeanDataFromComposite((CompositeDataSupport) value);
+            } else if (CompositeType.class.isAssignableFrom(value.getClass())) {
                 CompositeType compositeType = (CompositeType) value;
                 for (final String key : compositeType.keySet()) {
+                    log.info("Key : " + key + ", " + compositeType.getType(key));
                 }
+            } else {
+                log.info("Value : " + value);
             }
         }
     }
