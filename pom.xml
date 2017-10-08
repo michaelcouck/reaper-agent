@@ -1,8 +1,8 @@
 <project
-        xmlns="http://maven.apache.org/POM/4.0.0"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 
-        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
                             http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
@@ -38,7 +38,8 @@
         <headless-parameters>-Djava.awt.headless=true</headless-parameters>
         <memory-parameters>-Xms512m -Xmx1024m</memory-parameters>
 
-        <jmx-parameters>-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=8500 -Dcom.sun.management.jmxremote.local.only=false -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false</jmx-parameters>
+        <jmx-security>-Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false</jmx-security>
+        <jmx-parameters>-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=8500 -Dcom.sun.management.jmxremote.local.only=false ${jmx-security}</jmx-parameters>
     </properties>
 
     <build>
@@ -309,6 +310,28 @@
         </dependency>
 
         <dependency>
+            <groupId>org.jenkins-ci.plugins</groupId>
+            <artifactId>serenity</artifactId>
+            <version>1.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>sun.jdk</groupId>
+            <artifactId>tools</artifactId>
+            <version>1.8</version>
+            <scope>system</scope>
+            <systemPath>${java.home}/../lib/tools.jar</systemPath>
+        </dependency>
+
+        <dependency>
+            <groupId>sun.jdk</groupId>
+            <artifactId>jconsole</artifactId>
+            <version>1.8</version>
+            <scope>system</scope>
+            <systemPath>${java.home}/../lib/jconsole.jar</systemPath>
+        </dependency>
+
+        <dependency>
             <groupId>org.jmockit</groupId>
             <artifactId>jmockit</artifactId>
             <version>1.13</version>
@@ -319,12 +342,16 @@
         <repository>
             <id>ikube</id>
             <url>http://ikube.be/artifactory/libs-release-local/</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
+            <releases><enabled>true</enabled></releases>
+            <snapshots><enabled>true</enabled></snapshots>
+        </repository>
+        <repository>
+            <id>repo.jenkins-ci.org</id>
+            <url>http://repo.jenkins-ci.org/public/</url>
+        </repository>
+        <repository>
+            <id>repo.jenkins-ci.org-plugins</id>
+            <url>http://repo.jenkins-ci.org/repo/org/jenkins-ci/plugins/</url>
         </repository>
     </repositories>
 
