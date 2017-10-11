@@ -1,8 +1,18 @@
 package com.pxs.reaper;
 
-@SuppressWarnings("WeakerAccess")
+import org.jeasy.props.api.PropertiesInjector;
+
+import java.util.Timer;
+
+import static org.jeasy.props.PropertiesInjectorBuilder.aNewPropertiesInjector;
+
 public interface Constant {
 
-    String javaLibraryPathKey = "java.library.path";
+    Timer TIMER = new Timer(true);
+
+    String REAPER_PROPERTIES = "reaper.properties";
+    String JAVA_LIBRARY_PATH_KEY = "java.library.path";
+
+    PropertiesInjector PROPERTIES_INJECTOR = aNewPropertiesInjector();
 
 }

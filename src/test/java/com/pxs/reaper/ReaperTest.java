@@ -9,7 +9,6 @@ import org.hyperic.sigar.SigarException;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.internal.util.reflection.Whitebox;
 
 import javax.websocket.*;
 import java.io.File;
@@ -43,7 +42,6 @@ public class ReaperTest {
     public void reap() throws SigarException, IOException {
         new ContainerProviderMock();
         Reaper reaper = new Reaper();
-        Whitebox.setInternalState(reaper, "iterations", 1);
         reaper.reap();
         // TODO: What is the result of this call, i.e. functional output
     }
@@ -51,7 +49,7 @@ public class ReaperTest {
     @Test
     public void addNativeLibrariesToPath() throws IOException {
         String linuxLoadModule = "libsigar-amd64-linux.so";
-        String javaLibraryPath = new Reaper().addNativeLibrariesToPath();
+        String javaLibraryPath = Reaper.addNativeLibrariesToPath();
         String[] paths = StringUtils.split(javaLibraryPath, File.pathSeparatorChar);
         for (final String path : paths) {
             if (Arrays.deepToString(new File(path).list()).contains(linuxLoadModule)) {

@@ -1,142 +1,34 @@
 package com.pxs.reaper;
 
-import com.google.gson.ExclusionStrategy;
-import com.google.gson.FieldAttributes;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.pxs.reaper.action.ReaperActionJMXMetrics;
 import com.pxs.reaper.action.ReaperActionOSMetrics;
-import com.pxs.reaper.model.Metrics;
 import com.pxs.reaper.toolkit.FILE;
 import com.pxs.reaper.toolkit.THREAD;
-import lombok.Getter;
-import lombok.Setter;
+import com.sun.tools.attach.*;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hyperic.sigar.SigarException;
-import org.jeasy.props.annotations.Property;
 
-import javax.websocket.*;
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
-
-import static org.jeasy.props.PropertiesInjectorBuilder.aNewPropertiesInjector;
+import java.lang.management.ManagementFactory;
+import java.util.ArrayList;
+import java.util.List;
 
 @Slf4j
-@Setter
-@Getter
-@ClientEndpoint
 public class Reaper {
 
-    public static final String REAPER_PROPERTIES = "reaper.properties";
-
-    private static long COUNTER = 0;
-
-    @Property(source = REAPER_PROPERTIES, key = "sleep-time")
-    private int sleepTime;
-    @Property(source = REAPER_PROPERTIES, key = "iterations")
-    private int iterations;
-    @Property(source = REAPER_PROPERTIES, key = "reaper-web-socket-uri")
-    private String reaperWebSocketUri;
-
-    private Session session;
-
-    Reaper() throws IOException {
-        aNewPropertiesInjector().injectProperties(this);
-        THREAD.initialize();
-        addNativeLibrariesToPath();
-    }
-
-    void reap() {
-        ReaperActionOSMetrics reaperActionOSMetrics = new ReaperActionOSMetrics();
-        ReaperActionJMXMetrics reaperActionJMXMetrics = new ReaperActionJMXMetrics();
-        while (true) {
-            Metrics metrics = Metrics.builder().build();
-            reaperActionOSMetrics.setMetrics(metrics);
-            reaperActionJMXMetrics.setMetrics(metrics);
-
-            THREAD.submit(ReaperActionOSMetrics.class.getSimpleName(), reaperActionOSMetrics);
-            THREAD.submit(ReaperActionJMXMetrics.class.getSimpleName(), reaperActionJMXMetrics);
-            THREAD.sleep(10000);
-
-            postMetrics(metrics);
-
-            if (--iterations == 0) {
-                break;
-            }
-            if (COUNTER++ % 1000 == 0) {
-                log.info("Metrics sent : " + ToStringBuilder.reflectionToString(metrics));
-            }
-            // TODO: Check for exceptions and stop actions if too many exceptions...
-            // TODO: Retry at longer intervals when high exception count...
-        }
-    }
-
-    private void postMetrics(final Metrics metrics) {
-        getTransport();
-        GsonBuilder gsonBuilder = new GsonBuilder();
-        gsonBuilder.setExclusionStrategies(new ExclusionStrategy() {
-            @Override
-            public boolean shouldSkipField(final FieldAttributes fieldAttributes) {
-                String fieldName = fieldAttributes.getName();
-                return fieldName.equals("compositeType");
-            }
-
-            @Override
-            public boolean shouldSkipClass(final Class<?> clazz) {
-                return false;
-            }
-        });
-        Gson GSON = gsonBuilder.create();
-        RemoteEndpoint.Async async = session.getAsyncRemote();
-        String postage = GSON.toJson(metrics);
-        async.sendText(postage);
-    }
-
-    private void getTransport() {
-        if (session == null || !session.isOpen()) {
-            WebSocketContainer container = ContainerProvider.getWebSocketContainer();
-            URI uri = URI.create(reaperWebSocketUri);
-            try {
-                session = container.connectToServer(this, uri);
-            } catch (final DeploymentException | IOException e) {
-                // TODO: Kep re-trying, service could be down
-                throw new RuntimeException("Error connecting to : " + uri, e);
-            }
-        }
-    }
-
-    @OnOpen
-    public void onOpen(final Session session) throws IOException {
-        log.debug("Session opened : " + session.getId());
-    }
-
-    @OnMessage
-    @SuppressWarnings("UnusedParameters")
-    public void onMessage(final String message, final Session session) throws IOException {
-        log.info("Got message : " + message);
-    }
-
-    @OnClose
-    public void onClose(final Session session) {
-        log.debug("Session closed : " + session.getId());
-    }
-
-    @OnError
-    public void onError(final Session session, final Throwable throwable) {
-        log.error("Error in session : " + session.getId(), throwable);
+    public static void main(final String[] args) throws SigarException, IOException {
+        new Reaper().reap();
     }
 
     /**
      * Adds the native libraries folder to the path and returns the library folder path. Also appends
-     * the native library path to the system property {@code Constant.javaLibraryPathKey}.
+     * the native library path to the system property {@code Constant.JAVA_LIBRARY_PATH_KEY}.
      *
      * @return the path to the native libraries for all the operating systems
      */
     @SuppressWarnings("WeakerAccess")
-    String addNativeLibrariesToPath() {
-        String javaLibraryPath = System.getProperty(Constant.javaLibraryPathKey);
+    public static String addNativeLibrariesToPath() {
+        String javaLibraryPath = System.getProperty(Constant.JAVA_LIBRARY_PATH_KEY);
 
         StringBuilder stringBuilder = new StringBuilder(javaLibraryPath);
         File linuxLoadModule = FILE.findFileRecursively(new File("."), "libsigar-amd64-linux.so");
@@ -148,13 +40,70 @@ public class Reaper {
         stringBuilder.append(FILE.cleanFilePath(libDirectory.getAbsolutePath()));
         stringBuilder.append(File.pathSeparator);
 
-        System.setProperty(Constant.javaLibraryPathKey, stringBuilder.toString());
+        System.setProperty(Constant.JAVA_LIBRARY_PATH_KEY, stringBuilder.toString());
 
         return libDirectory.getAbsolutePath();
     }
 
-    public static void main(final String[] args) throws SigarException, IOException {
-        new Reaper().reap();
+    private List<VirtualMachine> virtualMachines;
+
+    Reaper() throws IOException {
+        virtualMachines = new ArrayList<>();
+
+        THREAD.initialize();
+        addNativeLibrariesToPath();
+        Runtime.getRuntime().addShutdownHook(new Thread(this::detachFromJavaProcesses));
+    }
+
+    void reap() {
+        // Attach the agent to any Java processes that are running on the local machine
+        attachToJavaProcesses();
+        // Start the action to gather metrics from the operating system
+        new ReaperActionOSMetrics();
+    }
+
+    private void detachFromJavaProcesses() {
+        virtualMachines.stream().filter(virtualMachine -> virtualMachine != null).forEach(virtualMachine -> {
+            try {
+                virtualMachine.detach();
+            } catch (final IOException e) {
+                log.error("Exception detaching from java process : " + virtualMachine, e);
+            }
+        });
+    }
+
+    @SuppressWarnings("ConstantConditions")
+    private void attachToJavaProcesses() {
+        String vmName = ManagementFactory.getRuntimeMXBean().getName();
+        VirtualMachineDescriptor ourOwnDescriptor = getMachineDescriptor(vmName);
+        String pathToAgentJar = FILE.findFileRecursively(new File("."), "serenity.jar").getAbsolutePath();
+        pathToAgentJar = FILE.cleanFilePath(pathToAgentJar);
+        // String pathToAgentJar = ClassLoader.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+        for (final VirtualMachineDescriptor virtualMachineDescriptor : VirtualMachine.list()) {
+            if (ourOwnDescriptor.equals(virtualMachineDescriptor)) {
+                // Don't attach to our selves
+                continue;
+            }
+            VirtualMachine virtualMachine;
+            try {
+                virtualMachine = VirtualMachine.attach(virtualMachineDescriptor);
+                virtualMachine.loadAgent(pathToAgentJar);
+                virtualMachines.add(virtualMachine);
+                log.error("Attached to running java process : " + virtualMachineDescriptor);
+            } catch (final AttachNotSupportedException | IOException | AgentInitializationException | AgentLoadException e) {
+                log.error("Exception attaching to java process : " + virtualMachineDescriptor, e);
+            }
+        }
+    }
+
+    private VirtualMachineDescriptor getMachineDescriptor(final String vmName) {
+        for (final VirtualMachineDescriptor virtualMachineDescriptor : VirtualMachine.list()) {
+            String id = virtualMachineDescriptor.id();
+            if (vmName.contains(id)) {
+                return virtualMachineDescriptor;
+            }
+        }
+        throw new RuntimeException("No virtual machine descriptor, are we on Solaris : ");
     }
 
 }

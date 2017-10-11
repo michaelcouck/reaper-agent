@@ -1,23 +1,35 @@
 package com.pxs.reaper.action;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.pxs.reaper.Constant;
+import com.pxs.reaper.Transport;
+import com.pxs.reaper.WebSocketTransport;
 import com.pxs.reaper.model.Metrics;
 import com.pxs.reaper.toolkit.OS;
-import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.hyperic.sigar.*;
+import org.jeasy.props.annotations.Property;
+
+import java.util.TimerTask;
 
 @Slf4j
 @Setter
-@Getter
-public class ReaperActionOSMetrics implements ReaperAction, Runnable {
+public class ReaperActionOSMetrics extends TimerTask implements ReaperAction {
 
-    private volatile Metrics metrics;
+    @Property(source = Constant.REAPER_PROPERTIES, key = "sleep-time")
+    private int sleepTime;
+
+    private Transport transport;
     private SigarProxy sigarProxyCache;
 
     public ReaperActionOSMetrics() {
-        Sigar sigar = new Sigar();
-        sigarProxyCache = SigarProxyCache.newInstance(sigar, 1000);
+        transport = new WebSocketTransport();
+        sigarProxyCache = SigarProxyCache.newInstance(new Sigar(), 1000);
+
+        Constant.PROPERTIES_INJECTOR.injectProperties(this);
+        Constant.TIMER.scheduleAtFixedRate(this, sleepTime, sleepTime);
     }
 
     @Override
@@ -33,6 +45,7 @@ public class ReaperActionOSMetrics implements ReaperAction, Runnable {
             ProcStat procStat = procStat(sigarProxyCache);
             Tcp tcp = tcp(sigarProxyCache);
 
+            Metrics metrics = Metrics.builder().build();
             metrics.setCpu(cpu);
             metrics.setCpuPerc(cpuPerc);
             metrics.setLoadAverage(loadAverage);
@@ -42,22 +55,19 @@ public class ReaperActionOSMetrics implements ReaperAction, Runnable {
             metrics.setProcStat(procStat);
             metrics.setSwap(swap);
             metrics.setTcp(tcp);
-        } catch (final Exception e) {
+
+            GsonBuilder gsonBuilder = new GsonBuilder();
+            Gson GSON = gsonBuilder.create();
+            String postage = GSON.toJson(metrics);
+            log.error(postage);
+
+            transport.postMetrics(metrics);
+        } catch (final SigarException e) {
             throw new RuntimeException(e);
         } finally {
             SigarProxyCache.clear(sigarProxyCache);
             // TODO: If the session is closed or disconnected, create it again
         }
-    }
-
-    @SuppressWarnings("unused")
-    private Who[] who(final SigarProxy sigarProxy) throws SigarException {
-        return sigarProxy.getWhoList();
-    }
-
-    @SuppressWarnings("unused")
-    private Uptime upTime(final SigarProxy sigarProxy) throws SigarException {
-        return sigarProxy.getUptime();
     }
 
     private Tcp tcp(final SigarProxy sigarProxy) throws SigarException {
@@ -99,4 +109,9 @@ public class ReaperActionOSMetrics implements ReaperAction, Runnable {
         return sigarProxy.getSwap();
     }
 
+    @Override
+    public void terminate() {
+        this.cancel();
+        Constant.TIMER.purge();
+    }
 }
