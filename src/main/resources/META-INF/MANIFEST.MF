@@ -1,0 +1,55 @@
+Manifest-Version: 1.0
+Archiver-Version: Plexus Archiver
+Created-By: Apache Maven
+Built-By: laptop
+Build-Jdk: 1.8.0_91
+Specification-Title: reaper-agent
+Specification-Version: 1.0-SNAPSHOT
+Implementation-Title: reaper-agent
+Implementation-Version: 1.0-SNAPSHOT
+Implementation-Vendor-Id: com.pxs
+Main-Class: com.pxs.reaper.Reaper
+Agent-Class: com.pxs.reaper.action.ReaperAgent
+Premain-Class: com.pxs.reaper.action.ReaperAgent
+Agent-Jar-Name: reaper-agent-1.0-SNAPSHOT.jar
+Class-Path: lib/sigar-1.6.4.jar lib/slf4j-api-1.6.4.jar lib/slf4j-log4
+ j12-1.6.4.jar lib/log4j-1.2.16.jar lib/gson-2.7.jar lib/lombok-1.16.1
+ 2.jar lib/jackson-databind-2.8.3.jar lib/jackson-annotations-2.8.0.ja
+ r lib/jackson-core-2.8.3.jar lib/commons-lang-2.6.jar lib/javax.webso
+ cket-api-1.1.jar lib/commons-io-1.3.2.jar lib/tyrus-standalone-client
+ -1.12.jar lib/tyrus-container-grizzly-client-1.12.jar lib/grizzly-fra
+ mework-2.3.22.jar lib/grizzly-http-server-2.3.22.jar lib/grizzly-http
+ -2.3.22.jar lib/tyrus-client-1.12.jar lib/tyrus-core-1.12.jar lib/tyr
+ us-spi-1.12.jar lib/commons-collections-3.2.2.jar lib/easy-props-2.0.
+ 0.jar lib/commons-beanutils-1.9.2.jar lib/commons-logging-1.1.1.jar l
+ ib/ikube-com-6.0.0.jar lib/opencsv-2.3.jar lib/combinatoricslib-2.0.j
+ ar lib/javaee-api-7.0.jar lib/javax.mail-1.5.0.jar lib/activation-1.1
+ .jar lib/jersey-client-1.18.1.jar lib/jersey-core-1.18.1.jar lib/dom4
+ j-1.6.1.jar lib/xml-apis-1.0.b2.jar lib/httpclient-4.2.1.jar lib/http
+ core-4.2.1.jar lib/commons-codec-1.6.jar lib/mockito-all-1.9.5.jar li
+ b/simple-jndi-0.11.4.1.jar lib/lucene-core-4.8.0.jar lib/lucene-highl
+ ighter-4.8.0.jar lib/lucene-memory-4.8.0.jar lib/lucene-queries-4.8.0
+ .jar lib/lucene-spatial-4.8.0.jar lib/spatial4j-0.4.1.jar lib/lucene-
+ misc-4.8.0.jar lib/lucene-classification-4.8.0.jar lib/lucene-analyze
+ rs-common-4.8.0.jar lib/tika-core-1.7.jar lib/tika-parsers-1.7.jar li
+ b/vorbis-java-tika-0.6.jar lib/netcdf-4.2.20.jar lib/unidataCommon-4.
+ 2.20.jar lib/jcip-annotations-1.0.jar lib/commons-httpclient-3.1.jar
+ lib/jmatio-1.0.jar lib/apache-mime4j-core-0.7.2.jar lib/apache-mime4j
+ -dom-0.7.2.jar lib/commons-compress-1.8.1.jar lib/xz-1.5.jar lib/pdfb
+ ox-1.8.8.jar lib/fontbox-1.8.8.jar lib/jempbox-1.8.8.jar lib/bcmail-j
+ dk15-1.45.jar lib/bcprov-jdk15-1.45.jar lib/poi-3.11.jar lib/poi-scra
+ tchpad-3.11.jar lib/poi-ooxml-3.11.jar lib/poi-ooxml-schemas-3.11.jar
+  lib/xmlbeans-2.6.0.jar lib/tagsoup-1.2.1.jar lib/asm-debug-all-4.1.j
+ ar lib/isoparser-1.0.2.jar lib/aspectjrt-1.8.0.jar lib/metadata-extra
+ ctor-2.6.2.jar lib/xmpcore-5.1.2.jar lib/xercesImpl-2.8.1.jar lib/boi
+ lerpipe-1.1.0.jar lib/rome-1.0.jar lib/jdom-1.0.jar lib/vorbis-java-c
+ ore-0.6.jar lib/juniversalchardet-1.0.3.jar lib/jhighlight-1.0.jar li
+ b/java-libpst-0.8.1.jar lib/jersey-common-2.22.2.jar lib/javax.ws.rs-
+ api-2.0.1.jar lib/javax.annotation-api-1.2.jar lib/jersey-guava-2.22.
+ 2.jar lib/hk2-api-2.4.0-b34.jar lib/hk2-utils-2.4.0-b34.jar lib/aopal
+ liance-repackaged-2.4.0-b34.jar lib/javax.inject-2.4.0-b34.jar lib/hk
+ 2-locator-2.4.0-b34.jar lib/javassist-3.18.1-GA.jar lib/osgi-resource
+ -locator-1.0.1.jar lib/serenity-1.2.jar lib/neodatis-odb-1.9-beta-1.j
+ ar lib/java2html-5.0.jar lib/asm-5.0.3.jar lib/asm-commons-5.0.3.jar
+ lib/asm-tree-5.0.3.jar lib/jmockit-1.13.jar
+

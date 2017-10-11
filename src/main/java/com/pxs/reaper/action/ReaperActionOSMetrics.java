@@ -14,6 +14,8 @@ import org.jeasy.props.annotations.Property;
 
 import java.util.TimerTask;
 
+import static org.jeasy.props.PropertiesInjectorBuilder.aNewPropertiesInjector;
+
 @Slf4j
 @Setter
 public class ReaperActionOSMetrics extends TimerTask implements ReaperAction {
@@ -28,7 +30,7 @@ public class ReaperActionOSMetrics extends TimerTask implements ReaperAction {
         transport = new WebSocketTransport();
         sigarProxyCache = SigarProxyCache.newInstance(new Sigar(), 1000);
 
-        Constant.PROPERTIES_INJECTOR.injectProperties(this);
+        aNewPropertiesInjector().injectProperties(this);
         Constant.TIMER.scheduleAtFixedRate(this, sleepTime, sleepTime);
     }
 

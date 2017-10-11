@@ -43,6 +43,7 @@
     </properties>
 
     <build>
+        <!--<finalName>${project.name}-${project.version}.jar</finalName>-->
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -56,7 +57,14 @@
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>lib/</classpathPrefix>
                             <mainClass>${main-class}</mainClass>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                            <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
                         </manifest>
+                        <manifestEntries>
+                            <Agent-Class>com.pxs.reaper.action.ReaperAgent</Agent-Class>
+                            <Premain-Class>com.pxs.reaper.action.ReaperAgent</Premain-Class>
+                            <Agent-Jar-Name>${project.name}-${project.version}.jar</Agent-Jar-Name>
+                        </manifestEntries>
                     </archive>
                 </configuration>
             </plugin>
@@ -313,6 +321,12 @@
             <groupId>org.jenkins-ci.plugins</groupId>
             <artifactId>serenity</artifactId>
             <version>1.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.jcabi</groupId>
+            <artifactId>jcabi-manifests</artifactId>
+            <version>1.1</version>
         </dependency>
 
         <dependency>

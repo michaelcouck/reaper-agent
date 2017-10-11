@@ -1,5 +1,6 @@
 package com.pxs.reaper;
 
+import com.jcabi.manifests.Manifests;
 import com.pxs.reaper.action.ReaperActionOSMetrics;
 import com.pxs.reaper.toolkit.FILE;
 import com.pxs.reaper.toolkit.THREAD;
@@ -76,22 +77,28 @@ public class Reaper {
     private void attachToJavaProcesses() {
         String vmName = ManagementFactory.getRuntimeMXBean().getName();
         VirtualMachineDescriptor ourOwnDescriptor = getMachineDescriptor(vmName);
-        String pathToAgentJar = FILE.findFileRecursively(new File("."), "serenity.jar").getAbsolutePath();
-        pathToAgentJar = FILE.cleanFilePath(pathToAgentJar);
-        // String pathToAgentJar = ClassLoader.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-        for (final VirtualMachineDescriptor virtualMachineDescriptor : VirtualMachine.list()) {
-            if (ourOwnDescriptor.equals(virtualMachineDescriptor)) {
-                // Don't attach to our selves
-                continue;
-            }
-            VirtualMachine virtualMachine;
-            try {
-                virtualMachine = VirtualMachine.attach(virtualMachineDescriptor);
-                virtualMachine.loadAgent(pathToAgentJar);
-                virtualMachines.add(virtualMachine);
-                log.error("Attached to running java process : " + virtualMachineDescriptor);
-            } catch (final AttachNotSupportedException | IOException | AgentInitializationException | AgentLoadException e) {
-                log.error("Exception attaching to java process : " + virtualMachineDescriptor, e);
+        String jarFileName = Manifests.read("Agent-Jar-Name");
+        File agentJar = FILE.findFileRecursively(new File("."), jarFileName);
+        if (agentJar == null) {
+            log.warn("Agent jar not found : ");
+        } else {
+            String pathToAgentJar = FILE.findFileRecursively(new File("."), "reaper-agent-1.0-SNAPSHOT.jar").getAbsolutePath();
+            pathToAgentJar = FILE.cleanFilePath(pathToAgentJar);
+            // String pathToAgentJar = ClassLoader.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+            for (final VirtualMachineDescriptor virtualMachineDescriptor : VirtualMachine.list()) {
+                if (ourOwnDescriptor.equals(virtualMachineDescriptor)) {
+                    // Don't attach to our selves
+                    continue;
+                }
+                VirtualMachine virtualMachine;
+                try {
+                    virtualMachine = VirtualMachine.attach(virtualMachineDescriptor);
+                    virtualMachine.loadAgent(pathToAgentJar);
+                    virtualMachines.add(virtualMachine);
+                    log.error("Attached to running java process : " + virtualMachineDescriptor);
+                } catch (final AttachNotSupportedException | IOException | AgentInitializationException | AgentLoadException e) {
+                    log.error("Exception attaching to java process : " + virtualMachineDescriptor, e);
+                }
             }
         }
     }
