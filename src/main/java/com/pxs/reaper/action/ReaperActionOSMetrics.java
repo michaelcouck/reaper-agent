@@ -4,7 +4,7 @@ import com.pxs.reaper.Constant;
 import com.pxs.reaper.Transport;
 import com.pxs.reaper.WebSocketTransport;
 import com.pxs.reaper.model.OSMetrics;
-import com.pxs.reaper.toolkit.OS;
+import ikube.toolkit.OS;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.hyperic.sigar.*;

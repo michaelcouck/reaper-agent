@@ -1,11 +1,11 @@
 package com.pxs.reaper;
 
+import com.sun.tools.attach.spi.AttachProvider;
 import lombok.extern.slf4j.Slf4j;
 import mockit.Mock;
 import mockit.MockUp;
 import mockit.integration.junit4.JMockit;
 import org.apache.commons.lang.StringUtils;
-import org.hyperic.sigar.SigarException;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -39,8 +39,11 @@ public class ReaperTest {
     }
 
     @Test
-    public void reap() throws SigarException, IOException {
+    public void reap() throws Exception {
         new ContainerProviderMock();
+        for (final AttachProvider attachProvider : AttachProvider.providers()) {
+            log.warn("Provider : " + attachProvider);
+        }
         Reaper reaper = new Reaper();
         reaper.reap();
         // TODO: What is the result of this call, i.e. functional output
