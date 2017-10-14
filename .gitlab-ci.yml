@@ -1,23 +1,8 @@
 image: maven:latest
 
-cache:
-  paths:
-    - .m2/repository/
-    - target/
-
-build:
-  stage: build
-  script:
-    - mvn compile
-
-test:
-  stage: test
-  script:
-    - mvn test
-
 deploy:
-  stage: deploy
+  stage: install
   script:
-    - mvn deploy
+    - mvn compile test install
   only:
     - master
