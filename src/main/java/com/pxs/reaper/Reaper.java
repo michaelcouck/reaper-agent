@@ -76,6 +76,7 @@ public class Reaper {
     @SuppressWarnings("ConstantConditions")
     private void attachToJavaProcesses() {
         String vmName = ManagementFactory.getRuntimeMXBean().getName();
+        log.warn("VM Name : " + vmName);
         VirtualMachineDescriptor ourOwnDescriptor = getMachineDescriptor(vmName);
         String jarFileName = Manifests.read("Agent-Jar-Name");
         File agentJar = FILE.findFileRecursively(new File("."), jarFileName);
@@ -84,8 +85,9 @@ public class Reaper {
         } else {
             String pathToAgentJar = FILE.cleanFilePath(agentJar.getAbsolutePath());
             // String pathToAgentJar = ClassLoader.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+            log.warn("Virtual machines : " + VirtualMachine.list());
             for (final VirtualMachineDescriptor virtualMachineDescriptor : VirtualMachine.list()) {
-                if (ourOwnDescriptor.equals(virtualMachineDescriptor)) {
+                if (virtualMachineDescriptor.equals(ourOwnDescriptor)) {
                     // Don't attach to our selves
                     continue;
                 }
@@ -109,7 +111,8 @@ public class Reaper {
                 return virtualMachineDescriptor;
             }
         }
-        throw new RuntimeException("No virtual machine descriptor, are we on Solaris : ");
+        log.warn("No virtual machine descriptor, are we on Solaris : ");
+        return null;
     }
 
 }
