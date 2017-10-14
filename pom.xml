@@ -31,7 +31,7 @@
     </developers>
 
     <!-- TODO: Set up Nexus/Artifactory -->
-    <distributionManagement>
+    <!--<distributionManagement>
         <site>
             <id>ikube-releases</id>
             <name>ikube-releases</name>
@@ -47,7 +47,7 @@
             <name>libs-snapshot-local</name>
             <url>http://ikube.be/artifactory/libs-release-local</url>
         </snapshotRepository>
-    </distributionManagement>
+    </distributionManagement>-->
 
     <properties>
         <sigar-version>1.6.4</sigar-version>
