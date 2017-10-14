@@ -82,8 +82,7 @@ public class Reaper {
         if (agentJar == null) {
             log.warn("Agent jar not found : ");
         } else {
-            String pathToAgentJar = FILE.findFileRecursively(new File("."), "reaper-agent-1.0-SNAPSHOT.jar").getAbsolutePath();
-            pathToAgentJar = FILE.cleanFilePath(pathToAgentJar);
+            String pathToAgentJar = FILE.cleanFilePath(agentJar.getAbsolutePath());
             // String pathToAgentJar = ClassLoader.class.getProtectionDomain().getCodeSource().getLocation().getPath();
             for (final VirtualMachineDescriptor virtualMachineDescriptor : VirtualMachine.list()) {
                 if (ourOwnDescriptor.equals(virtualMachineDescriptor)) {

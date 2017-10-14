@@ -2,7 +2,6 @@ package com.pxs.reaper;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.pxs.reaper.model.Metrics;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.jeasy.props.annotations.Property;
@@ -26,12 +25,15 @@ public class WebSocketTransport implements Transport {
         Constant.PROPERTIES_INJECTOR.injectProperties(this);
     }
 
-    public void postMetrics(final Metrics metrics) {
+    public void postMetrics(final Object metrics) {
         getTransport();
         GsonBuilder gsonBuilder = new GsonBuilder();
         Gson GSON = gsonBuilder.create();
         RemoteEndpoint.Async async = session.getAsyncRemote();
         String postage = GSON.toJson(metrics);
+
+        log.info("Metrics : {}", postage);
+
         async.sendText(postage);
     }
 

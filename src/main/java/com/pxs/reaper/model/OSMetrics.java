@@ -8,14 +8,13 @@ import lombok.ToString;
 import org.hyperic.sigar.*;
 
 import java.net.InetAddress;
-import java.util.Map;
 
 @Getter
 @Setter
 @Builder
 @ToString
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Metrics {
+public class OSMetrics {
 
     /**
      * Ip address of the local agent.
@@ -25,19 +24,19 @@ public class Metrics {
     /**
      * Model objects from Sigar that can be used directly, i.e. transported over the wire
      */
-    private Cpu cpu;
-    private CpuPerc cpuPerc;
-    private Swap swap;
+    private Cpu[] cpu;
+    private CpuPerc[] cpuPerc;
+    private CpuInfo[] cpuInfo;
+
+    private ResourceLimit resourceLimit;
+
     private double[] loadAverage;
+
     private Mem mem;
+    private Swap swap;
+    private Tcp tcp;
     private NetInfo netInfo;
     private NetStat netStat;
     private ProcStat procStat;
-    private Tcp tcp;
-
-    /**
-     * Jvm metrics in maps of maps.
-     */
-    private Map<Object, Object> attributes;
 
 }

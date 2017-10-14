@@ -1,17 +1,17 @@
 package com.pxs.reaper.action;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.pxs.reaper.Constant;
 import com.pxs.reaper.Transport;
 import com.pxs.reaper.WebSocketTransport;
-import com.pxs.reaper.model.Metrics;
+import com.pxs.reaper.model.OSMetrics;
 import com.pxs.reaper.toolkit.OS;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.hyperic.sigar.*;
 import org.jeasy.props.annotations.Property;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.TimerTask;
 
 import static org.jeasy.props.PropertiesInjectorBuilder.aNewPropertiesInjector;
@@ -37,8 +37,12 @@ public class ReaperActionOSMetrics extends TimerTask implements ReaperAction {
     @Override
     public void run() {
         try {
-            Cpu cpu = cpu(sigarProxyCache);
-            CpuPerc cpuPerc = cpuPerc(sigarProxyCache);
+            OSMetrics osMetrics = OSMetrics.builder().build();
+            osMetrics.setInetAddress(InetAddress.getLocalHost());
+
+            Cpu[] cpu = cpu(sigarProxyCache);
+            CpuInfo[] cpuInfo = cpuInfo(sigarProxyCache);
+            CpuPerc[] cpuPerc = cpuPerc(sigarProxyCache);
             Swap swap = swap(sigarProxyCache);
             double[] loadAverage = loadAverage(sigarProxyCache);
             Mem mem = mem(sigarProxyCache);
@@ -46,25 +50,23 @@ public class ReaperActionOSMetrics extends TimerTask implements ReaperAction {
             NetStat netStat = netStat(sigarProxyCache);
             ProcStat procStat = procStat(sigarProxyCache);
             Tcp tcp = tcp(sigarProxyCache);
+            ResourceLimit resourceLimit = resourceLimit(sigarProxyCache);
 
-            Metrics metrics = Metrics.builder().build();
-            metrics.setCpu(cpu);
-            metrics.setCpuPerc(cpuPerc);
-            metrics.setLoadAverage(loadAverage);
-            metrics.setMem(mem);
-            metrics.setNetInfo(netInfo);
-            metrics.setNetStat(netStat);
-            metrics.setProcStat(procStat);
-            metrics.setSwap(swap);
-            metrics.setTcp(tcp);
+            osMetrics.setCpu(cpu);
+            osMetrics.setCpuPerc(cpuPerc);
+            osMetrics.setCpuInfo(cpuInfo);
 
-            GsonBuilder gsonBuilder = new GsonBuilder();
-            Gson GSON = gsonBuilder.create();
-            String postage = GSON.toJson(metrics);
-            log.error(postage);
+            osMetrics.setLoadAverage(loadAverage);
+            osMetrics.setMem(mem);
+            osMetrics.setNetInfo(netInfo);
+            osMetrics.setNetStat(netStat);
+            osMetrics.setProcStat(procStat);
+            osMetrics.setSwap(swap);
+            osMetrics.setTcp(tcp);
+            osMetrics.setResourceLimit(resourceLimit);
 
-            transport.postMetrics(metrics);
-        } catch (final SigarException e) {
+            transport.postMetrics(osMetrics);
+        } catch (final SigarException | UnknownHostException e) {
             throw new RuntimeException(e);
         } finally {
             SigarProxyCache.clear(sigarProxyCache);
@@ -99,16 +101,24 @@ public class ReaperActionOSMetrics extends TimerTask implements ReaperAction {
         return new double[0];
     }
 
-    private CpuPerc cpuPerc(final SigarProxy sigarProxy) throws SigarException {
-        return sigarProxy.getCpuPerc();
+    private CpuPerc[] cpuPerc(final SigarProxy sigarProxy) throws SigarException {
+        return sigarProxy.getCpuPercList();
     }
 
-    private Cpu cpu(final SigarProxy sigarProxy) throws SigarException {
-        return sigarProxy.getCpu();
+    private Cpu[] cpu(final SigarProxy sigarProxy) throws SigarException {
+        return sigarProxy.getCpuList();
+    }
+
+    private CpuInfo[] cpuInfo(final SigarProxy sigarProxy) throws SigarException {
+        return sigarProxy.getCpuInfoList();
     }
 
     private Swap swap(final SigarProxy sigarProxy) throws SigarException {
         return sigarProxy.getSwap();
+    }
+
+    private ResourceLimit resourceLimit(final SigarProxy sigarProxy) throws SigarException {
+        return sigarProxy.getResourceLimit();
     }
 
     @Override
