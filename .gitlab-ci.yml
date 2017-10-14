@@ -1,8 +1,11 @@
 image: maven:latest
 
-deploy:
-  stage: install
+build:
+  stage: build
   script:
-    - mvn compile test install
-  only:
-    - master
+    - mvn deploy
+
+test:
+  stage: test
+  script:
+    - mvn test
