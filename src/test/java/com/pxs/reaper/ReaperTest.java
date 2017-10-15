@@ -1,6 +1,5 @@
 package com.pxs.reaper;
 
-import com.sun.tools.attach.spi.AttachProvider;
 import lombok.extern.slf4j.Slf4j;
 import mockit.Mock;
 import mockit.MockUp;
@@ -24,9 +23,12 @@ import static org.mockito.Mockito.when;
 @RunWith(JMockit.class)
 public class ReaperTest {
 
-    @SuppressWarnings("unused")
+    /**
+     * Mocks the web socket container.
+     */
     public static class ContainerProviderMock extends MockUp<ContainerProvider> {
         @Mock
+        @SuppressWarnings("unused")
         public WebSocketContainer getWebSocketContainer() throws IOException, DeploymentException {
             WebSocketContainer webSocketContainer = mock(WebSocketContainer.class);
             Session session = mock(Session.class);
@@ -39,14 +41,18 @@ public class ReaperTest {
     }
 
     @Test
-    public void reap() throws Exception {
+    public void attachToOperatingSystem() throws Exception {
         new ContainerProviderMock();
-        for (final AttachProvider attachProvider : AttachProvider.providers()) {
-            log.warn("Provider : " + attachProvider);
-        }
         Reaper reaper = new Reaper();
-        reaper.reap();
-        // TODO: What is the result of this call, i.e. functional output
+        reaper.attachToOperatingSystem();
+    }
+
+    @Test
+    public void attachToJavaProcesses() throws Exception {
+        new ContainerProviderMock();
+        Reaper reaper = new Reaper();
+        reaper.attachToJavaProcesses();
+        reaper.attachToJavaProcesses();
     }
 
     @Test

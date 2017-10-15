@@ -5,9 +5,9 @@ import org.junit.Test;
 public class ReaperIntegration {
 
     @Test
-    public void reap() throws Exception {
+    public void attachToOperatingSystem() throws Exception {
         Reaper reaper = new Reaper();
-        reaper.reap();
+        reaper.attachToOperatingSystem();
         // TODO: You complete me
     }
 

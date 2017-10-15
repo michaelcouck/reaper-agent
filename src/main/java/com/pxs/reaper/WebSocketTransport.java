@@ -31,9 +31,7 @@ public class WebSocketTransport implements Transport {
         Gson GSON = gsonBuilder.create();
         RemoteEndpoint.Async async = session.getAsyncRemote();
         String postage = GSON.toJson(metrics);
-
-        log.info("Metrics : {}", postage);
-
+        log.debug("Sending metrics : {}", postage);
         async.sendText(postage);
     }
 
@@ -58,7 +56,7 @@ public class WebSocketTransport implements Transport {
     @OnMessage
     @SuppressWarnings("UnusedParameters")
     public void onMessage(final String message, final Session session) throws IOException {
-        log.info("Got message : " + message);
+        log.debug("Got message : " + message);
     }
 
     @OnClose
