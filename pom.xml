@@ -82,12 +82,21 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>2.3.1</version>
                 <configuration>
                     <verbose>true</verbose>
                     <archive>
-                        <index>true</index>
+                        <!-- This is important, if specified then the Class-Path will be ignored. -->
+                        <index>false</index>
                         <manifest>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>lib/</classpathPrefix>
@@ -97,6 +106,12 @@
                         </manifest>
                         <manifestEntries>
                             <Agent-Class>com.pxs.reaper.action.ReaperAgent</Agent-Class>
+                            <!--
+                                In addition to the entries from the dependencies, the system scoped
+                                dependencies need to be added manually for some unknown reason. Perhaps
+                                register a feature request in the jar plugin Jira?
+                            -->
+                            <Class-Path>lib/tools-1.8.jar</Class-Path>
                             <Premain-Class>com.pxs.reaper.action.ReaperAgent</Premain-Class>
                             <Agent-Jar-Name>${project.name}-${project.version}.jar</Agent-Jar-Name>
                         </manifestEntries>
@@ -109,14 +124,15 @@
                 <executions>
                     <execution>
                         <id>copy-dependencies</id>
-                        <phase>compile</phase>
+                        <phase>prepare-package</phase>
                         <goals>
                             <goal>copy-dependencies</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>target/lib</outputDirectory>
-                            <overWriteReleases>true</overWriteReleases>
-                            <overWriteSnapshots>true</overWriteSnapshots>
+                            <overWriteIfNewer>true</overWriteIfNewer>
+                            <overWriteReleases>false</overWriteReleases>
+                            <overWriteSnapshots>false</overWriteSnapshots>
+                            <outputDirectory>${project.build.directory}/lib</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>
@@ -128,7 +144,7 @@
                 <executions>
                     <execution>
                         <id>package-reaper-agent</id>
-                        <phase>compile</phase>
+                        <phase>deploy</phase>
                         <goals>
                             <goal>single</goal>
                         </goals>
@@ -140,14 +156,6 @@
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

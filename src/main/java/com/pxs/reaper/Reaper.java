@@ -2,7 +2,8 @@ package com.pxs.reaper;
 
 import com.jcabi.manifests.Manifests;
 import com.pxs.reaper.action.ReaperActionOSMetrics;
-import com.sun.tools.attach.*;
+import com.sun.tools.attach.VirtualMachine;
+import com.sun.tools.attach.VirtualMachineDescriptor;
 import ikube.toolkit.FILE;
 import ikube.toolkit.THREAD;
 import lombok.extern.slf4j.Slf4j;
@@ -11,44 +12,14 @@ import sun.jvmstat.monitor.MonitoredHost;
 import java.io.File;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.*;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
+import java.util.ArrayList;
+import java.util.List;
 
 @Slf4j
 public class Reaper {
 
     public static void main(final String[] args) throws Exception {
-        addToolsToClassPath();
-        Properties properties = System.getProperties();
-        for (final Map.Entry<Object, Object> mapEntry : properties.entrySet()) {
-            log.warn(mapEntry.getKey() + ":" + mapEntry.getValue());
-        }
         new Reaper().reap();
-    }
-
-    private static void addToolsToClassPath() throws Exception {
-        // Load the tools.jar
-        String javaHome = System.getProperty("java.home");
-        int upDirectories = javaHome.contains("jre") ? 2 : 0;
-        File toolsJar = FILE.findFileRecursively(new File(javaHome), upDirectories, "tools.jar");
-
-        URLClassLoader urlClassLoader = new URLClassLoader(new URL[]{toolsJar.toURI().toURL()}, System.class.getClassLoader());
-        JarFile jarFile = new JarFile(toolsJar);
-        Enumeration<JarEntry> e = jarFile.entries();
-        while (e.hasMoreElements()) {
-            JarEntry je = e.nextElement();
-            if (je.isDirectory() || !je.getName().endsWith(".class")) {
-                continue;
-            }
-            // -6 because of .class
-            String className = je.getName().substring(0, je.getName().length() - 6);
-            className = className.replace('/', '.');
-            log.info("Loading class : " + className);
-            urlClassLoader.loadClass(className);
-        }
     }
 
     /**
@@ -96,8 +67,9 @@ public class Reaper {
     private void detachFromJavaProcesses() {
         virtualMachines.stream().filter(virtualMachine -> virtualMachine != null).forEach(virtualMachine -> {
             try {
+                log.info("Detaching from : {}", virtualMachine);
                 virtualMachine.detach();
-            } catch (final IOException e) {
+            } catch (final Exception e) {
                 log.error("Exception detaching from java process : " + virtualMachine, e);
             }
         });
@@ -117,35 +89,38 @@ public class Reaper {
             String pathToAgentJar = FILE.cleanFilePath(agentJar.getAbsolutePath());
             // String pathToAgentJar = ClassLoader.class.getProtectionDomain().getCodeSource().getLocation().getPath();
             log.warn("Virtual machines : " + VirtualMachine.list());
-            MonitoredHost monitoredHost = MonitoredHost.getMonitoredHost("localhost");
-            for (final Integer pid : monitoredHost.activeVms()) {
-                VirtualMachine virtualMachine;
-                try {
-                    // virtualMachine = new LinuxVirtualMachine(ATTACH_PROVIDER, pid);
-                    virtualMachine = VirtualMachine.attach(String.valueOf(pid));
-                    virtualMachine.loadAgent(pathToAgentJar);
-                    virtualMachines.add(virtualMachine);
-                    log.error("Attached to running java process : " + pid);
-                } catch (final AttachNotSupportedException | IOException | AgentInitializationException | AgentLoadException e) {
-                    log.error("Exception attaching to java process : " + pid, e);
+            if (VirtualMachine.list().isEmpty()) {
+                MonitoredHost monitoredHost = MonitoredHost.getMonitoredHost("localhost");
+                for (final Integer pid : monitoredHost.activeVms()) {
+                    VirtualMachine virtualMachine;
+                    try {
+                        // virtualMachine = new LinuxVirtualMachine(ATTACH_PROVIDER, pid);
+                        virtualMachine = VirtualMachine.attach(String.valueOf(pid));
+                        virtualMachine.loadAgent(pathToAgentJar);
+                        virtualMachines.add(virtualMachine);
+                        log.error("Attached to running java process : " + pid);
+                    } catch (final Exception e) {
+                        log.error("Exception attaching to java process : " + pid, e);
+                    }
+                }
+            } else {
+                for (final VirtualMachineDescriptor virtualMachineDescriptor : VirtualMachine.list()) {
+                    if (virtualMachineDescriptor.equals(ourOwnDescriptor)) {
+                        // Don't attach to our selves
+                        continue;
+                    }
+                    VirtualMachine virtualMachine;
+                    try {
+                        virtualMachine = VirtualMachine.attach(virtualMachineDescriptor);
+                        virtualMachine.loadAgent(pathToAgentJar);
+                        virtualMachines.add(virtualMachine);
+                        log.error("Attached to running java process : " + virtualMachineDescriptor);
+                    } catch (final Exception e) {
+                        log.error("Exception attaching to java process : " + virtualMachineDescriptor, e);
+                    }
                 }
             }
 
-            /*for (final VirtualMachineDescriptor virtualMachineDescriptor : VirtualMachine.list()) {
-                if (virtualMachineDescriptor.equals(ourOwnDescriptor)) {
-                    // Don't attach to our selves
-                    continue;
-                }
-                VirtualMachine virtualMachine;
-                try {
-                    virtualMachine = VirtualMachine.attach(virtualMachineDescriptor);
-                    virtualMachine.loadAgent(pathToAgentJar);
-                    virtualMachines.add(virtualMachine);
-                    log.error("Attached to running java process : " + virtualMachineDescriptor);
-                } catch (final AttachNotSupportedException | IOException | AgentInitializationException | AgentLoadException e) {
-                    log.error("Exception attaching to java process : " + virtualMachineDescriptor, e);
-                }
-            }*/
         }
     }
 
