@@ -1,71 +1,113 @@
 package com.pxs.reaper;
 
+import com.sun.tools.attach.VirtualMachine;
+import ikube.toolkit.THREAD;
 import lombok.extern.slf4j.Slf4j;
-import mockit.Mock;
-import mockit.MockUp;
+import mockit.*;
 import mockit.integration.junit4.JMockit;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.websocket.*;
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
 import java.util.Arrays;
-
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import java.util.HashMap;
+import java.util.Map;
 
 @Slf4j
 @RunWith(JMockit.class)
 public class ReaperTest {
 
     /**
-     * Mocks the web socket container.
+     * Mock the reaper to test the scheduler
      */
-    public static class ContainerProviderMock extends MockUp<ContainerProvider> {
-        @Mock
-        @SuppressWarnings("unused")
-        public WebSocketContainer getWebSocketContainer() throws IOException, DeploymentException {
-            WebSocketContainer webSocketContainer = mock(WebSocketContainer.class);
-            Session session = mock(Session.class);
-            RemoteEndpoint.Async async = mock(RemoteEndpoint.Async.class);
+    @SuppressWarnings("unused")
+    public static class ReaperMock extends MockUp<Reaper> {
 
-            when(webSocketContainer.connectToServer(any(Reaper.class), any(URI.class))).thenReturn(session);
-            when(session.getAsyncRemote()).thenReturn(async);
-            return webSocketContainer;
+        static int attachToOperatingSystemCount = 0;
+        static int attachToJavaProcessesCount = 0;
+
+        @Mock
+        public void $init() {
+            // Do nothing
+        }
+
+        @Mock
+        void attachToOperatingSystem() {
+            attachToOperatingSystemCount++;
+        }
+
+        @Mock
+        void attachToJavaProcesses() {
+            attachToJavaProcessesCount++;
         }
     }
 
+    @Mocked
+    private VirtualMachine virtualMachine;
+
+    @Before
+    public void before() {
+        THREAD.initialize();
+    }
+
     @Test
-    public void attachToOperatingSystem() throws Exception {
-        new ContainerProviderMock();
+    public void main() {
+        long waitTime = 3000;
+        final ReaperMock reaper = new ReaperMock();
+        try {
+            THREAD.submit("blade-runner", () -> Reaper.main(new String[]{Long.toString(waitTime)}));
+            THREAD.sleep(waitTime);
+        } finally {
+            reaper.tearDown();
+        }
+        Assert.assertEquals(1, ReaperMock.attachToOperatingSystemCount);
+        Assert.assertEquals(1, ReaperMock.attachToJavaProcessesCount);
+    }
+
+    @Test
+    public void addNativeLibrariesToPath() throws IOException {
+        String javaLibraryPath = Reaper.addNativeLibrariesToPath();
+        String[] paths = StringUtils.split(javaLibraryPath, File.pathSeparatorChar);
+        for (final String path : paths) {
+            if (Arrays.deepToString(new File(path).list()).contains(Constant.LINUX_LOAD_MODULE)) {
+                return;
+            }
+        }
+        Assert.fail("Should contain the link libraries");
+    }
+
+    @Test
+    public void attachToOperatingSystem() {
         Reaper reaper = new Reaper();
         reaper.attachToOperatingSystem();
     }
 
     @Test
-    public void attachToJavaProcesses() throws Exception {
-        new ContainerProviderMock();
+    public void detachFromJavaProcesses() {
+        final String id = "virtual-machine";
         Reaper reaper = new Reaper();
-        reaper.attachToJavaProcesses();
-        reaper.attachToJavaProcesses();
+        new Expectations() {
+            {
+                virtualMachine.id();
+                result = id;
+            }
+        };
+        Map<String, VirtualMachine> virtualMachines = new HashMap<>();
+        virtualMachines.put(id, virtualMachine);
+        Deencapsulation.setField(reaper, "virtualMachines", virtualMachines);
+        reaper.detachFromJavaProcesses();
+        Assert.assertEquals(0, virtualMachines.size());
     }
 
     @Test
-    public void addNativeLibrariesToPath() throws IOException {
-        String linuxLoadModule = "libsigar-amd64-linux.so";
-        String javaLibraryPath = Reaper.addNativeLibrariesToPath();
-        String[] paths = StringUtils.split(javaLibraryPath, File.pathSeparatorChar);
-        for (final String path : paths) {
-            if (Arrays.deepToString(new File(path).list()).contains(linuxLoadModule)) {
-                return;
-            }
-        }
-        Assert.fail("Should contain the link libraries");
+    public void attachToJavaProcesses() throws Exception {
+        Reaper reaper = new Reaper();
+        reaper.attachToJavaProcesses();
+        // TODO: Finish this, why are the virtual machines replaced with the mocked version in the map?!
     }
 
 }

@@ -15,4 +15,5 @@ public interface Constant {
 
     PropertiesInjector PROPERTIES_INJECTOR = aNewPropertiesInjector();
 
+    String LINUX_LOAD_MODULE = "libsigar-amd64-linux.so";
 }

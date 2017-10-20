@@ -23,14 +23,18 @@ public class ReaperActionOSMetrics extends TimerTask implements ReaperAction {
     @Property(source = Constant.REAPER_PROPERTIES, key = "sleep-time")
     private int sleepTime;
 
+    private Sigar sigar;
     private Transport transport;
-    private SigarProxy sigarProxyCache;
+    private SigarProxy sigarProxy;
 
     public ReaperActionOSMetrics() {
         transport = new WebSocketTransport();
-        sigarProxyCache = SigarProxyCache.newInstance(new Sigar(), 1000);
+        sigar = new Sigar();
+        sigarProxy = SigarProxyCache.newInstance(sigar, 1000);
 
         aNewPropertiesInjector().injectProperties(this);
+
+        Runtime.getRuntime().addShutdownHook(new Thread(this::terminate));
         Constant.TIMER.scheduleAtFixedRate(this, sleepTime, sleepTime);
     }
 
@@ -40,17 +44,17 @@ public class ReaperActionOSMetrics extends TimerTask implements ReaperAction {
             OSMetrics osMetrics = OSMetrics.builder().build();
             osMetrics.setInetAddress(InetAddress.getLocalHost());
 
-            Cpu[] cpu = cpu(sigarProxyCache);
-            CpuInfo[] cpuInfo = cpuInfo(sigarProxyCache);
-            CpuPerc[] cpuPerc = cpuPerc(sigarProxyCache);
-            Swap swap = swap(sigarProxyCache);
-            double[] loadAverage = loadAverage(sigarProxyCache);
-            Mem mem = mem(sigarProxyCache);
-            NetInfo netInfo = netInfo(sigarProxyCache);
-            NetStat netStat = netStat(sigarProxyCache);
-            ProcStat procStat = procStat(sigarProxyCache);
-            Tcp tcp = tcp(sigarProxyCache);
-            ResourceLimit resourceLimit = resourceLimit(sigarProxyCache);
+            Cpu[] cpu = cpu(sigarProxy);
+            CpuInfo[] cpuInfo = cpuInfo(sigarProxy);
+            CpuPerc[] cpuPerc = cpuPerc(sigarProxy);
+            Swap swap = swap(sigarProxy);
+            double[] loadAverage = loadAverage(sigarProxy);
+            Mem mem = mem(sigarProxy);
+            NetInfo netInfo = netInfo(sigarProxy);
+            NetStat netStat = netStat(sigarProxy);
+            ProcStat procStat = procStat(sigarProxy);
+            Tcp tcp = tcp(sigarProxy);
+            ResourceLimit resourceLimit = resourceLimit(sigarProxy);
 
             osMetrics.setCpu(cpu);
             osMetrics.setCpuPerc(cpuPerc);
@@ -69,7 +73,7 @@ public class ReaperActionOSMetrics extends TimerTask implements ReaperAction {
         } catch (final SigarException | UnknownHostException e) {
             throw new RuntimeException(e);
         } finally {
-            SigarProxyCache.clear(sigarProxyCache);
+            SigarProxyCache.clear(sigarProxy);
             // TODO: If the session is closed or disconnected, create it again
         }
     }
@@ -123,6 +127,13 @@ public class ReaperActionOSMetrics extends TimerTask implements ReaperAction {
 
     @Override
     public void terminate() {
+        if (sigar != null) {
+            try {
+                sigar.close();
+            } catch (final Exception e) {
+                log.error("Exception closing the Sigar : ", e);
+            }
+        }
         this.cancel();
         Constant.TIMER.purge();
     }
