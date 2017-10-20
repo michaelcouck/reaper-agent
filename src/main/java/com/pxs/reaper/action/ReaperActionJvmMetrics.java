@@ -1,8 +1,8 @@
 package com.pxs.reaper.action;
 
 import com.pxs.reaper.Constant;
-import com.pxs.reaper.Transport;
-import com.pxs.reaper.WebSocketTransport;
+import com.pxs.reaper.transport.Transport;
+import com.pxs.reaper.transport.WebSocketTransport;
 import com.pxs.reaper.model.*;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -17,22 +17,27 @@ import java.util.List;
 import java.util.TimerTask;
 
 /**
+ * This class will collect all the telemetry data from the Java process, populate a {@link JMetrics} object
+ * and post it to the endpoint that is defined by the implementation of {@link Transport}.
+ *
+ * Telemetry is gathered for memory, threads, garbage collection etc. The Operating system telemetry is gathered
+ * by the {@link ReaperActionOSMetrics} class so not necessary to double the load.
+ *
  * @author Michael Couck
  * @version 01.00
  * @since 09-10-2017
  */
 @Slf4j
 @Setter
-public class ReaperActionJvmMetrics extends TimerTask implements ReaperAction {
+class ReaperActionJvmMetrics extends TimerTask implements ReaperAction {
 
     @Property(source = Constant.REAPER_PROPERTIES, key = "sleep-time")
     private int sleepTime;
 
     private Transport transport;
 
-    public ReaperActionJvmMetrics() {
+    ReaperActionJvmMetrics() {
         transport = new WebSocketTransport();
-
         Constant.PROPERTIES_INJECTOR.injectProperties(this);
         Constant.TIMER.scheduleAtFixedRate(this, sleepTime, sleepTime);
     }

@@ -1,6 +1,6 @@
 package com.pxs.reaper.action;
 
-import com.pxs.reaper.Transport;
+import com.pxs.reaper.transport.Transport;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;

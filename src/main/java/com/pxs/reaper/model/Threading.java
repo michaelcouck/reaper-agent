@@ -8,6 +8,13 @@ import lombok.ToString;
 
 import java.lang.management.ThreadInfo;
 
+/**
+ * Contains details for the threads in the Java process.
+ *
+ * @author Michael Couck
+ * @version 1.0
+ * @since 20-10-2017
+ */
 @Getter
 @Setter
 @Builder

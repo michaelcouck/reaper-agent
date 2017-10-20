@@ -1,7 +1,8 @@
-package com.pxs.reaper;
+package com.pxs.reaper.transport;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.pxs.reaper.Constant;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.jeasy.props.annotations.Property;
@@ -10,6 +11,14 @@ import javax.websocket.*;
 import java.io.IOException;
 import java.net.URI;
 
+/**
+ * Transport for the web socket implementation. This implementation connects to the web socket using a parameter in the
+ * properties file, converts the metrics objects for transport into Json.
+ *
+ * @author Michael Couck
+ * @version 1.0
+ * @since 20-10-2017
+ */
 @Slf4j
 @Setter
 @ClientEndpoint
@@ -19,18 +28,23 @@ public class WebSocketTransport implements Transport {
     @Property(source = Constant.REAPER_PROPERTIES, key = "reaper-web-socket-uri")
     private String reaperWebSocketUri;
 
+    private Gson gson;
     private Session session;
+    private GsonBuilder gsonBuilder;
 
     public WebSocketTransport() {
+        gsonBuilder = new GsonBuilder();
+        gson = gsonBuilder.create();
         Constant.PROPERTIES_INJECTOR.injectProperties(this);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void postMetrics(final Object metrics) {
         getTransport();
-        GsonBuilder gsonBuilder = new GsonBuilder();
-        Gson GSON = gsonBuilder.create();
         RemoteEndpoint.Async async = session.getAsyncRemote();
-        String postage = GSON.toJson(metrics);
+        String postage = gson.toJson(metrics);
         log.debug("Sending metrics : {}", postage);
         async.sendText(postage);
     }

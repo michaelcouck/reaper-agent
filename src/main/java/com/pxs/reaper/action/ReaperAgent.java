@@ -39,7 +39,7 @@ public class ReaperAgent {
     }
 
     /**
-     * TODO: Can we remove this? We don't need it.
+     * TODO: Can we remove this? We don't need it. At the moment, but we could add some profiling logic...
      */
     @SuppressWarnings("UnusedParameters")
     public byte[] transform(

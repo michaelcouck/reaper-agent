@@ -1,8 +1,8 @@
 package com.pxs.reaper.action;
 
 import com.pxs.reaper.Constant;
-import com.pxs.reaper.Transport;
-import com.pxs.reaper.WebSocketTransport;
+import com.pxs.reaper.transport.Transport;
+import com.pxs.reaper.transport.WebSocketTransport;
 import com.pxs.reaper.model.OSMetrics;
 import ikube.toolkit.OS;
 import lombok.Setter;
@@ -16,6 +16,11 @@ import java.util.TimerTask;
 
 import static org.jeasy.props.PropertiesInjectorBuilder.aNewPropertiesInjector;
 
+/**
+ * @author Michael Couck
+ * @version 1.0
+ * @since 20-10-2017
+ */
 @Slf4j
 @Setter
 public class ReaperActionOSMetrics extends TimerTask implements ReaperAction {

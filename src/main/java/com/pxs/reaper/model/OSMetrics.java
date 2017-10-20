@@ -9,6 +9,13 @@ import org.hyperic.sigar.*;
 
 import java.net.InetAddress;
 
+/**
+ * Contains operating system metrics, low level.
+ *
+ * @author Michael Couck
+ * @version 1.0
+ * @since 20-10-2017
+ */
 @Getter
 @Setter
 @Builder

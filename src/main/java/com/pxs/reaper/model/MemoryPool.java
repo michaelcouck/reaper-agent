@@ -9,6 +9,13 @@ import lombok.ToString;
 import java.lang.management.MemoryType;
 import java.lang.management.MemoryUsage;
 
+/**
+ * Contains memory pool telemetry, like scavenge time and released memory blocks.
+ *
+ * @author Michael Couck
+ * @version 1.0
+ * @since 20-10-2017
+ */
 @Getter
 @Setter
 @Builder
