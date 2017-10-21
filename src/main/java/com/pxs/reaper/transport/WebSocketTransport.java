@@ -32,6 +32,9 @@ public class WebSocketTransport implements Transport {
     private Session session;
     private GsonBuilder gsonBuilder;
 
+    private long loggingInterval = 60000;
+    private long lastLoggingTimestamp = System.currentTimeMillis();
+
     public WebSocketTransport() {
         gsonBuilder = new GsonBuilder();
         gson = gsonBuilder.create();
@@ -46,6 +49,10 @@ public class WebSocketTransport implements Transport {
 
         RemoteEndpoint.Async async = session.getAsyncRemote();
         String postage = gson.toJson(metrics);
+        if (System.currentTimeMillis() - lastLoggingTimestamp > loggingInterval) {
+            log.info("Sending metrics : {}", postage);
+            lastLoggingTimestamp = System.currentTimeMillis();
+        }
         log.debug("Sending metrics : {}", postage);
         async.sendText(postage);
     }
