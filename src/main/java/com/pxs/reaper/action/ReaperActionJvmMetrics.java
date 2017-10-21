@@ -29,7 +29,7 @@ import java.util.TimerTask;
  */
 @Slf4j
 @Setter
-class ReaperActionJvmMetrics extends TimerTask implements ReaperAction {
+public class ReaperActionJvmMetrics extends TimerTask implements ReaperAction {
 
     @Property(source = Constant.REAPER_PROPERTIES, key = "sleep-time")
     private int sleepTime;
