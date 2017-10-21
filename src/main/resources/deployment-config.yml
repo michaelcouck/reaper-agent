@@ -1,0 +1,110 @@
+apiVersion: v1
+kind: DeploymentConfig
+metadata:
+  annotations:
+    openshift.io/generated-by: OpenShiftWebConsole
+  creationTimestamp: '2017-09-19T13:52:01Z'
+  generation: 49
+  labels:
+    app: reaper-agent
+  name: reaper-agent
+  namespace: reaper
+  resourceVersion: '111017447'
+  selfLink: /oapi/v1/namespaces/reaper/deploymentconfigs/reaper-agent
+  uid: b631fe32-9d41-11e7-b0cb-12b5519f9b58
+spec:
+  replicas: 0
+  selector:
+    app: reaper-agent
+    deploymentconfig: reaper-agent
+  strategy:
+    activeDeadlineSeconds: 21600
+    resources: {}
+    rollingParams:
+      intervalSeconds: 1
+      maxSurge: 25%
+      maxUnavailable: 25%
+      timeoutSeconds: 600
+      updatePeriodSeconds: 1
+    type: Rolling
+  template:
+    metadata:
+      annotations:
+        openshift.io/generated-by: OpenShiftWebConsole
+      creationTimestamp: null
+      labels:
+        app: reaper-agent
+        deploymentconfig: reaper-agent
+    spec:
+      containers:
+        - env:
+            - name: JAVA_OPTIONS
+              value: >-
+                -Dcom.sun.management.jmxremote=false
+                -Dcom.sun.management.jmxremote.local.only=true
+                -Dcom.sun.management.jmxremote.authenticate=false
+                -Dcom.sun.management.jmxremote.ssl=false
+                -Djava.rmi.server.hostname=localhost
+                -Dcom.sun.management.jmxremote.port=8500
+                -Dcom.sun.management.jmxremote.rmi.port=8501 -jar 
+                reaper-agent-1.0-SNAPSHOT.jar 
+          image: >-
+            172.30.118.67:5000/reaper/reaper-agent@sha256:ffd6d80f7ae8a7bac73c1bf71acd3579fdbc110c93b2398d98ae7b5fa3a7c080
+          imagePullPolicy: Always
+          name: reaper-agent
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+            - containerPort: 8443
+              protocol: TCP
+            - containerPort: 8778
+              protocol: TCP
+            - containerPort: 8500
+              protocol: TCP
+            - containerPort: 8501
+              protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+  test: false
+  triggers:
+    - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+          - reaper-agent
+        from:
+          kind: ImageStreamTag
+          name: 'reaper-agent:latest'
+          namespace: reaper
+        lastTriggeredImage: >-
+          172.30.118.67:5000/reaper/reaper-agent@sha256:ffd6d80f7ae8a7bac73c1bf71acd3579fdbc110c93b2398d98ae7b5fa3a7c080
+      type: ImageChange
+status:
+  availableReplicas: 0
+  conditions:
+    - lastTransitionTime: '2017-10-15T21:33:52Z'
+      lastUpdateTime: '2017-10-15T21:33:52Z'
+      message: replication controller "reaper-agent-20" successfully rolled out
+      reason: NewReplicationControllerAvailable
+      status: 'True'
+      type: Progressing
+    - lastTransitionTime: '2017-10-18T12:21:22Z'
+      lastUpdateTime: '2017-10-18T12:21:22Z'
+      message: Deployment config does not have minimum availability.
+      status: 'False'
+      type: Available
+  details:
+    causes:
+      - type: Manual
+    message: manual change
+  latestVersion: 20
+  observedGeneration: 49
+  replicas: 0
+  unavailableReplicas: 0
+  updatedReplicas: 0

@@ -75,7 +75,7 @@ public class Reaper {
             }
         });
         long waitTime = Long.MAX_VALUE;
-        if (args != null && NumberUtils.isNumber(args[0])) {
+        if (args != null && args.length >= 1 && NumberUtils.isNumber(args[0])) {
             waitTime = Long.parseLong(args[0]);
         }
         THREAD.waitForFuture(future, waitTime);
