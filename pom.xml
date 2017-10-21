@@ -72,6 +72,9 @@
 
         <headless-parameters>-Djava.awt.headless=true</headless-parameters>
         <memory-parameters>-Xms512m -Xmx1024m</memory-parameters>
+
+        <jmx-security>-Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false</jmx-security>
+        <jmx-parameters>-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=8500 -Dcom.sun.management.jmxremote.local.only=false ${jmx-security}</jmx-parameters>
     </properties>
 
     <build>
@@ -163,6 +166,7 @@
                     <includes>
                         <include>**/*Test.java</include>
                     </includes>
+                    <argLine>${jmx-parameters}</argLine>
                     <!--suppress MavenModelInspection -->
                     <!--<argLine>-javaagent:${project.basedir}/serenity/serenity.jar ${headless-parameters} ${serenity-parameters} ${memory-parameters}</argLine>-->
                 </configuration>
