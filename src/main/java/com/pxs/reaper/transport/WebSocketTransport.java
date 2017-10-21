@@ -32,7 +32,7 @@ public class WebSocketTransport implements Transport {
     private Session session;
     private GsonBuilder gsonBuilder;
 
-    private long loggingInterval = 60000;
+    private long loggingInterval = 1000 * 60 * 60;
     private long lastLoggingTimestamp = System.currentTimeMillis();
 
     public WebSocketTransport() {
