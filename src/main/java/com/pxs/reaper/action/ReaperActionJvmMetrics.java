@@ -1,12 +1,10 @@
 package com.pxs.reaper.action;
 
 import com.pxs.reaper.Constant;
+import com.pxs.reaper.model.*;
 import com.pxs.reaper.transport.Transport;
 import com.pxs.reaper.transport.WebSocketTransport;
-import com.pxs.reaper.model.*;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.jeasy.props.annotations.Property;
 
 import java.lang.management.*;
 import java.net.InetAddress;
@@ -19,7 +17,7 @@ import java.util.TimerTask;
 /**
  * This class will collect all the telemetry data from the Java process, populate a {@link JMetrics} object
  * and post it to the endpoint that is defined by the implementation of {@link Transport}.
- *
+ * <p>
  * Telemetry is gathered for memory, threads, garbage collection etc. The Operating system telemetry is gathered
  * by the {@link ReaperActionOSMetrics} class so not necessary to double the load.
  *
@@ -28,18 +26,12 @@ import java.util.TimerTask;
  * @since 09-10-2017
  */
 @Slf4j
-@Setter
-public class ReaperActionJvmMetrics extends TimerTask implements ReaperAction {
-
-    @Property(source = Constant.REAPER_PROPERTIES, key = "sleep-time")
-    private int sleepTime;
+class ReaperActionJvmMetrics extends TimerTask implements ReaperAction {
 
     private Transport transport;
 
     ReaperActionJvmMetrics() {
         transport = new WebSocketTransport();
-        Constant.PROPERTIES_INJECTOR.injectProperties(this);
-        Constant.TIMER.scheduleAtFixedRate(this, sleepTime, sleepTime);
     }
 
     @Override
@@ -161,9 +153,10 @@ public class ReaperActionJvmMetrics extends TimerTask implements ReaperAction {
     }
 
     @Override
-    public void terminate() {
-        this.cancel();
+    public boolean terminate() {
+        boolean terminated = cancel();
         Constant.TIMER.purge();
+        return terminated;
     }
 
 }

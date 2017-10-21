@@ -1,20 +1,16 @@
 package com.pxs.reaper.action;
 
 import com.pxs.reaper.Constant;
+import com.pxs.reaper.model.OSMetrics;
 import com.pxs.reaper.transport.Transport;
 import com.pxs.reaper.transport.WebSocketTransport;
-import com.pxs.reaper.model.OSMetrics;
 import ikube.toolkit.OS;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.hyperic.sigar.*;
-import org.jeasy.props.annotations.Property;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.TimerTask;
-
-import static org.jeasy.props.PropertiesInjectorBuilder.aNewPropertiesInjector;
 
 /**
  * @author Michael Couck
@@ -22,25 +18,16 @@ import static org.jeasy.props.PropertiesInjectorBuilder.aNewPropertiesInjector;
  * @since 20-10-2017
  */
 @Slf4j
-@Setter
 public class ReaperActionOSMetrics extends TimerTask implements ReaperAction {
-
-    @Property(source = Constant.REAPER_PROPERTIES, key = "sleep-time")
-    private int sleepTime;
 
     private Sigar sigar;
     private Transport transport;
     private SigarProxy sigarProxy;
 
     public ReaperActionOSMetrics() {
-        transport = new WebSocketTransport();
         sigar = new Sigar();
+        transport = new WebSocketTransport();
         sigarProxy = SigarProxyCache.newInstance(sigar, 1000);
-
-        aNewPropertiesInjector().injectProperties(this);
-
-        Runtime.getRuntime().addShutdownHook(new Thread(this::terminate));
-        Constant.TIMER.scheduleAtFixedRate(this, sleepTime, sleepTime);
     }
 
     @Override
@@ -79,7 +66,6 @@ public class ReaperActionOSMetrics extends TimerTask implements ReaperAction {
             throw new RuntimeException(e);
         } finally {
             SigarProxyCache.clear(sigarProxy);
-            // TODO: If the session is closed or disconnected, create it again
         }
     }
 
@@ -131,15 +117,17 @@ public class ReaperActionOSMetrics extends TimerTask implements ReaperAction {
     }
 
     @Override
-    public void terminate() {
-        if (sigar != null) {
+    @SuppressWarnings("SynchronizeOnNonFinalField")
+    public boolean terminate() {
+        synchronized (sigar) {
             try {
                 sigar.close();
             } catch (final Exception e) {
                 log.error("Exception closing the Sigar : ", e);
             }
         }
-        this.cancel();
+        boolean terminated = cancel();
         Constant.TIMER.purge();
+        return terminated;
     }
 }

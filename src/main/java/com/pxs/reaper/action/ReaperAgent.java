@@ -1,15 +1,20 @@
 package com.pxs.reaper.action;
 
+import com.pxs.reaper.Constant;
+
 import java.lang.instrument.IllegalClassFormatException;
 import java.lang.instrument.Instrumentation;
 import java.security.ProtectionDomain;
 
 /**
+ * This class is attached to the running Java processes on the local operating system by the {@link com.pxs.reaper.Reaper}. It
+ * in turn starts a timed task, {@link ReaperActionJvmMetrics}, object that collects various Java process telemetry and metrics
+ * and posts the results to the reaper micro service.
+ *
  * @author Michael Couck
  * @version 01.00
  * @since 09-10-2017
  */
-@SuppressWarnings("WeakerAccess")
 public class ReaperAgent {
 
     /**
@@ -22,7 +27,7 @@ public class ReaperAgent {
      * @param instrumentation the instrumentation instance from the JVM
      * @throws Exception anything happens to block the startup
      */
-    @SuppressWarnings("unused")
+    @SuppressWarnings("WeakerAccess")
     public static void agentmain(String args, Instrumentation instrumentation) throws Exception {
         premain(args, instrumentation);
     }
@@ -34,14 +39,18 @@ public class ReaperAgent {
      * @param instrumentation the instrumentation implementation of the JVM
      */
     public static void premain(final String args, final Instrumentation instrumentation) {
+        Constant.PROPERTIES_INJECTOR.injectProperties(Constant.EXTERNAL_CONSTANTS);
+
+        int sleepTime = Constant.EXTERNAL_CONSTANTS.getSleepTime();
         ReaperActionJvmMetrics reaperActionJvmMetrics = new ReaperActionJvmMetrics();
+        Constant.TIMER.scheduleAtFixedRate(reaperActionJvmMetrics, sleepTime, sleepTime);
         Runtime.getRuntime().addShutdownHook(new Thread(reaperActionJvmMetrics::terminate));
     }
 
     /**
-     * TODO: Can we remove this? We don't need it. At the moment, but we could add some profiling logic...
+     * All kinds of opportunity here.
      */
-    @SuppressWarnings("UnusedParameters")
+    @SuppressWarnings({"WeakerAccess", "UnusedParameters"})
     public byte[] transform(
             final ClassLoader loader,
             final String className,

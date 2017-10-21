@@ -1,5 +1,8 @@
 package com.pxs.reaper;
 
+import lombok.Getter;
+import lombok.Setter;
+import org.jeasy.props.annotations.Property;
 import org.jeasy.props.api.PropertiesInjector;
 
 import java.util.Timer;
@@ -13,12 +16,20 @@ import static org.jeasy.props.PropertiesInjectorBuilder.aNewPropertiesInjector;
  */
 public interface Constant {
 
-    Timer TIMER = new Timer(true);
-
     String REAPER_PROPERTIES = "reaper.properties";
     String JAVA_LIBRARY_PATH_KEY = "java.library.path";
+    String LINUX_LOAD_MODULE = "libsigar-amd64-linux.so";
 
+    Timer TIMER = new Timer(true);
+    ExternalConstants EXTERNAL_CONSTANTS = new ExternalConstants();
     PropertiesInjector PROPERTIES_INJECTOR = aNewPropertiesInjector();
 
-    String LINUX_LOAD_MODULE = "libsigar-amd64-linux.so";
+    @Getter
+    @Setter
+    class ExternalConstants {
+        @SuppressWarnings("unused")
+        @Property(source = Constant.REAPER_PROPERTIES, key = "sleep-time")
+        private int sleepTime = 10;
+    }
+
 }

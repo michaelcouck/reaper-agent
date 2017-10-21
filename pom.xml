@@ -63,22 +63,18 @@
         <main-class>com.pxs.reaper.Reaper</main-class>
 
         <!-- Serenity parameters -->
-        <write-classes>-Dwrite.classes=false</write-classes>
+        <write-classes>-Dwrite.classes=true</write-classes>
         <clean-classes>-Dclean.classes=true</clean-classes>
-        <included-packages>-Dincluded.packages=com</included-packages>
-        <excluded-packages>-Dexcluded.packages=com.ikokoon:Mock:Test:Integration</excluded-packages>
+        <included-packages>-Dincluded.packages=com.pxs.reaper</included-packages>
+        <excluded-packages>-Dexcluded.packages=Mock:Test:Integration</excluded-packages>
         <included-adapters>-Dincluded.adapters=coverage:complexity:dependency</included-adapters>
         <serenity-parameters>${write-classes} ${clean-classes} ${included-packages} ${excluded-packages} ${included-adapters} -noverify</serenity-parameters>
 
         <headless-parameters>-Djava.awt.headless=true</headless-parameters>
         <memory-parameters>-Xms512m -Xmx1024m</memory-parameters>
-
-        <jmx-security>-Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false</jmx-security>
-        <jmx-parameters>-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=8500 -Dcom.sun.management.jmxremote.local.only=false ${jmx-security}</jmx-parameters>
     </properties>
 
     <build>
-        <!--<finalName>${project.name}-${project.version}.jar</finalName>-->
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -168,34 +164,8 @@
                         <include>**/*Test.java</include>
                     </includes>
                     <!--suppress MavenModelInspection -->
-                    <!--<argLine>-javaagent:${project.basedir}/serenity/serenity.jar ${headless-parameters} ${serenity-parameters} ${memory-parameters} ${jmx-parameters}</argLine>-->
+                    <!--<argLine>-javaagent:${project.basedir}/serenity/serenity.jar ${headless-parameters} ${serenity-parameters} ${memory-parameters}</argLine>-->
                 </configuration>
-            </plugin>
-            <plugin>
-                <artifactId>maven-failsafe-plugin</artifactId>
-                <version>2.18.1</version>
-                <configuration>
-                    <forkMode>once</forkMode>
-                    <!--suppress MavenModelInspection -->
-                    <argLine>${headless-parameters} ${memory-parameters}</argLine>
-                    <testFailureIgnore>true</testFailureIgnore>
-                    <argLine>-Dintegration-test=true ${jmx-parameters}</argLine>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>integration-tests</id>
-                        <phase>integration-test</phase>
-                        <goals>
-                            <goal>integration-test</goal>
-                            <goal>verify</goal>
-                        </goals>
-                        <configuration>
-                            <includes>
-                                <include>**/*Integration*.java</include>
-                            </includes>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
             <!--
                 This plugin is necessary to copy the dependencies to the lib directory

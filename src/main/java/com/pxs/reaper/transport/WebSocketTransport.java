@@ -42,14 +42,16 @@ public class WebSocketTransport implements Transport {
      * {@inheritDoc}
      */
     public void postMetrics(final Object metrics) {
-        getTransport();
+        openSession();
+
         RemoteEndpoint.Async async = session.getAsyncRemote();
         String postage = gson.toJson(metrics);
         log.debug("Sending metrics : {}", postage);
         async.sendText(postage);
     }
 
-    private void getTransport() {
+    @SuppressWarnings("SynchronizeOnNonFinalField")
+    private void openSession() {
         if (session == null || !session.isOpen()) {
             WebSocketContainer container = ContainerProvider.getWebSocketContainer();
             URI uri = URI.create(reaperWebSocketUri);

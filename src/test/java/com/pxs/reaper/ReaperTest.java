@@ -56,7 +56,7 @@ public class ReaperTest {
 
     @Test
     public void main() {
-        long waitTime = 3000;
+        long waitTime = 1000;
         final ReaperMock reaper = new ReaperMock();
         try {
             THREAD.submit("blade-runner", () -> Reaper.main(new String[]{Long.toString(waitTime)}));
@@ -107,7 +107,14 @@ public class ReaperTest {
     public void attachToJavaProcesses() throws Exception {
         Reaper reaper = new Reaper();
         reaper.attachToJavaProcesses();
-        // TODO: Finish this, why are the virtual machines replaced with the mocked version in the map?!
+
+        Map<String, VirtualMachine> virtualMachines = Deencapsulation.getField(reaper, "virtualMachines");
+        int virtualMachinesSize = virtualMachines.size();
+        Assert.assertTrue(virtualMachinesSize > 0);
+
+        reaper.attachToJavaProcesses();
+        virtualMachines = Deencapsulation.getField(reaper, "virtualMachines");
+        Assert.assertEquals(virtualMachinesSize, virtualMachines.size());
     }
 
 }

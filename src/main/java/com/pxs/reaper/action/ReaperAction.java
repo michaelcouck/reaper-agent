@@ -12,6 +12,6 @@ interface ReaperAction {
     /**
      * Releases any resources, operating system agents, Java agents etc.
      */
-    void terminate();
+    boolean terminate();
 
 }

@@ -54,6 +54,7 @@ public class Reaper {
     /* Initialize the executor service */
     static {
         THREAD.initialize();
+        Constant.PROPERTIES_INJECTOR.injectProperties(Constant.EXTERNAL_CONSTANTS);
     }
 
     @SuppressWarnings("InfiniteLoopStatement")
@@ -105,76 +106,76 @@ public class Reaper {
         return libDirectory.getAbsolutePath();
     }
 
-    private Map<String, VirtualMachine> virtualMachines;
+    private String pathToAgent;
+    private final Map<String, VirtualMachine> virtualMachines;
 
     Reaper() {
+        String vmName = ManagementFactory.getRuntimeMXBean().getName();
+        log.info("Reaper virtual machine name : " + vmName);
+
         addNativeLibrariesToPath();
+        pathToAgent = getPathToAgent();
         virtualMachines = new HashMap<>();
         Runtime.getRuntime().addShutdownHook(new Thread(this::detachFromJavaProcesses));
     }
 
     void attachToOperatingSystem() {
         // Start the action to gather metrics from the operating system
-        new ReaperActionOSMetrics();
+        int sleepTime = Constant.EXTERNAL_CONSTANTS.getSleepTime();
+        ReaperActionOSMetrics reaperActionOSMetrics = new ReaperActionOSMetrics();
+        Runtime.getRuntime().addShutdownHook(new Thread(reaperActionOSMetrics::terminate));
+        Constant.TIMER.scheduleAtFixedRate(reaperActionOSMetrics, sleepTime, sleepTime);
     }
 
     void attachToJavaProcesses() {
-        String vmName = ManagementFactory.getRuntimeMXBean().getName();
-        log.info("My name is : " + vmName);
-
         // First remove all the virtual machines that have terminated
         removeTerminatedProcesses();
 
-        String pathToAgent = getPathToAgent();
-        if (StringUtils.isEmpty(pathToAgent)) {
-            log.warn("Agent jar not found : ");
-        } else {
-            List<String> pids = getPids();
-            for (final String pid : pids) {
-                VirtualMachine virtualMachine;
-                try {
-                    if (virtualMachines.containsKey(pid)) {
-                        log.info("Already attached to : {}", pid);
-                        continue;
-                    }
-                    virtualMachine = VirtualMachine.attach(pid);
-                    virtualMachine.loadAgent(pathToAgent);
-                    virtualMachines.put(pid, virtualMachine);
-                    log.info("Attached to pid : " + pid);
-                } catch (final AttachNotSupportedException | IOException | AgentLoadException | AgentInitializationException e) {
-                    log.error("Exception attaching to pid : " + pid, e);
+        Set<String> pids = getPidsFromOperatingSystem();
+        for (final String pid : pids) {
+            VirtualMachine virtualMachine;
+            try {
+                if (virtualMachines.containsKey(pid)) {
+                    log.debug("Already attached to : {}", pid);
+                    continue;
                 }
+                virtualMachine = VirtualMachine.attach(pid);
+                if (StringUtils.isNotEmpty(pathToAgent)) {
+                    virtualMachine.loadAgent(pathToAgent);
+                } else {
+                    log.warn("Agent jar not found : ");
+                }
+                virtualMachines.put(pid, virtualMachine);
+                log.info("Attached to pid : {}, {}", pid, virtualMachine.getClass().getName());
+            } catch (final AttachNotSupportedException | IOException | AgentLoadException | AgentInitializationException e) {
+                log.error("Exception attaching to pid : " + pid, e);
             }
         }
     }
 
     void detachFromJavaProcesses() {
-        final Collection<String> toRemove = new ArrayList<>();
-        virtualMachines
-                .values()
-                .stream()
-                .filter(virtualMachine -> virtualMachine != null)
-                .forEach(virtualMachine -> {
-                    try {
-                        toRemove.add(virtualMachine.id());
-                        log.info("Detaching from : {}", virtualMachine.id());
-                        virtualMachine.detach();
-                    } catch (final Exception e) {
-                        log.error("Exception detaching from java process : " + virtualMachine.id(), e);
-                    }
-                });
-        toRemove.forEach(pid -> virtualMachines.remove(pid));
+        Collection<VirtualMachine> machines = virtualMachines.values();
+        machines.forEach(virtualMachine -> {
+            try {
+                log.info("Detaching from : {}, {}", virtualMachine.id(), virtualMachine.getClass().getName());
+                virtualMachine.detach();
+            } catch (final IOException e) {
+                log.error("Exception detaching from java process : " + virtualMachine.id(), e);
+            }
+        });
+        Set<String> pids = new TreeSet<>(virtualMachines.keySet());
+        pids.forEach(virtualMachines::remove);
     }
 
-    private List<String> getPids() {
+    private Set<String> getPidsFromOperatingSystem() {
         MonitoredHost monitoredHost;
         try {
             monitoredHost = MonitoredHost.getMonitoredHost("localhost");
-            return monitoredHost.activeVms().stream().map(Object::toString).collect(Collectors.toList());
+            return monitoredHost.activeVms().stream().map(Object::toString).collect(Collectors.toSet());
         } catch (final MonitorException | URISyntaxException e) {
             log.error("Exception getting the pids from the OS : ", e);
             //noinspection unchecked
-            return Collections.EMPTY_LIST;
+            return Collections.EMPTY_SET;
         }
     }
 
@@ -185,12 +186,26 @@ public class Reaper {
     }
 
     private void removeTerminatedProcesses() {
-        List<String> pids = getPids();
-        List<String> toRemovePids = virtualMachines.keySet().stream().filter(pids::contains).collect(Collectors.toList());
-        toRemovePids.forEach(pid -> {
+        Set<String> pids = getPidsFromOperatingSystem();
+        Set<String> terminatedPids = new TreeSet<>(virtualMachines.keySet());
+        // Remove all the active pids from the attached pids and you have the terminated pids left over
+        terminatedPids.removeAll(pids);
+
+        // Remove all the pids in the currently attached map that are not
+        // found in the pid list from the operating system, i.e. the process has
+        // been terminated at operating system level
+        terminatedPids.forEach(pid -> {
             log.info("Removing terminated pid : " + pid);
-            virtualMachines.remove(pid);
+            VirtualMachine virtualMachine = virtualMachines.get(pid);
+            if (virtualMachine != null) {
+                try {
+                    virtualMachine.detach();
+                } catch (final Exception e) {
+                    log.error("Exception detaching from process : {}", pid, e);
+                }
+            }
         });
+        virtualMachines.keySet().removeAll(terminatedPids);
     }
 
 }
