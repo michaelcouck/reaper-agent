@@ -1,26 +1,17 @@
 package com.pxs.reaper;
 
-import com.jcabi.manifests.Manifests;
+import com.pxs.reaper.action.ReaperActionAgentMetrics;
+import com.pxs.reaper.action.ReaperActionJmxMetrics;
 import com.pxs.reaper.action.ReaperActionOSMetrics;
-import com.sun.tools.attach.AgentInitializationException;
-import com.sun.tools.attach.AgentLoadException;
-import com.sun.tools.attach.AttachNotSupportedException;
-import com.sun.tools.attach.VirtualMachine;
 import ikube.toolkit.FILE;
 import ikube.toolkit.THREAD;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
-import sun.jvmstat.monitor.MonitorException;
-import sun.jvmstat.monitor.MonitoredHost;
+import org.jeasy.props.annotations.Property;
 
 import java.io.File;
-import java.io.IOException;
 import java.lang.management.ManagementFactory;
-import java.net.URISyntaxException;
-import java.util.*;
-import java.util.concurrent.Future;
-import java.util.stream.Collectors;
 
 /**
  * This class sets up the agents running on the local operating system and in the JVMs potentially. Functions that it
@@ -49,36 +40,28 @@ import java.util.stream.Collectors;
  * </pre>
  */
 @Slf4j
+@Setter
 public class Reaper {
 
     /* Initialize the executor service */
     static {
-        THREAD.initialize();
         Constant.PROPERTIES_INJECTOR.injectProperties(Constant.EXTERNAL_CONSTANTS);
     }
 
     @SuppressWarnings("InfiniteLoopStatement")
     public static void main(final String[] args) {
-        // Start a schedule that will continuously check the pids and
-        // either attach to the new ones or detach from the terminated ones
-        Future<?> future = THREAD.submit("reaper-thread", () -> {
-            Reaper reaper = new Reaper();
-            reaper.attachToOperatingSystem();
-            while (true) {
-                try {
-                    reaper.attachToJavaProcesses();
-                } catch (final Exception e) {
-                    log.error("Exception attaching to the JVMs : ", e);
-                } finally {
-                    THREAD.sleep(60000);
-                }
-            }
-        });
+        addNativeLibrariesToPath();
+
+        Reaper reaper = new Reaper();
+        reaper.attachToOperatingSystem();
+        reaper.attachToJavaProcesses();
+        reaper.attachToJmxProcesses();
+
         long waitTime = Long.MAX_VALUE;
         if (args != null && args.length >= 1 && NumberUtils.isNumber(args[0])) {
             waitTime = Long.parseLong(args[0]);
         }
-        THREAD.waitForFuture(future, waitTime);
+        THREAD.sleep(waitTime);
     }
 
     /**
@@ -106,106 +89,39 @@ public class Reaper {
         return libDirectory.getAbsolutePath();
     }
 
-    private String pathToAgent;
-    private final Map<String, VirtualMachine> virtualMachines;
+    @SuppressWarnings("unused")
+    @Property(source = Constant.REAPER_PROPERTIES, key = "sleep-time")
+    private int sleepTime = 10;
 
+    @SuppressWarnings("WeakerAccess")
     Reaper() {
+        Constant.PROPERTIES_INJECTOR.injectProperties(this);
         String vmName = ManagementFactory.getRuntimeMXBean().getName();
         log.info("Reaper virtual machine name : " + vmName);
-
-        addNativeLibrariesToPath();
-        pathToAgent = getPathToAgent();
-        virtualMachines = new HashMap<>();
-        Runtime.getRuntime().addShutdownHook(new Thread(this::detachFromJavaProcesses));
     }
 
     void attachToOperatingSystem() {
         // Start the action to gather metrics from the operating system
-        int sleepTime = Constant.EXTERNAL_CONSTANTS.getSleepTime();
         ReaperActionOSMetrics reaperActionOSMetrics = new ReaperActionOSMetrics();
+        Constant.PROPERTIES_INJECTOR.injectProperties(reaperActionOSMetrics);
         Runtime.getRuntime().addShutdownHook(new Thread(reaperActionOSMetrics::terminate));
         Constant.TIMER.scheduleAtFixedRate(reaperActionOSMetrics, sleepTime, sleepTime);
     }
 
     void attachToJavaProcesses() {
-        // First remove all the virtual machines that have terminated
-        removeTerminatedProcesses();
-
-        Set<String> pids = getPidsFromOperatingSystem();
-        for (final String pid : pids) {
-            VirtualMachine virtualMachine;
-            try {
-                if (virtualMachines.containsKey(pid)) {
-                    log.debug("Already attached to : {}", pid);
-                    continue;
-                }
-                virtualMachine = VirtualMachine.attach(pid);
-                if (StringUtils.isNotEmpty(pathToAgent)) {
-                    virtualMachine.loadAgent(pathToAgent);
-                } else {
-                    log.warn("Agent jar not found : ");
-                }
-                virtualMachines.put(pid, virtualMachine);
-                log.info("Attached to pid : {}, {}", pid, virtualMachine.getClass().getName());
-            } catch (final AttachNotSupportedException | IOException | AgentLoadException | AgentInitializationException e) {
-                log.error("Exception attaching to pid : " + pid, e);
-            }
-        }
+        // Start the action to attach to the Java processes on the local machine and gather metrics from the JVM(s)
+        ReaperActionAgentMetrics reaperActionAgentMetrics = new ReaperActionAgentMetrics();
+        Constant.PROPERTIES_INJECTOR.injectProperties(reaperActionAgentMetrics);
+        Runtime.getRuntime().addShutdownHook(new Thread(reaperActionAgentMetrics::terminate));
+        Constant.TIMER.scheduleAtFixedRate(reaperActionAgentMetrics, sleepTime, sleepTime);
     }
 
-    void detachFromJavaProcesses() {
-        Collection<VirtualMachine> machines = virtualMachines.values();
-        machines.forEach(virtualMachine -> {
-            try {
-                log.info("Detaching from : {}, {}", virtualMachine.id(), virtualMachine.getClass().getName());
-                virtualMachine.detach();
-            } catch (final IOException e) {
-                log.error("Exception detaching from java process : " + virtualMachine.id(), e);
-            }
-        });
-        Set<String> pids = new TreeSet<>(virtualMachines.keySet());
-        pids.forEach(virtualMachines::remove);
-    }
-
-    private Set<String> getPidsFromOperatingSystem() {
-        MonitoredHost monitoredHost;
-        try {
-            monitoredHost = MonitoredHost.getMonitoredHost("localhost");
-            return monitoredHost.activeVms().stream().map(Object::toString).collect(Collectors.toSet());
-        } catch (final MonitorException | URISyntaxException e) {
-            log.error("Exception getting the pids from the OS : ", e);
-            //noinspection unchecked
-            return Collections.EMPTY_SET;
-        }
-    }
-
-    private String getPathToAgent() {
-        String jarFileName = Manifests.read("Agent-Jar-Name");
-        File agentJar = FILE.findFileRecursively(new File("."), jarFileName);
-        return (agentJar != null) ? FILE.cleanFilePath(agentJar.getAbsolutePath()) : null;
-    }
-
-    private void removeTerminatedProcesses() {
-        Set<String> pids = getPidsFromOperatingSystem();
-        Set<String> terminatedPids = new TreeSet<>(virtualMachines.keySet());
-        // Remove all the active pids from the attached pids and you have the terminated pids left over
-        terminatedPids.removeAll(pids);
-
-        // Remove all the pids in the currently attached map that are not
-        // found in the pid list from the operating system, i.e. the process has
-        // been terminated at operating system level
-        terminatedPids.forEach(pid -> {
-            log.info("Removing terminated pid : " + pid);
-            VirtualMachine virtualMachine = virtualMachines.get(pid);
-            if (virtualMachine != null) {
-                try {
-                    virtualMachine.detach();
-                } catch (final Exception e) {
-                    log.error("Exception detaching from process : {}", pid, e);
-                }
-            }
-        });
-        virtualMachines.keySet().removeAll(terminatedPids);
+    void attachToJmxProcesses() {
+        // Start the action to attach to the Java processes via JMX gather metrics from the JVM(s)
+        ReaperActionJmxMetrics reaperActionJmxMetrics = new ReaperActionJmxMetrics();
+        Constant.PROPERTIES_INJECTOR.injectProperties(reaperActionJmxMetrics);
+        Runtime.getRuntime().addShutdownHook(new Thread(reaperActionJmxMetrics::terminate));
+        Constant.TIMER.scheduleAtFixedRate(reaperActionJmxMetrics, sleepTime, sleepTime);
     }
 
 }

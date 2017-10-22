@@ -5,13 +5,24 @@ import com.pxs.reaper.model.*;
 import java.lang.management.*;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.TimerTask;
+import java.util.*;
 
+/**
+ * Base class for JMX operations on management MBeans for the JVM. Takes various MBeans from the JVM and populates
+ * metrics model objects for transport to the micro service for analysis and model building.
+ *
+ * @author Michael Couck
+ * @version 01.00
+ * @since 22-10-2017
+ */
 abstract class ReaperActionMBeanMetrics extends TimerTask implements ReaperAction {
 
+    /**
+     * Populates the miscellaneous items for transport, the ip address, timestamp etc.
+     *
+     * @param jMetrics      the JVM metrics model object for transport
+     * @param runtimeMXBean the runtime MBean for the name of the JVM
+     */
     void misc(final JMetrics jMetrics, final RuntimeMXBean runtimeMXBean) {
         try {
             String vmName = runtimeMXBean.getName();
@@ -23,6 +34,12 @@ abstract class ReaperActionMBeanMetrics extends TimerTask implements ReaperActio
         }
     }
 
+    /**
+     * Populates the thread items for transport, how many threads, the core times, deadlocked, etc.
+     *
+     * @param jMetrics     the JVM metrics model object for transport
+     * @param threadMXBean the thread MBean for access to the threads in the JVM
+     */
     void threading(final JMetrics jMetrics, final ThreadMXBean threadMXBean) {
         Threading threading = Threading.builder().build();
 
@@ -35,25 +52,29 @@ abstract class ReaperActionMBeanMetrics extends TimerTask implements ReaperActio
 
         long[] threadIds = threadMXBean.getAllThreadIds();
         threading.setThreadIds(threadIds);
-
         long[] threadCpuTimes = new long[threadIds.length];
         ThreadInfo[] threadInfos = new ThreadInfo[threadIds.length];
-
-        int index = 0;
-        for (final long threadId : threadIds) {
-            threadCpuTimes[index] = threadMXBean.getThreadCpuTime(threadId);
-            threadInfos[index] = threadMXBean.getThreadInfo(threadId);
-            index++;
+        for (int i = 0; i < threadInfos.length; i++) {
+            threadInfos[i] = threadMXBean.getThreadInfo(threadIds[i]);
+            threadCpuTimes[i] = threadMXBean.getThreadCpuTime(threadIds[i]);
         }
-
-        threading.setThreadCpuTimes(threadCpuTimes);
         threading.setThreadInfos(threadInfos);
+        threading.setThreadCpuTimes(threadCpuTimes);
 
         jMetrics.setThreading(threading);
     }
 
+    /**
+     * Populates the memory pool model objects.
+     *
+     * @param jMetrics          the JVM metrics model object for transport
+     * @param memoryPoolMXBeans the memory pool beans from the JVM
+     */
     void memoryPool(final JMetrics jMetrics, final List<MemoryPoolMXBean> memoryPoolMXBeans) {
         List<MemoryPool> memoryPools = new ArrayList<>();
+        if (jMetrics.getMemoryPools() != null) {
+            memoryPools.addAll(Arrays.asList(jMetrics.getMemoryPools()));
+        }
         for (final MemoryPoolMXBean memoryPoolMXBean : memoryPoolMXBeans) {
             MemoryPool memoryPool = MemoryPool.builder().build();
             memoryPool.setName(memoryPoolMXBean.getName());
@@ -75,6 +96,12 @@ abstract class ReaperActionMBeanMetrics extends TimerTask implements ReaperActio
         jMetrics.setMemoryPools(memoryPools.toArray(new MemoryPool[memoryPools.size()]));
     }
 
+    /**
+     * Populates the memory objects for transport, the heap and non heap usage.
+     *
+     * @param jMetrics     the JVM metrics model object for transport
+     * @param memoryMXBean the memory bean from the JVM
+     */
     void memory(final JMetrics jMetrics, final MemoryMXBean memoryMXBean) {
         Memory memory = Memory.builder().build();
 
@@ -84,8 +111,17 @@ abstract class ReaperActionMBeanMetrics extends TimerTask implements ReaperActio
         jMetrics.setMemory(memory);
     }
 
+    /**
+     * Populates the garbage collection beans for transport. How many collections, the time taken for each collection etc.
+     *
+     * @param jMetrics                the JVM metrics model object for transport
+     * @param garbageCollectorMXBeans the garbage collection beans for the JVM
+     */
     void garbageCollection(final JMetrics jMetrics, final List<GarbageCollectorMXBean> garbageCollectorMXBeans) {
         List<GarbageCollection> garbageCollections = new ArrayList<>();
+        if (jMetrics.getGarbageCollection() != null) {
+            garbageCollections.addAll(Arrays.asList(jMetrics.getGarbageCollection()));
+        }
         for (final GarbageCollectorMXBean garbageCollectorMXBean : garbageCollectorMXBeans) {
             GarbageCollection garbageCollection = GarbageCollection.builder().build();
             garbageCollection.setName(garbageCollectorMXBean.getName());
@@ -96,12 +132,25 @@ abstract class ReaperActionMBeanMetrics extends TimerTask implements ReaperActio
         jMetrics.setGarbageCollection(garbageCollections.toArray(new GarbageCollection[garbageCollections.size()]));
     }
 
+    /**
+     * Compilation times, probably not interesting. Could be in environments where there is a lot of instrumentation.
+     *
+     * @param jMetrics          the JVM metrics model object for transport
+     * @param compilationMXBean the compilation bean for the JVM
+     */
     void compilation(final JMetrics jMetrics, final CompilationMXBean compilationMXBean) {
         Compilation compilation = Compilation.builder().build();
         compilation.setCompilationTime(compilationMXBean.getTotalCompilationTime());
         jMetrics.setCompilation(compilation);
     }
 
+    /**
+     * Classloading metrics for the JVM, could be interesting, specially is if there is a class memory leak, and indeed because
+     * classes are loaded and stored off heap, it could potentially crash the machine that they are on.
+     *
+     * @param jMetrics           the JVM metrics model object for transport
+     * @param classLoadingMXBean the class loading bean for the JVM
+     */
     void classloading(final JMetrics jMetrics, final ClassLoadingMXBean classLoadingMXBean) {
         Classloading classloading = Classloading.builder().build();
         classloading.setLoadedClassCount(classLoadingMXBean.getLoadedClassCount());

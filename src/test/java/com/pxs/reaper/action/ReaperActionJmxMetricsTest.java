@@ -5,8 +5,6 @@ import com.pxs.reaper.model.JMetrics;
 import com.pxs.reaper.transport.Transport;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -41,12 +39,12 @@ public class ReaperActionJmxMetricsTest {
             }
             return null;
         }).when(transport).postMetrics(Mockito.any(Object.class));
+        Constant.PROPERTIES_INJECTOR.injectProperties(reaperActionJmxMetrics);
         reaperActionJmxMetrics.run();
         Assert.assertNotNull(objectAtomicReference.get());
     }
 
     @Test
-    @Ignore
     public void terminate() throws IOException {
         Constant.TIMER.scheduleAtFixedRate(reaperActionJmxMetrics, Short.MAX_VALUE, Short.MAX_VALUE);
         boolean terminated = reaperActionJmxMetrics.terminate();

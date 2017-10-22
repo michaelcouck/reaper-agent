@@ -5,16 +5,18 @@ import com.pxs.reaper.model.JMetrics;
 import com.pxs.reaper.transport.Transport;
 import com.pxs.reaper.transport.WebSocketTransport;
 import ikube.toolkit.THREAD;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.jeasy.props.annotations.Property;
 
-import javax.management.JMX;
-import javax.management.MBeanServerConnection;
-import javax.management.ObjectName;
+import javax.management.*;
 import javax.management.remote.JMXConnector;
 import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
 import java.io.IOException;
-import java.lang.management.RuntimeMXBean;
+import java.lang.management.*;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Set;
 
 /**
@@ -39,10 +41,24 @@ import java.util.Set;
  * @since 21-10-2017
  */
 @Slf4j
+@Setter
 @SuppressWarnings("WeakerAccess")
 public class ReaperActionJmxMetrics extends ReaperActionMBeanMetrics {
 
+    @SuppressWarnings("unused")
+    @Property(source = Constant.REAPER_PROPERTIES, key = "localhost-jmx-uri")
+    private String reaperJmxUri;
+
+    /**
+     * Keep retrying every 15 minutes for localhost JMX connections.
+     */
+    @SuppressWarnings("FieldCanBeLocal")
+    private long delay = 1000 * 60 * 15;
+    /**
+     * Transport to the service for accumulation of telemetry data for analysis.
+     */
     private Transport transport;
+    private JMXConnector jmxConnector;
     private MBeanServerConnection mbeanConn;
 
     public ReaperActionJmxMetrics() {
@@ -51,60 +67,87 @@ public class ReaperActionJmxMetrics extends ReaperActionMBeanMetrics {
 
     @Override
     public void run() {
-        JMetrics jMetrics = JMetrics.builder().build();
+        run(3, delay);
+    }
 
+    private void run(final int retry, final long delay) {
+        Set<ObjectName> objectNames;
         try {
             getMBeanServerConnection();
-
-            Set<ObjectName> objectNames = mbeanConn.queryNames(null, null);
-            for (final ObjectName objectName : objectNames) {
-                log.info("Object name : " + objectName.getCanonicalName());
-                if (objectName.getCanonicalName().contains("Runtime")) {
-                    RuntimeMXBean runtimeMXBean = JMX.newMXBeanProxy(mbeanConn, objectName, RuntimeMXBean.class, true);
-                    misc(jMetrics, runtimeMXBean);
-                }
+            objectNames = mbeanConn.queryNames(null, null);
+        } catch (final Exception e) {
+            if (retry > 0) {
+                long sleep = delay / retry;
+                THREAD.sleep(sleep);
+                run(retry - 1, delay);
+                return;
+            } else {
+                log.debug("No connection to JMX : ", e);
+                return;
             }
-        } catch (final IOException e) {
-            e.printStackTrace();
         }
 
-        //noinspection ConstantConditions,ConstantIfStatement
-        if (false) {
-            misc(jMetrics, null);
-            classloading(jMetrics, null);
-            compilation(jMetrics, null);
-            garbageCollection(jMetrics, null);
-            memory(jMetrics, null);
-            memoryPool(jMetrics, null);
-            threading(jMetrics, null);
+        JMetrics jMetrics = JMetrics.builder().build();
+        for (final ObjectName objectName : objectNames) {
+            try {
+                MBeanInfo mBeanInfo = mbeanConn.getMBeanInfo(objectName);
+                String className = mBeanInfo.getClassName();
+                Class clazz = Class.forName(className);
+                if (log.isDebugEnabled()) {
+                    log.debug("Object name : {}, {}, {}", new Object[]{objectName.getCanonicalName(), className, Arrays.toString(clazz.getInterfaces())});
+                }
+                if (RuntimeMXBean.class.isAssignableFrom(clazz)) {
+                    misc(jMetrics, JMX.newMXBeanProxy(mbeanConn, objectName, RuntimeMXBean.class, true));
+                } else if (ThreadMXBean.class.isAssignableFrom(clazz)) {
+                    threading(jMetrics, JMX.newMXBeanProxy(mbeanConn, objectName, ThreadMXBean.class, true));
+                } else if (MemoryPoolMXBean.class.isAssignableFrom(clazz)) {
+                    memoryPool(jMetrics, Collections.singletonList(JMX.newMXBeanProxy(mbeanConn, objectName, MemoryPoolMXBean.class, true)));
+                } else if (MemoryMXBean.class.isAssignableFrom(clazz)) {
+                    memory(jMetrics, JMX.newMXBeanProxy(mbeanConn, objectName, MemoryMXBean.class, true));
+                } else if (GarbageCollectorMXBean.class.isAssignableFrom(clazz)) {
+                    garbageCollection(jMetrics, Collections.singletonList(JMX.newMXBeanProxy(mbeanConn, objectName, GarbageCollectorMXBean.class, true)));
+                } else if (CompilationMXBean.class.isAssignableFrom(clazz)) {
+                    compilation(jMetrics, JMX.newMXBeanProxy(mbeanConn, objectName, CompilationMXBean.class, true));
+                } else if (ClassLoadingMXBean.class.isAssignableFrom(clazz)) {
+                    classloading(jMetrics, JMX.newMXBeanProxy(mbeanConn, objectName, ClassLoadingMXBean.class, true));
+                }
+            } catch (final ClassNotFoundException | IntrospectionException | InstanceNotFoundException | IOException | ReflectionException e) {
+                log.error("Exception accessing MBean : " + objectName, e);
+            }
         }
 
         transport.postMetrics(jMetrics);
     }
 
-
     @Override
     public boolean terminate() {
+        if (jmxConnector != null) {
+            try {
+                jmxConnector.close();
+            } catch (final IOException e) {
+                log.warn("Exception disconnecting from JMX : ", e);
+            }
+        }
         boolean terminated = cancel();
         Constant.TIMER.purge();
         return terminated;
     }
 
     private MBeanServerConnection getMBeanServerConnection() {
-        return getMBeanServerConnection(5, 1000);
+        return getMBeanServerConnection(3, 1000);
     }
 
     private MBeanServerConnection getMBeanServerConnection(final int retry, final long delay) {
         if (mbeanConn == null) {
             JMXServiceURL serviceUrl;
-            String url = "service:jmx:rmi:///jndi/rmi://localhost:8500/jmxrmi";
             try {
-                serviceUrl = new JMXServiceURL(url);
-                JMXConnector jmxConnector = JMXConnectorFactory.connect(serviceUrl, null);
+                serviceUrl = new JMXServiceURL(reaperJmxUri);
+                jmxConnector = JMXConnectorFactory.connect(serviceUrl, null);
                 return mbeanConn = jmxConnector.getMBeanServerConnection();
             } catch (final Exception e) {
                 if (retry > 0) {
-                    THREAD.sleep(delay / retry * 1000);
+                    long sleep = delay / retry;
+                    THREAD.sleep(sleep);
                     return getMBeanServerConnection(retry - 1, delay);
                 } else {
                     throw new RuntimeException(e);

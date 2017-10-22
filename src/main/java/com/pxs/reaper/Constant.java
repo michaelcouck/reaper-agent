@@ -21,9 +21,9 @@ public interface Constant {
     String LINUX_LOAD_MODULE = "libsigar-amd64-linux.so";
 
     Timer TIMER = new Timer(true);
-    ExternalConstants EXTERNAL_CONSTANTS = new ExternalConstants();
     PropertiesInjector PROPERTIES_INJECTOR = aNewPropertiesInjector();
 
+    ExternalConstants EXTERNAL_CONSTANTS = new ExternalConstants();
     @Getter
     @Setter
     class ExternalConstants {
