@@ -5,6 +5,7 @@ import com.pxs.reaper.model.OSMetrics;
 import com.pxs.reaper.transport.Transport;
 import com.pxs.reaper.transport.WebSocketTransport;
 import ikube.toolkit.OS;
+import ikube.toolkit.URI;
 import lombok.extern.slf4j.Slf4j;
 import org.hyperic.sigar.*;
 
@@ -34,7 +35,8 @@ public class ReaperActionOSMetrics extends TimerTask implements ReaperAction {
     public void run() {
         try {
             OSMetrics osMetrics = OSMetrics.builder().build();
-            osMetrics.setInetAddress(InetAddress.getLocalHost());
+            InetAddress inetAddress = InetAddress.getByName(URI.getIp());
+            osMetrics.setInetAddress(inetAddress);
 
             Cpu[] cpu = cpu(sigarProxy);
             CpuInfo[] cpuInfo = cpuInfo(sigarProxy);
