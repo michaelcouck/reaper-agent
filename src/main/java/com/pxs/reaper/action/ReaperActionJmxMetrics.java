@@ -45,6 +45,9 @@ import java.util.Set;
 @SuppressWarnings("WeakerAccess")
 public class ReaperActionJmxMetrics extends ReaperActionMBeanMetrics {
 
+    /**
+     * The uri to post the metrics to
+     */
     @SuppressWarnings("unused")
     @Property(source = Constant.REAPER_PROPERTIES, key = "localhost-jmx-uri")
     private String reaperJmxUri;
@@ -58,18 +61,34 @@ public class ReaperActionJmxMetrics extends ReaperActionMBeanMetrics {
      * Transport to the service for accumulation of telemetry data for analysis.
      */
     private Transport transport;
+    /**
+     * The JMX connector to the Java process, instance variable so as to release resources on terminate
+     */
     private JMXConnector jmxConnector;
+    /**
+     * The management bean connection to the JMX MBeans, instance variable so as to release resources on terminate
+     */
     private MBeanServerConnection mbeanConn;
 
     public ReaperActionJmxMetrics() {
         transport = new WebSocketTransport();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void run() {
         run(3, delay);
     }
 
+    /**
+     * Connects to the local JMX management beans. Iterates through all the beans, extracting interesting metrics and telemetry data
+     * from the beans. Populates a {@link JMetrics} object that is converted to json for transport the central analyzer.
+     *
+     * @param retry the number of times to retry connecting to the JMX MBeans
+     * @param delay the delay to apply. The delay increases with each retry
+     */
     private void run(final int retry, final long delay) {
         Set<ObjectName> objectNames;
         try {
@@ -119,6 +138,11 @@ public class ReaperActionJmxMetrics extends ReaperActionMBeanMetrics {
         transport.postMetrics(jMetrics);
     }
 
+    /**
+     * Releases all resources that this object holds, typically the connection to the JMX beans, and cancels the task in the {@link java.util.Timer}
+     *
+     * @return whether all releases of resources was successful
+     */
     @Override
     public boolean terminate() {
         if (jmxConnector != null) {

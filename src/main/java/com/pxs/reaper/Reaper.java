@@ -48,7 +48,6 @@ public class Reaper {
         Constant.PROPERTIES_INJECTOR.injectProperties(Constant.EXTERNAL_CONSTANTS);
     }
 
-    @SuppressWarnings("InfiniteLoopStatement")
     public static void main(final String[] args) {
         addNativeLibrariesToPath();
 
@@ -57,6 +56,7 @@ public class Reaper {
         reaper.attachToJavaProcesses();
         reaper.attachToJmxProcesses();
 
+        // Either sleep for the period specified in the arguments list, or infinitely, almost...
         long waitTime = Long.MAX_VALUE;
         if (args != null && args.length >= 1 && NumberUtils.isNumber(args[0])) {
             waitTime = Long.parseLong(args[0]);
@@ -70,7 +70,6 @@ public class Reaper {
      *
      * @return the path to the native libraries for all the operating systems
      */
-    @SuppressWarnings("WeakerAccess")
     public static String addNativeLibrariesToPath() {
         String javaLibraryPath = System.getProperty(Constant.JAVA_LIBRARY_PATH_KEY);
 
@@ -89,17 +88,24 @@ public class Reaper {
         return libDirectory.getAbsolutePath();
     }
 
-    @SuppressWarnings("unused")
+    /**
+     * The amount of time to sleep in milliseconds before sampling the operating system and
+     * the java processes for telemetry data, and posting to the central analyzer. Note that the
+     * average size of a posting is 12 kb, if there are 1000 virtual machines, the network impact
+     * will be 1200 kb/second metrics posting.
+     */
     @Property(source = Constant.REAPER_PROPERTIES, key = "sleep-time")
-    private int sleepTime = 10;
+    private int sleepTime = 10000;
 
-    @SuppressWarnings("WeakerAccess")
-    Reaper() {
+    private Reaper() {
         Constant.PROPERTIES_INJECTOR.injectProperties(this);
         String vmName = ManagementFactory.getRuntimeMXBean().getName();
         log.info("Reaper virtual machine name : " + vmName);
     }
 
+    /**
+     * Operating system metrics gathering action.
+     */
     void attachToOperatingSystem() {
         // Start the action to gather metrics from the operating system
         ReaperActionOSMetrics reaperActionOSMetrics = new ReaperActionOSMetrics();
@@ -108,6 +114,9 @@ public class Reaper {
         Constant.TIMER.scheduleAtFixedRate(reaperActionOSMetrics, sleepTime, sleepTime);
     }
 
+    /**
+     * Java process metrics gathering dynamic attache action.
+     */
     void attachToJavaProcesses() {
         // Start the action to attach to the Java processes on the local machine and gather metrics from the JVM(s)
         ReaperActionAgentMetrics reaperActionAgentMetrics = new ReaperActionAgentMetrics();
@@ -116,6 +125,9 @@ public class Reaper {
         Constant.TIMER.scheduleAtFixedRate(reaperActionAgentMetrics, sleepTime, sleepTime);
     }
 
+    /**
+     * Java process metrics gathering JMX attach action.
+     */
     void attachToJmxProcesses() {
         // Start the action to attach to the Java processes via JMX gather metrics from the JVM(s)
         ReaperActionJmxMetrics reaperActionJmxMetrics = new ReaperActionJmxMetrics();

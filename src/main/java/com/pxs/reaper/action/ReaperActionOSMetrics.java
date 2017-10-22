@@ -14,6 +14,10 @@ import java.net.UnknownHostException;
 import java.util.TimerTask;
 
 /**
+ * The action will inspect the local operating system for metrics and telemetry data, populate an {@link OSMetrics} object
+ * with the results from the various metrics available, and post the json converted string to the central analyzer for building
+ * models.
+ *
  * @author Michael Couck
  * @version 1.0
  * @since 20-10-2017
@@ -21,9 +25,19 @@ import java.util.TimerTask;
 @Slf4j
 public class ReaperActionOSMetrics extends TimerTask implements ReaperAction {
 
-    private Sigar sigar;
-    private Transport transport;
-    private SigarProxy sigarProxy;
+    /**
+     * {@link Sigar} is the native operating system access to metrics and telemetry. It provides {@link Cpu},
+     * {@link CpuInfo}, {@link Mem} information and several other metrics, some of which are quite low level.
+     */
+    private final Sigar sigar;
+    /**
+     * Provides transport of the metrics from the class to the central analyzer over the wire
+     */
+    private final Transport transport;
+    /**
+     * Proxy class for {@link Sigar} for simplifying the refresh rate of the gathering of data
+     */
+    private final SigarProxy sigarProxy;
 
     public ReaperActionOSMetrics() {
         sigar = new Sigar();
@@ -31,39 +45,45 @@ public class ReaperActionOSMetrics extends TimerTask implements ReaperAction {
         sigarProxy = SigarProxyCache.newInstance(sigar, 1000);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void run() {
         try {
+            // Gather all the operating system metrics, pop them in a OSMetrics object and post them
             OSMetrics osMetrics = OSMetrics.builder().build();
             InetAddress inetAddress = InetAddress.getByName(URI.getIp());
             osMetrics.setInetAddress(inetAddress);
 
-            Cpu[] cpu = cpu(sigarProxy);
-            CpuInfo[] cpuInfo = cpuInfo(sigarProxy);
-            CpuPerc[] cpuPerc = cpuPerc(sigarProxy);
-            Swap swap = swap(sigarProxy);
-            double[] loadAverage = loadAverage(sigarProxy);
-            Mem mem = mem(sigarProxy);
-            NetInfo netInfo = netInfo(sigarProxy);
-            NetStat netStat = netStat(sigarProxy);
-            ProcStat procStat = procStat(sigarProxy);
-            Tcp tcp = tcp(sigarProxy);
-            ResourceLimit resourceLimit = resourceLimit(sigarProxy);
+            synchronized (sigar) {
+                Cpu[] cpu = cpu(sigarProxy);
+                CpuInfo[] cpuInfo = cpuInfo(sigarProxy);
+                CpuPerc[] cpuPerc = cpuPerc(sigarProxy);
+                Swap swap = swap(sigarProxy);
+                double[] loadAverage = loadAverage(sigarProxy);
+                Mem mem = mem(sigarProxy);
+                NetInfo netInfo = netInfo(sigarProxy);
+                NetStat netStat = netStat(sigarProxy);
+                ProcStat procStat = procStat(sigarProxy);
+                Tcp tcp = tcp(sigarProxy);
+                ResourceLimit resourceLimit = resourceLimit(sigarProxy);
 
-            osMetrics.setCpu(cpu);
-            osMetrics.setCpuPerc(cpuPerc);
-            osMetrics.setCpuInfo(cpuInfo);
+                osMetrics.setCpu(cpu);
+                osMetrics.setCpuPerc(cpuPerc);
+                osMetrics.setCpuInfo(cpuInfo);
 
-            osMetrics.setLoadAverage(loadAverage);
-            osMetrics.setMem(mem);
-            osMetrics.setNetInfo(netInfo);
-            osMetrics.setNetStat(netStat);
-            osMetrics.setProcStat(procStat);
-            osMetrics.setSwap(swap);
-            osMetrics.setTcp(tcp);
-            osMetrics.setResourceLimit(resourceLimit);
+                osMetrics.setLoadAverage(loadAverage);
+                osMetrics.setMem(mem);
+                osMetrics.setNetInfo(netInfo);
+                osMetrics.setNetStat(netStat);
+                osMetrics.setProcStat(procStat);
+                osMetrics.setSwap(swap);
+                osMetrics.setTcp(tcp);
+                osMetrics.setResourceLimit(resourceLimit);
 
-            transport.postMetrics(osMetrics);
+                transport.postMetrics(osMetrics);
+            }
         } catch (final SigarException | UnknownHostException e) {
             throw new RuntimeException(e);
         } finally {
@@ -118,8 +138,10 @@ public class ReaperActionOSMetrics extends TimerTask implements ReaperAction {
         return sigarProxy.getResourceLimit();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    @SuppressWarnings("SynchronizeOnNonFinalField")
     public boolean terminate() {
         synchronized (sigar) {
             try {

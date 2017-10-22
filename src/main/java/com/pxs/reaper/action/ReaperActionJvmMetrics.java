@@ -22,12 +22,18 @@ import java.lang.management.ManagementFactory;
 @Slf4j
 class ReaperActionJvmMetrics extends ReaperActionMBeanMetrics {
 
+    /**
+     * The mechanism for posting metrics data to the central analyzer
+     */
     private Transport transport;
 
     ReaperActionJvmMetrics() {
         transport = new WebSocketTransport();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void run() {
         JMetrics jMetrics = JMetrics.builder().build();
@@ -43,6 +49,9 @@ class ReaperActionJvmMetrics extends ReaperActionMBeanMetrics {
         transport.postMetrics(jMetrics);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean terminate() {
         boolean terminated = cancel();

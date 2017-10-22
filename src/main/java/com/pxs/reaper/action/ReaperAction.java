@@ -11,6 +11,8 @@ interface ReaperAction {
 
     /**
      * Releases any resources, operating system agents, Java agents etc.
+     *
+     * @return whether the unit of work was successful. If resource release fails for any reason, the result should be false
      */
     boolean terminate();
 
