@@ -56,8 +56,7 @@ public class ReaperActionOSMetricsTest {
 
     @Test
     public void getHostname() throws Exception {
-        String hostName = reaperActionOSMetrics.getHostname();
-        log.info("Host name : ", hostName);
+        String hostName = ReaperAction.Hostname.hostname();
         Assert.assertNotNull(hostName);
     }
 
