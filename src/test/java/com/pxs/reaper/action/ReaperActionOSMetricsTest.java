@@ -4,6 +4,7 @@ import com.pxs.reaper.Constant;
 import com.pxs.reaper.Reaper;
 import com.pxs.reaper.model.OSMetrics;
 import com.pxs.reaper.transport.Transport;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -15,6 +16,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.concurrent.atomic.AtomicReference;
 
+@Slf4j
 @RunWith(MockitoJUnitRunner.class)
 public class ReaperActionOSMetricsTest {
 
@@ -50,6 +52,13 @@ public class ReaperActionOSMetricsTest {
         Constant.TIMER.scheduleAtFixedRate(reaperActionOSMetrics, Short.MAX_VALUE, Short.MAX_VALUE);
         boolean terminated = reaperActionOSMetrics.terminate();
         Assert.assertTrue(terminated);
+    }
+
+    @Test
+    public void getHostname() throws Exception {
+        String hostName = reaperActionOSMetrics.getHostname();
+        log.info("Host name : ", hostName);
+        Assert.assertNotNull(hostName);
     }
 
 }
