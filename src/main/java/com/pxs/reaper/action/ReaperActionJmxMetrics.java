@@ -27,13 +27,15 @@ import java.util.Set;
  * <p>
  * Parameters to allow JMX access.
  * <pre>
- *      -Dcom.sun.management.jmxremote=false
- *      -Dcom.sun.management.jmxremote.local.only=true
- *      -Dcom.sun.management.jmxremote.authenticate=false
- *      -Dcom.sun.management.jmxremote.ssl=false
  *      -Djava.rmi.server.hostname=localhost
- *      -Dcom.sun.management.jmxremote.port=8500
+ *      -Dcom.sun.management.jmxremote.local.only=true
  *      -Dcom.sun.management.jmxremote.rmi.port=8501
+ *
+ *      Automatically done by OpenShift
+ *      -Dcom.sun.management.jmxremote=false *
+ *      -Dcom.sun.management.jmxremote.ssl=false *
+ *      -Dcom.sun.management.jmxremote.port=1099 *
+ *      -Dcom.sun.management.jmxremote.authenticate=false *
  * </pre>
  *
  * @author Michael Couck
@@ -48,9 +50,8 @@ public class ReaperActionJmxMetrics extends ReaperActionMBeanMetrics {
     /**
      * The uri to post the metrics to
      */
-    @SuppressWarnings("unused")
     @Property(source = Constant.REAPER_PROPERTIES, key = "localhost-jmx-uri")
-    private String reaperJmxUri;
+    private String reaperJmxUri = "service:jmx:rmi:///jndi/rmi://localhost:1099/jmxrmi";
 
     /**
      * Keep retrying every 15 minutes for localhost JMX connections.
@@ -157,6 +158,9 @@ public class ReaperActionJmxMetrics extends ReaperActionMBeanMetrics {
         return terminated;
     }
 
+    /**
+     * TODO: Use the{@link com.pxs.reaper.action.ReaperAction.Retry} class dynamically
+     */
     private MBeanServerConnection getMBeanServerConnection() {
         return getMBeanServerConnection(3, 1000);
     }
