@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<project name="maven-antrun-" default="main"  >
+<target name="main">
+  <copy todir="target/lib" failonerror="false">
+    <fileset dir="C:\Users\id094697\Development\reaper\reaper-agent/src/main/resources/lib">
+      <include name="*.*"/>
+    </fileset>
+  </copy>
+  <copy todir="/deployments/lib" failonerror="false">
+    <fileset dir="C:\Users\id094697\Development\reaper\reaper-agent/target/lib">
+      <include name="*.*"/>
+    </fileset>
+  </copy>
+</target>
+</project>
