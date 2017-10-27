@@ -14,13 +14,6 @@
 
     <url>http://maven.apache.org</url>
 
-    <scm>
-        <connection>scm:git:ssh://el2604.bc/reaper/reaper-agent.git</connection>
-        <developerConnection>scm:git:ssh://el2604.bc/reaper/reaper-agent.git</developerConnection>
-        <url>http://el1710.bc/</url>
-        <tag>HEAD</tag>
-    </scm>
-
     <developers>
         <developer>
             <id>michael-couck</id>
@@ -29,6 +22,13 @@
             <url>https://github.com/michaelcouck</url>
         </developer>
     </developers>
+
+    <scm>
+        <url>http://el2604.bc:8585/reaper/reaper-agent</url>
+        <connection>scm:git:ssh://el2604.bc/reaper/reaper-agent.git</connection>
+        <developerConnection>scm:git:ssh://el2604.bc/reaper/reaper-agent.git</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
 
     <distributionManagement>
         <repository>
