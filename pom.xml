@@ -30,24 +30,16 @@
         </developer>
     </developers>
 
-    <!-- TODO: Set up Nexus/Artifactory -->
-    <!--<distributionManagement>
-        <site>
-            <id>ikube-releases</id>
-            <name>ikube-releases</name>
-            <url>file:/home/michael/.m2/repository</url>
-        </site>
+    <distributionManagement>
         <repository>
-            <id>libs-release-local</id>
-            <name>libs-release-local</name>
-            <url>http://ikube.be/artifactory/libs-release-local</url>
+            <id>releases</id>
+            <url>http://el1881.bc:8081/nexus/content/repositories/releases</url>
         </repository>
         <snapshotRepository>
-            <id>libs-snapshot-local</id>
-            <name>libs-snapshot-local</name>
-            <url>http://ikube.be/artifactory/libs-release-local</url>
+            <id>snapshots</id>
+            <url>http://el1881.bc:8081/nexus/content/repositories/snapshots</url>
         </snapshotRepository>
-    </distributionManagement>-->
+    </distributionManagement>
 
     <properties>
         <sigar-version>1.6.4</sigar-version>
