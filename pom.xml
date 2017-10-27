@@ -5,6 +5,12 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
                             http://maven.apache.org/maven-v4_0_0.xsd">
 
+    <parent>
+        <groupId>com.pxs.microservices.common</groupId>
+        <artifactId>root</artifactId>
+        <version>4.0.1</version>
+    </parent>
+
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.pxs</groupId>
     <artifactId>reaper-agent</artifactId>
@@ -15,9 +21,9 @@
     <url>http://maven.apache.org</url>
 
     <scm>
-        <url>https://gitlab.com/reaper-monitoring-alerting/reaper-agent</url>
-        <connection>scm:git:ssh://gitlab.com/reaper-monitoring-alerting/reaper-agent.git</connection>
-        <developerConnection>scm:git:ssh://git@gitlab.com/reaper-monitoring-alerting/reaper-agent.git</developerConnection>
+        <connection>scm:git:ssh://el2604.bc/reaper/reaper-agent.git</connection>
+        <developerConnection>scm:git:ssh://el2604.bc/reaper/reaper-agent.git</developerConnection>
+        <url>http://el1710.bc/</url>
         <tag>HEAD</tag>
     </scm>
 
@@ -30,24 +36,16 @@
         </developer>
     </developers>
 
-    <!-- TODO: Set up Nexus/Artifactory -->
-    <!--<distributionManagement>
-        <site>
-            <id>ikube-releases</id>
-            <name>ikube-releases</name>
-            <url>file:/home/michael/.m2/repository</url>
-        </site>
+    <distributionManagement>
         <repository>
-            <id>libs-release-local</id>
-            <name>libs-release-local</name>
-            <url>http://ikube.be/artifactory/libs-release-local</url>
+            <id>releases</id>
+            <url>http://el1881.bc:8081/nexus/content/repositories/MicroserviceReleases</url>
         </repository>
         <snapshotRepository>
-            <id>libs-snapshot-local</id>
-            <name>libs-snapshot-local</name>
-            <url>http://ikube.be/artifactory/libs-release-local</url>
+            <id>snapshots</id>
+            <url>http://el1881.bc:8081/nexus/content/repositories/snapshots</url>
         </snapshotRepository>
-    </distributionManagement>-->
+    </distributionManagement>
 
     <properties>
         <sigar-version>1.6.4</sigar-version>
@@ -188,7 +186,7 @@
                                 <include name="*.*"/>
                             </fileset>
                         </copy>
-                        <copy todir="/deployments/lib" failonerror="false">
+                        <copy todir="/Data/deployments/lib" failonerror="false">
                             <fileset dir="${project.basedir}/target/lib">
                                 <include name="*.*"/>
                             </fileset>
@@ -254,6 +252,12 @@
             <version>${log4j-version}</version>
             <type>jar</type>
             <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+            <version>1.2</version>
         </dependency>
 
         <dependency>
@@ -323,23 +327,10 @@
             <version>2.0.0</version>
         </dependency>
 
-        <!--  TODO: Exclude not used libraries... -->
-        <dependency>
-            <groupId>ikube</groupId>
-            <artifactId>ikube-com</artifactId>
-            <version>6.0.0</version>
-        </dependency>
-
         <dependency>
             <groupId>org.glassfish.jersey.core</groupId>
             <artifactId>jersey-common</artifactId>
             <version>2.22.2</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.jenkins-ci.plugins</groupId>
-            <artifactId>serenity</artifactId>
-            <version>1.2</version>
         </dependency>
 
         <dependency>
@@ -370,22 +361,5 @@
             <version>1.13</version>
         </dependency>
     </dependencies>
-
-    <repositories>
-        <repository>
-            <id>ikube</id>
-            <url>http://ikube.be/artifactory/libs-release-local/</url>
-            <releases><enabled>true</enabled></releases>
-            <snapshots><enabled>true</enabled></snapshots>
-        </repository>
-        <repository>
-            <id>repo.jenkins-ci.org</id>
-            <url>http://repo.jenkins-ci.org/public/</url>
-        </repository>
-        <repository>
-            <id>repo.jenkins-ci.org-plugins</id>
-            <url>http://repo.jenkins-ci.org/repo/org/jenkins-ci/plugins/</url>
-        </repository>
-    </repositories>
 
 </project>
