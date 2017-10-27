@@ -3,7 +3,7 @@ package com.pxs.reaper.transport;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.pxs.reaper.Constant;
-import ikube.toolkit.THREAD;
+import com.pxs.reaper.toolkit.THREAD;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.jeasy.props.annotations.Property;

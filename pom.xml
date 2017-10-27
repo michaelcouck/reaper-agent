@@ -15,9 +15,9 @@
     <url>http://maven.apache.org</url>
 
     <scm>
-        <url>https://gitlab.com/reaper-monitoring-alerting/reaper-agent</url>
-        <connection>scm:git:ssh://gitlab.com/reaper-monitoring-alerting/reaper-agent.git</connection>
-        <developerConnection>scm:git:ssh://git@gitlab.com/reaper-monitoring-alerting/reaper-agent.git</developerConnection>
+        <connection>scm:git:ssh://el2604.bc/reaper/reaper-agent.git</connection>
+        <developerConnection>scm:git:ssh://el2604.bc/reaper/reaper-agent.git</developerConnection>
+        <url>http://el1710.bc/</url>
         <tag>HEAD</tag>
     </scm>
 
@@ -180,7 +180,7 @@
                                 <include name="*.*"/>
                             </fileset>
                         </copy>
-                        <copy todir="/deployments/lib" failonerror="false">
+                        <copy todir="/Data/deployments/lib" failonerror="false">
                             <fileset dir="${project.basedir}/target/lib">
                                 <include name="*.*"/>
                             </fileset>
@@ -246,6 +246,12 @@
             <version>${log4j-version}</version>
             <type>jar</type>
             <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+            <version>1.2</version>
         </dependency>
 
         <dependency>
@@ -315,23 +321,10 @@
             <version>2.0.0</version>
         </dependency>
 
-        <!--  TODO: Exclude not used libraries... -->
-        <dependency>
-            <groupId>ikube</groupId>
-            <artifactId>ikube-com</artifactId>
-            <version>6.0.0</version>
-        </dependency>
-
         <dependency>
             <groupId>org.glassfish.jersey.core</groupId>
             <artifactId>jersey-common</artifactId>
             <version>2.22.2</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.jenkins-ci.plugins</groupId>
-            <artifactId>serenity</artifactId>
-            <version>1.2</version>
         </dependency>
 
         <dependency>
@@ -362,22 +355,5 @@
             <version>1.13</version>
         </dependency>
     </dependencies>
-
-    <repositories>
-        <repository>
-            <id>ikube</id>
-            <url>http://ikube.be/artifactory/libs-release-local/</url>
-            <releases><enabled>true</enabled></releases>
-            <snapshots><enabled>true</enabled></snapshots>
-        </repository>
-        <repository>
-            <id>repo.jenkins-ci.org</id>
-            <url>http://repo.jenkins-ci.org/public/</url>
-        </repository>
-        <repository>
-            <id>repo.jenkins-ci.org-plugins</id>
-            <url>http://repo.jenkins-ci.org/repo/org/jenkins-ci/plugins/</url>
-        </repository>
-    </repositories>
 
 </project>
