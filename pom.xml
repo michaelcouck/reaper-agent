@@ -23,7 +23,7 @@
         </developer>
     </developers>
 
-    <scm>
+<!--    <scm>
         <url>http://el2604.bc:8585/reaper/reaper-agent</url>
         <connection>scm:git:ssh://el2604.bc/reaper/reaper-agent.git</connection>
         <developerConnection>scm:git:ssh://el2604.bc/reaper/reaper-agent.git</developerConnection>
@@ -39,7 +39,7 @@
             <id>snapshots</id>
             <url>http://el1881.bc:8081/nexus/content/repositories/snapshots</url>
         </snapshotRepository>
-    </distributionManagement>
+    </distributionManagement>-->
 
     <properties>
         <sigar-version>1.6.4</sigar-version>
