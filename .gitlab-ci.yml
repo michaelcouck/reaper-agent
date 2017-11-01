@@ -8,7 +8,8 @@ before_script:
 stages:
   - test
 
+# -T 1C -U --fail-at-end --batch-mode -Pcssnexus
 execute-tests:
   stage: test
   script:
-    - mvn clean test -T 1C -U --fail-at-end --batch-mode -Pcssnexus
+    - mvn test

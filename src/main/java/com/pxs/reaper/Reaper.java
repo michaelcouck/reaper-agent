@@ -43,6 +43,11 @@ import java.lang.management.ManagementFactory;
 @Setter
 public class Reaper {
 
+    static {
+        Constant.PROPERTIES_INJECTOR.injectProperties(Constant.EXTERNAL_CONSTANTS);
+        addNativeLibrariesToPath();
+    }
+
     /**
      * The entry method attaches to the local operating system, attaches to any java processes on the local operating system, and
      * also tries to attach to any process that is exposing jmx on the local machine on the defined port.
@@ -50,10 +55,6 @@ public class Reaper {
      * @param args not used
      */
     public static void main(final String[] args) {
-        Constant.PROPERTIES_INJECTOR.injectProperties(Constant.EXTERNAL_CONSTANTS);
-
-        addNativeLibrariesToPath();
-
         Reaper reaper = new Reaper();
         reaper.attachToOperatingSystem();
         reaper.attachToJavaProcesses();

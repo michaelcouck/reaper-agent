@@ -66,7 +66,7 @@
         <memory-parameters>-Xms512m -Xmx1024m</memory-parameters>
 
         <jmx-remoting>-Djava.rmi.server.hostname=localhost -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.local.only=false</jmx-remoting>
-        <jmx-ports>-Dcom.sun.management.jmxremote.rmi.port=1098 -Dcom.sun.management.jmxremote.port=1099</jmx-ports>
+        <jmx-ports>-Dcom.sun.management.jmxremote.rmi.port=1100 -Dcom.sun.management.jmxremote.port=1099</jmx-ports>
         <jmx-security>-Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false</jmx-security>
         <jmx-parameters>${jmx-remoting} ${jmx-ports} ${jmx-security}</jmx-parameters>
     </properties>
