@@ -1,6 +1,5 @@
 package com.pxs.reaper.action;
 
-import ikube.toolkit.THREAD;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 
@@ -10,7 +9,6 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.Enumeration;
 import java.util.UUID;
-import java.util.function.Function;
 import java.util.regex.Pattern;
 
 /**
@@ -33,25 +31,6 @@ interface ReaperAction {
      * @return whether the unit of work was successful. If resource release fails for any reason, the result should be false
      */
     boolean terminate();
-
-    /**
-     * TODO: Weave this class into an annotation, for dynamic application...
-     */
-    class Retry {
-        void retry(final Object target, final Function<Object, Object> function, final int retry, final long delay) {
-            try {
-                function.apply(target);
-            } catch (final Exception e) {
-                if (retry > 0) {
-                    long sleep = delay / retry;
-                    THREAD.sleep(sleep);
-                    retry(target, function, retry - 1, delay);
-                } else {
-                    throw new RuntimeException(e);
-                }
-            }
-        }
-    }
 
     /**
      * This class looks through the {@link InetAddress}(s) of the host to try find the 'unique' ip address

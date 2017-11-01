@@ -24,23 +24,20 @@ import java.util.TimerTask;
 @Slf4j
 public class ReaperActionOSMetrics extends TimerTask implements ReaperAction {
 
-    /**
-     * The unique ip, hostname or UUID unique to this pod
-     */
-    private String hostName;
+    private final Object lock = new Object();
     /**
      * {@link Sigar} is the native operating system access to metrics and telemetry. It provides {@link Cpu},
      * {@link CpuInfo}, {@link Mem} information and several other metrics, some of which are quite low level.
      */
-    private final Sigar sigar;
+    private Sigar sigar;
     /**
      * Provides transport of the metrics from the class to the central analyzer over the wire
      */
-    private final Transport transport;
+    private Transport transport;
     /**
      * Proxy class for {@link Sigar} for simplifying the refresh rate of the gathering of data
      */
-    private final SigarProxy sigarProxy;
+    private SigarProxy sigarProxy;
 
     public ReaperActionOSMetrics() {
         sigar = new Sigar();
@@ -59,7 +56,7 @@ public class ReaperActionOSMetrics extends TimerTask implements ReaperAction {
             InetAddress inetAddress = InetAddress.getByName(Hostname.hostname());
             osMetrics.setInetAddress(inetAddress);
 
-            synchronized (sigar) {
+            synchronized (lock) {
                 Cpu[] cpu = cpu(sigarProxy);
                 CpuInfo[] cpuInfo = cpuInfo(sigarProxy);
                 CpuPerc[] cpuPerc = cpuPerc(sigarProxy);
@@ -88,6 +85,7 @@ public class ReaperActionOSMetrics extends TimerTask implements ReaperAction {
                 transport.postMetrics(osMetrics);
             }
         } catch (final SigarException | UnknownHostException e) {
+            // TODO: Re-initialize sigar here, and test it
             throw new RuntimeException(e);
         } finally {
             SigarProxyCache.clear(sigarProxy);
@@ -146,7 +144,7 @@ public class ReaperActionOSMetrics extends TimerTask implements ReaperAction {
      */
     @Override
     public boolean terminate() {
-        synchronized (sigar) {
+        synchronized (lock) {
             try {
                 sigar.close();
             } catch (final Exception e) {

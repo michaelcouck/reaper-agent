@@ -19,7 +19,7 @@ import static org.jeasy.props.PropertiesInjectorBuilder.aNewPropertiesInjector;
 public interface Constant {
 
     /**
-     * Properties file for various parameterizations. Used in conjunction with {@link Property} annotations is quite convenient
+     * Properties file for various parameterization. Used in conjunction with {@link Property} annotations is quite convenient
      */
     String REAPER_PROPERTIES = "reaper.properties";
     /**
@@ -51,7 +51,7 @@ public interface Constant {
     class ExternalConstants {
         @SuppressWarnings("unused")
         @Property(source = Constant.REAPER_PROPERTIES, key = "sleep-time")
-        private int sleepTime = 10;
+        private int sleepTime = 10000;
     }
 
 }

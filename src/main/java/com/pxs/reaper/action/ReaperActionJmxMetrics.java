@@ -2,9 +2,10 @@ package com.pxs.reaper.action;
 
 import com.pxs.reaper.Constant;
 import com.pxs.reaper.model.JMetrics;
+import com.pxs.reaper.toolkit.Retry;
+import com.pxs.reaper.toolkit.RetryIncreasingDelay;
 import com.pxs.reaper.transport.Transport;
 import com.pxs.reaper.transport.WebSocketTransport;
-import ikube.toolkit.THREAD;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.jeasy.props.annotations.Property;
@@ -18,6 +19,7 @@ import java.lang.management.*;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Set;
+import java.util.function.Function;
 
 /**
  * The pid for the Java processes are often not exposed, for example on OpenShift, consequently it is not possible to dynamically attach a n agent
@@ -29,7 +31,7 @@ import java.util.Set;
  * <pre>
  *      -Djava.rmi.server.hostname=localhost
  *      -Dcom.sun.management.jmxremote.local.only=true
- *      -Dcom.sun.management.jmxremote.rmi.port=8501
+ *      -Dcom.sun.management.jmxremote.rmi.port=1100
  *
  *      Automatically done by OpenShift
  *      -Dcom.sun.management.jmxremote=false *
@@ -52,13 +54,20 @@ public class ReaperActionJmxMetrics extends ReaperActionMBeanMetrics {
      */
     @Property(source = Constant.REAPER_PROPERTIES, key = "localhost-jmx-uri")
     private String reaperJmxUri = "service:jmx:rmi:///jndi/rmi://localhost:1099/jmxrmi";
+    /**
+     * Time to sleep between accessing the JMX telemetry.
+     */
+    @Property(source = Constant.REAPER_PROPERTIES, key = "sleep-time")
+    private long sleepTime = 1000 * 60 * 15;
+
+    @Property(source = Constant.REAPER_PROPERTIES, key = "max-retries")
+    private long maxRetries;
+    @Property(source = Constant.REAPER_PROPERTIES, key = "final-retry-delay")
+    private long finalRetryDelay;
 
     /**
-     * Keep retrying every 15 minutes for localhost JMX connections.
-     */
-    @SuppressWarnings("FieldCanBeLocal")
-    private long delay = 1000 * 60 * 15;
-    /**
+     * TODO: Centralize the transport for usage across components, and add connect retryWithIncreasingDelay
+     * <p>
      * Transport to the service for accumulation of telemetry data for analysis.
      */
     private Transport transport;
@@ -70,41 +79,26 @@ public class ReaperActionJmxMetrics extends ReaperActionMBeanMetrics {
      * The management bean connection to the JMX MBeans, instance variable so as to release resources on terminate
      */
     private MBeanServerConnection mbeanConn;
+    /**
+     * A class to retryWithIncreasingDelay certain functions with a sleepTime.
+     */
+    private Retry retryWithIncreasingDelay;
 
     public ReaperActionJmxMetrics() {
         transport = new WebSocketTransport();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void run() {
-        run(3, delay);
+        retryWithIncreasingDelay = new RetryIncreasingDelay();
     }
 
     /**
      * Connects to the local JMX management beans. Iterates through all the beans, extracting interesting metrics and telemetry data
      * from the beans. Populates a {@link JMetrics} object that is converted to json for transport the central analyzer.
-     *
-     * @param retry the number of times to retry connecting to the JMX MBeans
-     * @param delay the delay to apply. The delay increases with each retry
      */
-    private void run(final int retry, final long delay) {
-        Set<ObjectName> objectNames;
-        try {
-            getMBeanServerConnection();
-            objectNames = mbeanConn.queryNames(null, null);
-        } catch (final Exception e) {
-            if (retry > 0) {
-                long sleep = delay / retry;
-                THREAD.sleep(sleep);
-                run(retry - 1, delay);
-                return;
-            } else {
-                log.debug("No connection to JMX : ", e);
-                return;
-            }
+    @Override
+    public void run() {
+        Set<ObjectName> objectNames = getObjectNames();
+        if (objectNames == null) {
+            log.debug("No connection to JMX : ");
+            return;
         }
 
         JMetrics jMetrics = JMetrics.builder().build();
@@ -158,31 +152,40 @@ public class ReaperActionJmxMetrics extends ReaperActionMBeanMetrics {
         return terminated;
     }
 
-    /**
-     * TODO: Use the{@link com.pxs.reaper.action.ReaperAction.Retry} class dynamically
-     */
-    private MBeanServerConnection getMBeanServerConnection() {
-        return getMBeanServerConnection(3, 1000);
+    private Set<ObjectName> getObjectNames() {
+        getMBeanServerConnection();
+        Function<Void, Set<ObjectName>> function = aVoid -> {
+            try {
+                if (mbeanConn == null) {
+                    return null;
+                }
+                return mbeanConn.queryNames(null, null);
+            } catch (final IOException e) {
+                throw new RuntimeException(e);
+            }
+        };
+        return retryWithIncreasingDelay.retry(function, null, maxRetries, finalRetryDelay);
     }
 
-    private MBeanServerConnection getMBeanServerConnection(final int retry, final long delay) {
-        if (mbeanConn == null) {
-            JMXServiceURL serviceUrl;
+    private MBeanServerConnection getMBeanServerConnection() {
+        Function<Void, MBeanServerConnection> function = aVoid -> {
+            if (mbeanConn != null) {
+                return mbeanConn;
+            }
             try {
-                serviceUrl = new JMXServiceURL(reaperJmxUri);
+                JMXServiceURL serviceUrl = new JMXServiceURL(reaperJmxUri);
                 jmxConnector = JMXConnectorFactory.connect(serviceUrl, null);
                 return mbeanConn = jmxConnector.getMBeanServerConnection();
             } catch (final Exception e) {
-                if (retry > 0) {
-                    long sleep = delay / retry;
-                    THREAD.sleep(sleep);
-                    return getMBeanServerConnection(retry - 1, delay);
-                } else {
-                    throw new RuntimeException(e);
-                }
+                throw new RuntimeException(e);
             }
+        };
+        try {
+            return retryWithIncreasingDelay.retry(function, null, 5, sleepTime);
+        } catch (final Exception e) {
+            log.debug("No jmx on this machine : ", e);
+            return null;
         }
-        return mbeanConn;
     }
 
 }

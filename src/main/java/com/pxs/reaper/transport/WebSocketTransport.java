@@ -3,7 +3,8 @@ package com.pxs.reaper.transport;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.pxs.reaper.Constant;
-import ikube.toolkit.THREAD;
+import com.pxs.reaper.toolkit.Retry;
+import com.pxs.reaper.toolkit.RetryIncreasingDelay;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.jeasy.props.annotations.Property;
@@ -11,6 +12,7 @@ import org.jeasy.props.annotations.Property;
 import javax.websocket.*;
 import java.io.IOException;
 import java.net.URI;
+import java.util.function.Function;
 
 /**
  * Transport for the web socket implementation. This implementation connects to the web socket using a parameter in the
@@ -31,7 +33,10 @@ public class WebSocketTransport implements Transport {
     @SuppressWarnings("unused")
     @Property(source = Constant.REAPER_PROPERTIES, key = "reaper-web-socket-uri")
     private String reaperWebSocketUri;
-
+    /**
+     * Retry class for trying to connect to delivery protocol.
+     */
+    private Retry retryWithIncreasingDelay;
     /**
      * Converts the metrics objects to json for transport over the wire
      */
@@ -40,20 +45,28 @@ public class WebSocketTransport implements Transport {
      * Reference to the session to the centralized analyzer
      */
     private Session session;
-
+    /**
+     * Delay between logging the metrics posted.
+     */
+    @Property(source = Constant.REAPER_PROPERTIES, key = "logging-interval")
     private long loggingInterval = 1000 * 60 * 60;
     private long lastLoggingTimestamp = System.currentTimeMillis();
+    @Property(source = Constant.REAPER_PROPERTIES, key = "max-retries")
+    private int maxRetries;
+    @Property(source = Constant.REAPER_PROPERTIES, key = "final-retry-delay")
+    private long finalRetryDelay;
 
     public WebSocketTransport() {
         gson = new GsonBuilder().create();
         Constant.PROPERTIES_INJECTOR.injectProperties(this);
+        retryWithIncreasingDelay = new RetryIncreasingDelay();
     }
 
     /**
      * {@inheritDoc}
      */
     public void postMetrics(final Object metrics) {
-        openSession(3, 1000);
+        openSession();
 
         RemoteEndpoint.Async async = session.getAsyncRemote();
         String postage = gson.toJson(metrics);
@@ -68,24 +81,20 @@ public class WebSocketTransport implements Transport {
 
     /**
      * Opens a session to the web socket of the centralized analyzer.
-     *
-     * @param retry the number of times to retry opening the connection
-     * @param delay the final delay, if set to 1000 eg. then the first delay will be 333ms, then 500ms, then 1000ms
      */
-    private void openSession(final int retry, final long delay) {
+    private void openSession() {
         if (session == null || !session.isOpen()) {
-            WebSocketContainer container = ContainerProvider.getWebSocketContainer();
-            URI uri = URI.create(reaperWebSocketUri);
-            try {
-                session = container.connectToServer(this, uri);
-            } catch (final DeploymentException | IOException e) {
-                if (retry > 0) {
-                    THREAD.sleep(delay / retry);
-                    openSession(retry - 1, delay);
-                    return;
+            Transport transport = this;
+            Function<Void, Session> function = aVoid -> {
+                WebSocketContainer container = ContainerProvider.getWebSocketContainer();
+                URI uri = URI.create(reaperWebSocketUri);
+                try {
+                    return container.connectToServer(transport, uri);
+                } catch (DeploymentException | IOException e) {
+                    throw new RuntimeException(e);
                 }
-                throw new RuntimeException("Error connecting to : " + uri, e);
-            }
+            };
+            session = retryWithIncreasingDelay.retry(function, null, maxRetries, finalRetryDelay);
         }
     }
 

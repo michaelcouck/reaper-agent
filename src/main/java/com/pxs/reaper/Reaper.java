@@ -48,6 +48,12 @@ public class Reaper {
         Constant.PROPERTIES_INJECTOR.injectProperties(Constant.EXTERNAL_CONSTANTS);
     }
 
+    /**
+     * Teh entry method attaches to the local operating system, attaches to any java processes on the local operating system, and
+     * also tries to attach to any process that is exposing jmx on the local machine on the defined port.
+     *
+     * @param args not used
+     */
     public static void main(final String[] args) {
         addNativeLibrariesToPath();
 
