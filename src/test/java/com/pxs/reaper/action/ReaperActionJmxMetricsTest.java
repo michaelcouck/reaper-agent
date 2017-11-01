@@ -3,7 +3,6 @@ package com.pxs.reaper.action;
 import com.pxs.reaper.Constant;
 import com.pxs.reaper.model.JMetrics;
 import com.pxs.reaper.transport.Transport;
-import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,7 +15,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicReference;
 
-@Slf4j
 @RunWith(MockitoJUnitRunner.class)
 public class ReaperActionJmxMetricsTest {
 

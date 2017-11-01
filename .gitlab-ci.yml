@@ -1,6 +1,14 @@
-image: maven:latest
+image: maven:3-alpine
 
-build:
-  stage: build
+before_script:
+  - echo $JAVA_HOME
+  - java -version
+  - mvn -version
+
+stages:
+  - test
+
+execute-tests:
+  stage: test
   script:
-    - mvn install
+    - mvn clean test -T 1C -U --fail-at-end --batch-mode -Pcssnexus
