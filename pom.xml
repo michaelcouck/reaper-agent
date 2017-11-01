@@ -180,7 +180,8 @@
                                 <include name="*.*"/>
                             </fileset>
                         </copy>
-                        <copy todir="/Data/deployments/lib" failonerror="false">
+                        <!-- On linux and in a pod on OpenShift this path must be /deployments/lib, and nothing else. -->
+                        <copy todir="/deployments/lib" failonerror="false">
                             <fileset dir="${project.basedir}/target/lib">
                                 <include name="*.*"/>
                             </fileset>
