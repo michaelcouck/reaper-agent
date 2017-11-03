@@ -95,6 +95,7 @@ public class ReaperActionJmxMetrics extends ReaperActionMBeanMetrics {
      */
     @Override
     public void run() {
+        // TODO: Scan for al ports here, just in case... Then save them. Perhaps have a scheduled scan to check for mew exposures.
         Set<ObjectName> objectNames = getObjectNames();
         if (objectNames == null) {
             log.debug("No connection to JMX : ");
