@@ -30,9 +30,28 @@ public class WebSocketTransport implements Transport {
     /**
      * The uri to the central analyzer for posting metrics to
      */
-    @SuppressWarnings("unused")
     @Property(source = Constant.REAPER_PROPERTIES, key = "reaper-web-socket-uri")
     private String reaperWebSocketUri;
+    /**
+     * Delay between logging the metrics posted
+     */
+    @Property(source = Constant.REAPER_PROPERTIES, key = "logging-interval")
+    private long loggingInterval;
+    /**
+     * Time stamp for the last time a log was posted
+     */
+    private long lastLoggingTimestamp;
+    /**
+     * Maximum number of retries to connect to the service
+     */
+    @Property(source = Constant.REAPER_PROPERTIES, key = "max-retries")
+    private int maxRetries;
+    /**
+     * The maximum delay between retries to connect ot the service
+     */
+    @Property(source = Constant.REAPER_PROPERTIES, key = "final-retry-delay")
+    private long finalRetryDelay;
+
     /**
      * Retry class for trying to connect to delivery protocol.
      */
@@ -45,18 +64,10 @@ public class WebSocketTransport implements Transport {
      * Reference to the session to the centralized analyzer
      */
     private Session session;
-    /**
-     * Delay between logging the metrics posted.
-     */
-    @Property(source = Constant.REAPER_PROPERTIES, key = "logging-interval")
-    private long loggingInterval = 1000 * 60 * 60;
-    private long lastLoggingTimestamp = System.currentTimeMillis();
-    @Property(source = Constant.REAPER_PROPERTIES, key = "max-retries")
-    private int maxRetries;
-    @Property(source = Constant.REAPER_PROPERTIES, key = "final-retry-delay")
-    private long finalRetryDelay;
 
     public WebSocketTransport() {
+        loggingInterval = 1000 * 60 * 60;
+        lastLoggingTimestamp = System.currentTimeMillis();
         gson = new GsonBuilder().create();
         Constant.PROPERTIES_INJECTOR.injectProperties(this);
         retryWithIncreasingDelay = new RetryIncreasingDelay();

@@ -2,6 +2,7 @@ package com.pxs.reaper.action;
 
 import com.pxs.reaper.Constant;
 import com.pxs.reaper.model.OSMetrics;
+import com.pxs.reaper.toolkit.HOST;
 import com.pxs.reaper.toolkit.OS;
 import com.pxs.reaper.transport.Transport;
 import com.pxs.reaper.transport.WebSocketTransport;
@@ -53,7 +54,7 @@ public class ReaperActionOSMetrics extends TimerTask implements ReaperAction {
         try {
             // Gather all the operating system metrics, pop them in a OSMetrics object and post them
             OSMetrics osMetrics = OSMetrics.builder().build();
-            InetAddress inetAddress = InetAddress.getByName(Hostname.hostname());
+            InetAddress inetAddress = InetAddress.getByName(HOST.hostname());
             osMetrics.setInetAddress(inetAddress);
 
             synchronized (lock) {

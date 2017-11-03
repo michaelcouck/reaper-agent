@@ -1,6 +1,7 @@
 package com.pxs.reaper.action;
 
 import com.pxs.reaper.model.*;
+import com.pxs.reaper.toolkit.HOST;
 
 import java.lang.management.*;
 import java.net.InetAddress;
@@ -28,7 +29,7 @@ abstract class ReaperActionMBeanMetrics extends TimerTask implements ReaperActio
             String vmName = runtimeMXBean.getName();
             jMetrics.setPid(vmName);
             jMetrics.setDate(new Date());
-            InetAddress inetAddress = InetAddress.getByName(Hostname.hostname());
+            InetAddress inetAddress = InetAddress.getByName(HOST.hostname());
             jMetrics.setInetAddress(inetAddress);
         } catch (final UnknownHostException e) {
             throw new RuntimeException(e);
