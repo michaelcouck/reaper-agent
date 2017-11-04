@@ -5,6 +5,7 @@ import com.pxs.reaper.Reaper;
 import com.pxs.reaper.model.OSMetrics;
 import com.pxs.reaper.transport.Transport;
 import lombok.extern.slf4j.Slf4j;
+import org.hyperic.sigar.NetConnection;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -44,6 +45,10 @@ public class ReaperActionOSMetricsTest {
             Object[] metrics = invocation.getArguments();
             for (final Object metric : metrics) {
                 if (metric != null && OSMetrics.class.isAssignableFrom(metric.getClass())) {
+                    System.out.println(Constant.GSON.toJson(metric));
+                    for (NetConnection netConnection : ((OSMetrics) metric).getNetConnections()) {
+                        System.out.println(netConnection.getRemoteAddress());
+                    }
                     objectAtomicReference.set(metric);
                 }
             }

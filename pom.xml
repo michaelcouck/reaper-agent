@@ -23,6 +23,19 @@
         </developer>
     </developers>
 
+    <distributionManagement>
+        <repository>
+            <id>libs-release-local</id>
+            <name>libs-release-local</name>
+            <url>http://ikube.be/artifactory/libs-release-local</url>
+        </repository>
+        <snapshotRepository>
+            <id>libs-snapshot-local</id>
+            <name>libs-snapshot-local</name>
+            <url>http://ikube.be/artifactory/libs-release-local</url>
+        </snapshotRepository>
+    </distributionManagement>
+
 <!--    <scm>
         <url>http://el2604.bc:8585/reaper/reaper-agent</url>
         <connection>scm:git:ssh://el2604.bc/reaper/reaper-agent.git</connection>

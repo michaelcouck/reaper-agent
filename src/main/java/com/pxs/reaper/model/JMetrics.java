@@ -23,6 +23,8 @@ import java.util.Date;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class JMetrics {
 
+    private Class<?> type = this.getType();
+
     /**
      * Ip address of the local agent.
      */
@@ -35,11 +37,11 @@ public class JMetrics {
 
     private Date date;
 
-    private Classloading classLoading;
-    private Compilation compilation;
-    private GarbageCollection[] garbageCollection;
     private Memory memory;
-    private MemoryPool[] memoryPools;
     private Threading threading;
+    private Compilation compilation;
+    private MemoryPool[] memoryPools;
+    private Classloading classLoading;
+    private GarbageCollection[] garbageCollection;
 
 }

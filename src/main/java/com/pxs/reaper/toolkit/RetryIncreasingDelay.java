@@ -15,23 +15,14 @@ import java.util.function.Function;
 public class RetryIncreasingDelay implements Retry {
 
     /**
-     * TODO: Document me...
-     *
-     * @param functionToRetry ...
-     * @param input           ...
-     * @param additionalInput ...
-     * @param <I>             ...
-     * @param <O>             ...
-     * @return ...
+     * {@inheritDoc}
      */
-    public <I, O> O retry(final Function<I, O> functionToRetry, final I input, final Object... additionalInput) {
-        int numberOfRetries = ((Number) additionalInput[0]).intValue();
-        long finalDelayBetweenRetries = ((Number) additionalInput[1]).longValue();
+    public <I, O> O retry(final Function<I, O> functionToRetry, final I input, final int numberOfRetries, final long finalDelayBetweenRetries) {
         return retryWithIncreasingDelay(functionToRetry, input, numberOfRetries, finalDelayBetweenRetries);
     }
 
     /**
-     * See: {@link RetryIncreasingDelay#retry(Function, Object, Object...)}
+     * See: {@link RetryIncreasingDelay#retry(Function, Object, int, long)}
      */
     private <I, O> O retryWithIncreasingDelay(
             final Function<I, O> functionToRetry,
@@ -43,7 +34,6 @@ public class RetryIncreasingDelay implements Retry {
         } catch (final Exception e) {
             if (numberOfRetries > 0) {
                 long time = finalDelayBetweenRetries / Math.max(1, numberOfRetries);
-                log.debug("Sleeping for : {}", time);
                 sleep(time);
                 return retryWithIncreasingDelay(functionToRetry, input, numberOfRetries - 1, finalDelayBetweenRetries);
             } else {
@@ -54,6 +44,7 @@ public class RetryIncreasingDelay implements Retry {
 
     private void sleep(final long time) {
         try {
+            log.debug("Sleeping for : {}", time);
             Thread.sleep(time);
         } catch (final InterruptedException e) {
             Thread.currentThread().interrupt();

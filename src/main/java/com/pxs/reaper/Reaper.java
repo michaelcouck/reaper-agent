@@ -99,7 +99,7 @@ public class Reaper {
      * will be 1200 kb/second metrics posting.
      */
     @Property(source = Constant.REAPER_PROPERTIES, key = "sleep-time")
-    private int sleepTime = 10000;
+    private int sleepTime = 15000;
 
     private Reaper() {
         Constant.PROPERTIES_INJECTOR.injectProperties(this);

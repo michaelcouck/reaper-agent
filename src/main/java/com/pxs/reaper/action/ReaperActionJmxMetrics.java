@@ -165,7 +165,7 @@ public class ReaperActionJmxMetrics extends ReaperActionMBeanMetrics {
                 throw new RuntimeException(e);
             }
         };
-        return retryWithIncreasingDelay.retry(function, null, maxRetries, finalRetryDelay);
+        return retryWithIncreasingDelay.retry(function, null, (int) maxRetries, finalRetryDelay);
     }
 
     private MBeanServerConnection getMBeanServerConnection() {

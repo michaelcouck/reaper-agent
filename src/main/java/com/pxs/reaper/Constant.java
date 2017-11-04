@@ -1,5 +1,7 @@
 package com.pxs.reaper;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import lombok.Getter;
 import lombok.Setter;
 import org.jeasy.props.annotations.Property;
@@ -30,6 +32,14 @@ public interface Constant {
      * The linux sigar load module, to find where in the folder structure these link libraries are and add them to the $PATH
      */
     String LINUX_LOAD_MODULE = "libsigar-amd64-linux.so";
+    /**
+     * The date format for the serializer.
+     */
+    String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss.SSS";
+    /**
+     * The Json serializer and de serializer.
+     */
+    Gson GSON = new GsonBuilder().setDateFormat(DATE_FORMAT).create();
 
     /**
      * The timer for all the actions, {@link com.pxs.reaper.action.ReaperActionAgentMetrics}, {@link com.pxs.reaper.action.ReaperActionJmxMetrics} etc.

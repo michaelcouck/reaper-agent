@@ -11,6 +11,14 @@ import java.net.InetAddress;
 
 /**
  * Contains operating system metrics, low level.
+ * <p>
+ * Potentially interesting additions to the metrics.
+ * <pre>
+ *     {@link NetConnection}
+ *     {@link NetInterfaceStat}
+ *     {@link FileSystemUsage}
+ *     {@link DiskUsage}
+ * </pre>
  *
  * @author Michael Couck
  * @version 1.0
@@ -22,6 +30,8 @@ import java.net.InetAddress;
 @ToString
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class OSMetrics {
+
+    private Class<?> type = this.getType();
 
     /**
      * Ip address of the local agent.
@@ -35,15 +45,16 @@ public class OSMetrics {
     private CpuPerc[] cpuPerc;
     private CpuInfo[] cpuInfo;
 
-    private ResourceLimit resourceLimit;
-
     private double[] loadAverage;
 
+    private Tcp tcp;
     private Mem mem;
     private Swap swap;
-    private Tcp tcp;
     private NetInfo netInfo;
     private NetStat netStat;
+    private NetRoute[] netRoutes;
+    private NetConnection[] netConnections;
     private ProcStat procStat;
+    private ResourceLimit resourceLimit;
 
 }

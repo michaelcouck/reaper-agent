@@ -1,7 +1,7 @@
 package com.pxs.reaper.transport;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.pxs.reaper.Constant;
 import com.pxs.reaper.toolkit.Retry;
 import com.pxs.reaper.toolkit.RetryIncreasingDelay;
@@ -57,10 +57,6 @@ public class WebSocketTransport implements Transport {
      */
     private Retry retryWithIncreasingDelay;
     /**
-     * Converts the metrics objects to json for transport over the wire
-     */
-    private Gson gson;
-    /**
      * Reference to the session to the centralized analyzer
      */
     private Session session;
@@ -68,7 +64,6 @@ public class WebSocketTransport implements Transport {
     public WebSocketTransport() {
         loggingInterval = 1000 * 60 * 60;
         lastLoggingTimestamp = System.currentTimeMillis();
-        gson = new GsonBuilder().create();
         Constant.PROPERTIES_INJECTOR.injectProperties(this);
         retryWithIncreasingDelay = new RetryIncreasingDelay();
     }
@@ -79,13 +74,19 @@ public class WebSocketTransport implements Transport {
     public void postMetrics(final Object metrics) {
         openSession();
 
-        RemoteEndpoint.Async async = session.getAsyncRemote();
-        String postage = gson.toJson(metrics);
+        JsonElement jsonElement = Constant.GSON.toJsonTree(metrics);
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.add(metrics.getClass().getName(), jsonElement);
+        String postage = jsonObject.toString();
+        // System.out.println(postage);
+
         // Periodically log some data
         if (System.currentTimeMillis() - lastLoggingTimestamp > loggingInterval) {
             log.info("Sending metrics : {}", postage);
             lastLoggingTimestamp = System.currentTimeMillis();
         }
+
+        RemoteEndpoint.Async async = session.getAsyncRemote();
         log.debug("Sending metrics : {}", postage);
         async.sendText(postage);
     }

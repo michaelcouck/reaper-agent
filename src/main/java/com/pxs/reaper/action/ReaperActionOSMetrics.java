@@ -66,6 +66,8 @@ public class ReaperActionOSMetrics extends TimerTask implements ReaperAction {
                 Mem mem = mem(sigarProxy);
                 NetInfo netInfo = netInfo(sigarProxy);
                 NetStat netStat = netStat(sigarProxy);
+                NetRoute[] netRoutes = netRoutes(sigarProxy);
+                NetConnection[] netConnections = netConnections(sigarProxy);
                 ProcStat procStat = procStat(sigarProxy);
                 Tcp tcp = tcp(sigarProxy);
                 ResourceLimit resourceLimit = resourceLimit(sigarProxy);
@@ -78,6 +80,8 @@ public class ReaperActionOSMetrics extends TimerTask implements ReaperAction {
                 osMetrics.setMem(mem);
                 osMetrics.setNetInfo(netInfo);
                 osMetrics.setNetStat(netStat);
+                osMetrics.setNetRoutes(netRoutes);
+                osMetrics.setNetConnections(netConnections);
                 osMetrics.setProcStat(procStat);
                 osMetrics.setSwap(swap);
                 osMetrics.setTcp(tcp);
@@ -103,6 +107,15 @@ public class ReaperActionOSMetrics extends TimerTask implements ReaperAction {
 
     private NetStat netStat(final SigarProxy sigarProxy) throws SigarException {
         return sigarProxy.getNetStat();
+    }
+
+    private NetRoute[] netRoutes(final SigarProxy sigarProxy) throws SigarException {
+        return sigarProxy.getNetRouteList();
+    }
+
+    private NetConnection[] netConnections(final SigarProxy sigarProxy) throws SigarException {
+        int flags = NetFlags.CONN_SERVER | NetFlags.CONN_CLIENT | NetFlags.CONN_TCP;
+        return sigarProxy.getNetConnectionList(flags);
     }
 
     private NetInfo netInfo(final SigarProxy sigarProxy) throws SigarException {

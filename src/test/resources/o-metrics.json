@@ -1,0 +1,933 @@
+{
+  "inetAddress": "192.168.1.13",
+  "cpu": [
+    {
+      "user": 5774870,
+      "sys": 4249700,
+      "nice": 37310,
+      "idle": 435610880,
+      "wait": 321100,
+      "irq": 0,
+      "softIrq": 9760,
+      "stolen": 0,
+      "total": 446003620
+    },
+    {
+      "user": 5568730,
+      "sys": 4078640,
+      "nice": 45530,
+      "idle": 436081020,
+      "wait": 177010,
+      "irq": 0,
+      "softIrq": 6760,
+      "stolen": 0,
+      "total": 445957690
+    },
+    {
+      "user": 6011540,
+      "sys": 4949660,
+      "nice": 35580,
+      "idle": 434341350,
+      "wait": 550800,
+      "irq": 0,
+      "softIrq": 4520,
+      "stolen": 0,
+      "total": 445893450
+    },
+    {
+      "user": 5835230,
+      "sys": 4649180,
+      "nice": 24420,
+      "idle": 435286120,
+      "wait": 179480,
+      "irq": 0,
+      "softIrq": 11230,
+      "stolen": 0,
+      "total": 445985660
+    },
+    {
+      "user": 3458040,
+      "sys": 2606590,
+      "nice": 26830,
+      "idle": 439810200,
+      "wait": 175340,
+      "irq": 0,
+      "softIrq": 500,
+      "stolen": 0,
+      "total": 446077500
+    },
+    {
+      "user": 3295080,
+      "sys": 2444090,
+      "nice": 26280,
+      "idle": 440213050,
+      "wait": 35080,
+      "irq": 0,
+      "softIrq": 1660,
+      "stolen": 0,
+      "total": 446015240
+    },
+    {
+      "user": 3138360,
+      "sys": 2456070,
+      "nice": 51470,
+      "idle": 440217830,
+      "wait": 156210,
+      "irq": 0,
+      "softIrq": 53880,
+      "stolen": 0,
+      "total": 446073820
+    },
+    {
+      "user": 3555900,
+      "sys": 2635370,
+      "nice": 42030,
+      "idle": 439616790,
+      "wait": 267080,
+      "irq": 0,
+      "softIrq": 140,
+      "stolen": 0,
+      "total": 446117310
+    }
+  ],
+  "cpuPerc": [
+    {
+      "user": 0.3,
+      "sys": 0.02,
+      "nice": 0.0,
+      "idle": 0.68,
+      "wait": 0.0,
+      "irq": 0.0,
+      "softIrq": 0.0,
+      "stolen": 0.0,
+      "combined": 0.32
+    },
+    {
+      "user": 0.24,
+      "sys": 0.02,
+      "nice": 0.0,
+      "idle": 0.74,
+      "wait": 0.0,
+      "irq": 0.0,
+      "softIrq": 0.0,
+      "stolen": 0.0,
+      "combined": 0.26
+    },
+    {
+      "user": 0.35294117647058826,
+      "sys": 0.058823529411764705,
+      "nice": 0.0,
+      "idle": 0.5882352941176471,
+      "wait": 0.0,
+      "irq": 0.0,
+      "softIrq": 0.0,
+      "stolen": 0.0,
+      "combined": 0.411764705882353
+    },
+    {
+      "user": 0.06,
+      "sys": 0.02,
+      "nice": 0.0,
+      "idle": 0.92,
+      "wait": 0.0,
+      "irq": 0.0,
+      "softIrq": 0.0,
+      "stolen": 0.0,
+      "combined": 0.08
+    },
+    {
+      "user": 0.35294117647058826,
+      "sys": 0.0196078431372549,
+      "nice": 0.0,
+      "idle": 0.6274509803921569,
+      "wait": 0.0,
+      "irq": 0.0,
+      "softIrq": 0.0,
+      "stolen": 0.0,
+      "combined": 0.37254901960784315
+    },
+    {
+      "user": 0.21568627450980393,
+      "sys": 0.058823529411764705,
+      "nice": 0.0,
+      "idle": 0.7254901960784313,
+      "wait": 0.0,
+      "irq": 0.0,
+      "softIrq": 0.0,
+      "stolen": 0.0,
+      "combined": 0.27450980392156865
+    },
+    {
+      "user": 0.2653061224489796,
+      "sys": 0.02040816326530612,
+      "nice": 0.0,
+      "idle": 0.7142857142857143,
+      "wait": 0.0,
+      "irq": 0.0,
+      "softIrq": 0.0,
+      "stolen": 0.0,
+      "combined": 0.28571428571428575
+    },
+    {
+      "user": 0.47058823529411764,
+      "sys": 0.0,
+      "nice": 0.0,
+      "idle": 0.5294117647058824,
+      "wait": 0.0,
+      "irq": 0.0,
+      "softIrq": 0.0,
+      "stolen": 0.0,
+      "combined": 0.47058823529411764
+    }
+  ],
+  "cpuInfo": [
+    {
+      "vendor": "Intel",
+      "model": "Core(TM) i7-4870HQ CPU @ 2.50GHz",
+      "mhz": 3700,
+      "cacheSize": 6144,
+      "totalCores": 8,
+      "totalSockets": 8,
+      "coresPerSocket": 16
+    },
+    {
+      "vendor": "Intel",
+      "model": "Core(TM) i7-4870HQ CPU @ 2.50GHz",
+      "mhz": 3700,
+      "cacheSize": 6144,
+      "totalCores": 8,
+      "totalSockets": 8,
+      "coresPerSocket": 16
+    },
+    {
+      "vendor": "Intel",
+      "model": "Core(TM) i7-4870HQ CPU @ 2.50GHz",
+      "mhz": 3700,
+      "cacheSize": 6144,
+      "totalCores": 8,
+      "totalSockets": 8,
+      "coresPerSocket": 16
+    },
+    {
+      "vendor": "Intel",
+      "model": "Core(TM) i7-4870HQ CPU @ 2.50GHz",
+      "mhz": 3700,
+      "cacheSize": 6144,
+      "totalCores": 8,
+      "totalSockets": 8,
+      "coresPerSocket": 16
+    },
+    {
+      "vendor": "Intel",
+      "model": "Core(TM) i7-4870HQ CPU @ 2.50GHz",
+      "mhz": 3700,
+      "cacheSize": 6144,
+      "totalCores": 8,
+      "totalSockets": 8,
+      "coresPerSocket": 16
+    },
+    {
+      "vendor": "Intel",
+      "model": "Core(TM) i7-4870HQ CPU @ 2.50GHz",
+      "mhz": 3700,
+      "cacheSize": 6144,
+      "totalCores": 8,
+      "totalSockets": 8,
+      "coresPerSocket": 16
+    },
+    {
+      "vendor": "Intel",
+      "model": "Core(TM) i7-4870HQ CPU @ 2.50GHz",
+      "mhz": 3700,
+      "cacheSize": 6144,
+      "totalCores": 8,
+      "totalSockets": 8,
+      "coresPerSocket": 16
+    },
+    {
+      "vendor": "Intel",
+      "model": "Core(TM) i7-4870HQ CPU @ 2.50GHz",
+      "mhz": 3700,
+      "cacheSize": 6144,
+      "totalCores": 8,
+      "totalSockets": 8,
+      "coresPerSocket": 16
+    }
+  ],
+  "loadAverage": [
+    1.0,
+    0.0,
+    0.0
+  ],
+  "tcp": {
+    "activeOpens": 75395,
+    "passiveOpens": 2189,
+    "attemptFails": 60705,
+    "estabResets": 3405,
+    "currEstab": 15,
+    "inSegs": 6738367,
+    "outSegs": 6551262,
+    "retransSegs": 7962,
+    "inErrs": 60,
+    "outRsts": 5835569
+  },
+  "mem": {
+    "total": 16697065472,
+    "ram": 15928,
+    "used": 13497184256,
+    "free": 3199881216,
+    "actualUsed": 6917775360,
+    "actualFree": 9779290112,
+    "usedPercent": 41.43108483104833,
+    "freePercent": 58.56891516895167
+  },
+  "swap": {
+    "total": 0,
+    "used": 0,
+    "free": 0,
+    "pageIn": 0,
+    "pageOut": 0
+  },
+  "netInfo": {
+    "defaultGateway": "192.168.1.1",
+    "hostName": "laptop",
+    "domainName": "(none)",
+    "primaryDns": "192.168.1.1",
+    "secondaryDns": "8.8.8.8"
+  },
+  "netStat": {
+    "tcpStates": [
+      0,
+      15,
+      0,
+      0,
+      0,
+      0,
+      4,
+      0,
+      6,
+      0,
+      25,
+      0,
+      0,
+      0
+    ],
+    "tcpInboundTotal": 2,
+    "tcpOutboundTotal": 23,
+    "allInboundTotal": 2,
+    "allOutboundTotal": 23
+  },
+  "netRoutes": [
+    {
+      "destination": "0.0.0.0",
+      "gateway": "192.168.1.1",
+      "flags": 3,
+      "refcnt": 0,
+      "use": 0,
+      "metric": 0,
+      "mask": "0.0.0.0",
+      "mtu": 0,
+      "window": 0,
+      "irtt": 0,
+      "ifname": "wlp4s0"
+    },
+    {
+      "destination": "169.254.0.0",
+      "gateway": "0.0.0.0",
+      "flags": 1,
+      "refcnt": 0,
+      "use": 0,
+      "metric": 1000,
+      "mask": "255.255.0.0",
+      "mtu": 0,
+      "window": 0,
+      "irtt": 0,
+      "ifname": "docker0"
+    },
+    {
+      "destination": "172.16.248.0",
+      "gateway": "0.0.0.0",
+      "flags": 1,
+      "refcnt": 0,
+      "use": 0,
+      "metric": 0,
+      "mask": "255.255.255.0",
+      "mtu": 0,
+      "window": 0,
+      "irtt": 0,
+      "ifname": "vmnet8"
+    },
+    {
+      "destination": "172.17.0.0",
+      "gateway": "0.0.0.0",
+      "flags": 1,
+      "refcnt": 0,
+      "use": 0,
+      "metric": 0,
+      "mask": "255.255.0.0",
+      "mtu": 0,
+      "window": 0,
+      "irtt": 0,
+      "ifname": "docker0"
+    },
+    {
+      "destination": "192.168.1.0",
+      "gateway": "0.0.0.0",
+      "flags": 1,
+      "refcnt": 0,
+      "use": 0,
+      "metric": 0,
+      "mask": "255.255.255.0",
+      "mtu": 0,
+      "window": 0,
+      "irtt": 0,
+      "ifname": "wlp4s0"
+    },
+    {
+      "destination": "192.168.220.0",
+      "gateway": "0.0.0.0",
+      "flags": 1,
+      "refcnt": 0,
+      "use": 0,
+      "metric": 0,
+      "mask": "255.255.255.0",
+      "mtu": 0,
+      "window": 0,
+      "irtt": 0,
+      "ifname": "vmnet1"
+    }
+  ],
+  "netConnections": [
+    {
+      "localPort": 60430,
+      "localAddress": "0.0.0.0",
+      "remotePort": 0,
+      "remoteAddress": "0.0.0.0",
+      "type": 16,
+      "state": 10,
+      "sendQueue": 0,
+      "receiveQueue": 0
+    },
+    {
+      "localPort": 63342,
+      "localAddress": "127.0.0.1",
+      "remotePort": 0,
+      "remoteAddress": "0.0.0.0",
+      "type": 16,
+      "state": 10,
+      "sendQueue": 0,
+      "receiveQueue": 0
+    },
+    {
+      "localPort": 5556,
+      "localAddress": "127.0.0.1",
+      "remotePort": 0,
+      "remoteAddress": "0.0.0.0",
+      "type": 16,
+      "state": 10,
+      "sendQueue": 0,
+      "receiveQueue": 0
+    },
+    {
+      "localPort": 5556,
+      "localAddress": "192.168.220.1",
+      "remotePort": 0,
+      "remoteAddress": "0.0.0.0",
+      "type": 16,
+      "state": 10,
+      "sendQueue": 0,
+      "receiveQueue": 0
+    },
+    {
+      "localPort": 5556,
+      "localAddress": "192.168.1.13",
+      "remotePort": 0,
+      "remoteAddress": "0.0.0.0",
+      "type": 16,
+      "state": 10,
+      "sendQueue": 0,
+      "receiveQueue": 0
+    },
+    {
+      "localPort": 5556,
+      "localAddress": "172.16.248.1",
+      "remotePort": 0,
+      "remoteAddress": "0.0.0.0",
+      "type": 16,
+      "state": 10,
+      "sendQueue": 0,
+      "receiveQueue": 0
+    },
+    {
+      "localPort": 22,
+      "localAddress": "0.0.0.0",
+      "remotePort": 0,
+      "remoteAddress": "0.0.0.0",
+      "type": 16,
+      "state": 10,
+      "sendQueue": 0,
+      "receiveQueue": 0
+    },
+    {
+      "localPort": 39194,
+      "localAddress": "127.0.0.1",
+      "remotePort": 0,
+      "remoteAddress": "0.0.0.0",
+      "type": 16,
+      "state": 10,
+      "sendQueue": 0,
+      "receiveQueue": 0
+    },
+    {
+      "localPort": 9050,
+      "localAddress": "127.0.0.1",
+      "remotePort": 0,
+      "remoteAddress": "0.0.0.0",
+      "type": 16,
+      "state": 10,
+      "sendQueue": 0,
+      "receiveQueue": 0
+    },
+    {
+      "localPort": 17500,
+      "localAddress": "0.0.0.0",
+      "remotePort": 0,
+      "remoteAddress": "0.0.0.0",
+      "type": 16,
+      "state": 10,
+      "sendQueue": 0,
+      "receiveQueue": 0
+    },
+    {
+      "localPort": 34717,
+      "localAddress": "0.0.0.0",
+      "remotePort": 0,
+      "remoteAddress": "0.0.0.0",
+      "type": 16,
+      "state": 10,
+      "sendQueue": 0,
+      "receiveQueue": 0
+    },
+    {
+      "localPort": 6942,
+      "localAddress": "127.0.0.1",
+      "remotePort": 0,
+      "remoteAddress": "0.0.0.0",
+      "type": 16,
+      "state": 10,
+      "sendQueue": 0,
+      "receiveQueue": 0
+    },
+    {
+      "localPort": 17600,
+      "localAddress": "127.0.0.1",
+      "remotePort": 0,
+      "remoteAddress": "0.0.0.0",
+      "type": 16,
+      "state": 10,
+      "sendQueue": 0,
+      "receiveQueue": 0
+    },
+    {
+      "localPort": 17603,
+      "localAddress": "127.0.0.1",
+      "remotePort": 0,
+      "remoteAddress": "0.0.0.0",
+      "type": 16,
+      "state": 10,
+      "sendQueue": 0,
+      "receiveQueue": 0
+    },
+    {
+      "localPort": 902,
+      "localAddress": "0.0.0.0",
+      "remotePort": 0,
+      "remoteAddress": "0.0.0.0",
+      "type": 16,
+      "state": 10,
+      "sendQueue": 0,
+      "receiveQueue": 0
+    },
+    {
+      "localPort": 39584,
+      "localAddress": "192.168.1.13",
+      "remotePort": 443,
+      "remoteAddress": "172.217.19.206",
+      "type": 16,
+      "state": 1,
+      "sendQueue": 0,
+      "receiveQueue": 0
+    },
+    {
+      "localPort": 59540,
+      "localAddress": "192.168.1.13",
+      "remotePort": 443,
+      "remoteAddress": "198.252.206.25",
+      "type": 16,
+      "state": 1,
+      "sendQueue": 0,
+      "receiveQueue": 0
+    },
+    {
+      "localPort": 40236,
+      "localAddress": "127.0.0.1",
+      "remotePort": 39194,
+      "remoteAddress": "127.0.0.1",
+      "type": 16,
+      "state": 1,
+      "sendQueue": 0,
+      "receiveQueue": 0
+    },
+    {
+      "localPort": 34374,
+      "localAddress": "192.168.1.13",
+      "remotePort": 443,
+      "remoteAddress": "162.125.65.3",
+      "type": 16,
+      "state": 8,
+      "sendQueue": 0,
+      "receiveQueue": 32
+    },
+    {
+      "localPort": 57074,
+      "localAddress": "192.168.1.13",
+      "remotePort": 443,
+      "remoteAddress": "162.125.18.133",
+      "type": 16,
+      "state": 1,
+      "sendQueue": 0,
+      "receiveQueue": 0
+    },
+    {
+      "localPort": 39586,
+      "localAddress": "192.168.1.13",
+      "remotePort": 443,
+      "remoteAddress": "172.217.19.206",
+      "type": 16,
+      "state": 1,
+      "sendQueue": 0,
+      "receiveQueue": 0
+    },
+    {
+      "localPort": 41124,
+      "localAddress": "192.168.1.13",
+      "remotePort": 40028,
+      "remoteAddress": "157.55.56.156",
+      "type": 16,
+      "state": 1,
+      "sendQueue": 0,
+      "receiveQueue": 0
+    },
+    {
+      "localPort": 43282,
+      "localAddress": "127.0.0.1",
+      "remotePort": 39194,
+      "remoteAddress": "127.0.0.1",
+      "type": 16,
+      "state": 6,
+      "sendQueue": 0,
+      "receiveQueue": 0
+    },
+    {
+      "localPort": 34450,
+      "localAddress": "192.168.1.13",
+      "remotePort": 443,
+      "remoteAddress": "52.20.239.22",
+      "type": 16,
+      "state": 8,
+      "sendQueue": 0,
+      "receiveQueue": 1
+    },
+    {
+      "localPort": 57738,
+      "localAddress": "192.168.1.13",
+      "remotePort": 12350,
+      "remoteAddress": "91.190.218.51",
+      "type": 16,
+      "state": 1,
+      "sendQueue": 0,
+      "receiveQueue": 0
+    },
+    {
+      "localPort": 40208,
+      "localAddress": "192.168.1.13",
+      "remotePort": 443,
+      "remoteAddress": "172.217.19.198",
+      "type": 16,
+      "state": 1,
+      "sendQueue": 0,
+      "receiveQueue": 0
+    },
+    {
+      "localPort": 32970,
+      "localAddress": "192.168.1.13",
+      "remotePort": 443,
+      "remoteAddress": "108.177.119.188",
+      "type": 16,
+      "state": 1,
+      "sendQueue": 0,
+      "receiveQueue": 0
+    },
+    {
+      "localPort": 38888,
+      "localAddress": "192.168.1.13",
+      "remotePort": 443,
+      "remoteAddress": "40.77.226.192",
+      "type": 16,
+      "state": 1,
+      "sendQueue": 0,
+      "receiveQueue": 0
+    },
+    {
+      "localPort": 39194,
+      "localAddress": "127.0.0.1",
+      "remotePort": 43316,
+      "remoteAddress": "127.0.0.1",
+      "type": 16,
+      "state": 1,
+      "sendQueue": 0,
+      "receiveQueue": 0
+    },
+    {
+      "localPort": 39194,
+      "localAddress": "127.0.0.1",
+      "remotePort": 40236,
+      "remoteAddress": "127.0.0.1",
+      "type": 16,
+      "state": 1,
+      "sendQueue": 0,
+      "receiveQueue": 0
+    },
+    {
+      "localPort": 59188,
+      "localAddress": "192.168.1.13",
+      "remotePort": 443,
+      "remoteAddress": "162.125.18.133",
+      "type": 16,
+      "state": 1,
+      "sendQueue": 0,
+      "receiveQueue": 0
+    },
+    {
+      "localPort": 51428,
+      "localAddress": "192.168.1.13",
+      "remotePort": 443,
+      "remoteAddress": "104.25.253.28",
+      "type": 16,
+      "state": 1,
+      "sendQueue": 0,
+      "receiveQueue": 0
+    },
+    {
+      "localPort": 53502,
+      "localAddress": "192.168.1.13",
+      "remotePort": 443,
+      "remoteAddress": "162.125.65.3",
+      "type": 16,
+      "state": 8,
+      "sendQueue": 0,
+      "receiveQueue": 32
+    },
+    {
+      "localPort": 60434,
+      "localAddress": "192.168.1.13",
+      "remotePort": 443,
+      "remoteAddress": "162.125.34.6",
+      "type": 16,
+      "state": 8,
+      "sendQueue": 0,
+      "receiveQueue": 32
+    },
+    {
+      "localPort": 43316,
+      "localAddress": "127.0.0.1",
+      "remotePort": 39194,
+      "remoteAddress": "127.0.0.1",
+      "type": 16,
+      "state": 1,
+      "sendQueue": 0,
+      "receiveQueue": 0
+    },
+    {
+      "localPort": 1099,
+      "localAddress": "::",
+      "remotePort": 0,
+      "remoteAddress": "::",
+      "type": 16,
+      "state": 10,
+      "sendQueue": 0,
+      "receiveQueue": 0
+    },
+    {
+      "localPort": 1100,
+      "localAddress": "::",
+      "remotePort": 0,
+      "remoteAddress": "::",
+      "type": 16,
+      "state": 10,
+      "sendQueue": 0,
+      "receiveQueue": 0
+    },
+    {
+      "localPort": 7533,
+      "localAddress": "::",
+      "remotePort": 0,
+      "remoteAddress": "::",
+      "type": 16,
+      "state": 10,
+      "sendQueue": 0,
+      "receiveQueue": 0
+    },
+    {
+      "localPort": 35823,
+      "localAddress": "::",
+      "remotePort": 0,
+      "remoteAddress": "::",
+      "type": 16,
+      "state": 10,
+      "sendQueue": 0,
+      "receiveQueue": 0
+    },
+    {
+      "localPort": 1716,
+      "localAddress": "::",
+      "remotePort": 0,
+      "remoteAddress": "::",
+      "type": 16,
+      "state": 10,
+      "sendQueue": 0,
+      "receiveQueue": 0
+    },
+    {
+      "localPort": 22,
+      "localAddress": "::",
+      "remotePort": 0,
+      "remoteAddress": "::",
+      "type": 16,
+      "state": 10,
+      "sendQueue": 0,
+      "receiveQueue": 0
+    },
+    {
+      "localPort": 44732,
+      "localAddress": "::",
+      "remotePort": 0,
+      "remoteAddress": "::",
+      "type": 16,
+      "state": 10,
+      "sendQueue": 0,
+      "receiveQueue": 0
+    },
+    {
+      "localPort": 17500,
+      "localAddress": "::",
+      "remotePort": 0,
+      "remoteAddress": "::",
+      "type": 16,
+      "state": 10,
+      "sendQueue": 0,
+      "receiveQueue": 0
+    },
+    {
+      "localPort": 55454,
+      "localAddress": "::",
+      "remotePort": 0,
+      "remoteAddress": "::",
+      "type": 16,
+      "state": 10,
+      "sendQueue": 0,
+      "receiveQueue": 0
+    },
+    {
+      "localPort": 902,
+      "localAddress": "::",
+      "remotePort": 0,
+      "remoteAddress": "::",
+      "type": 16,
+      "state": 10,
+      "sendQueue": 0,
+      "receiveQueue": 0
+    },
+    {
+      "localPort": 56372,
+      "localAddress": "::ffff:127.0.0.1",
+      "remotePort": 34717,
+      "remoteAddress": "::ffff:127.0.0.1",
+      "type": 16,
+      "state": 6,
+      "sendQueue": 0,
+      "receiveQueue": 0
+    },
+    {
+      "localPort": 57422,
+      "localAddress": "::ffff:192.168.1.13",
+      "remotePort": 80,
+      "remoteAddress": "::ffff:151.101.36.215",
+      "type": 16,
+      "state": 8,
+      "sendQueue": 0,
+      "receiveQueue": 1
+    },
+    {
+      "localPort": 56376,
+      "localAddress": "::ffff:127.0.0.1",
+      "remotePort": 34717,
+      "remoteAddress": "::ffff:127.0.0.1",
+      "type": 16,
+      "state": 6,
+      "sendQueue": 0,
+      "receiveQueue": 0
+    },
+    {
+      "localPort": 51468,
+      "localAddress": "::ffff:192.168.1.13",
+      "remotePort": 443,
+      "remoteAddress": "::ffff:107.23.166.173",
+      "type": 16,
+      "state": 8,
+      "sendQueue": 0,
+      "receiveQueue": 32
+    },
+    {
+      "localPort": 56374,
+      "localAddress": "::ffff:127.0.0.1",
+      "remotePort": 34717,
+      "remoteAddress": "::ffff:127.0.0.1",
+      "type": 16,
+      "state": 6,
+      "sendQueue": 0,
+      "receiveQueue": 0
+    }
+  ],
+  "procStat": {
+    "total": 299,
+    "idle": 0,
+    "running": 0,
+    "sleeping": 299,
+    "stopped": 0,
+    "zombie": 0,
+    "threads": 1127
+  },
+  "resourceLimit": {
+    "cpuCur": -1,
+    "cpuMax": -1,
+    "fileSizeCur": -1,
+    "fileSizeMax": -1,
+    "pipeSizeMax": 8,
+    "pipeSizeCur": 8,
+    "dataCur": -1,
+    "dataMax": -1,
+    "stackCur": 8192,
+    "stackMax": -1,
+    "coreCur": 0,
+    "coreMax": -1,
+    "memoryCur": -1,
+    "memoryMax": -1,
+    "processesCur": 62121,
+    "processesMax": 62121,
+    "openFilesCur": 256000,
+    "openFilesMax": 256000,
+    "virtualMemoryCur": -1,
+    "virtualMemoryMax": -1
+  }
+}
