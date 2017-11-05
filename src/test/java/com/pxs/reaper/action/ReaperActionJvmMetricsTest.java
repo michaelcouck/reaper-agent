@@ -4,7 +4,9 @@ import com.pxs.reaper.Constant;
 import com.pxs.reaper.model.JMetrics;
 import com.pxs.reaper.transport.Transport;
 import lombok.extern.slf4j.Slf4j;
+import mockit.Deencapsulation;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -25,6 +27,11 @@ public class ReaperActionJvmMetricsTest {
     @Spy
     @InjectMocks
     private ReaperActionJvmMetrics reaperActionJvmMetrics;
+
+    @Before
+    public void before() {
+        Deencapsulation.setField(Constant.class, "TRANSPORT", transport);
+    }
 
     @Test
     public void run() throws IOException {

@@ -54,12 +54,13 @@ public class ReaperTest {
     @Test
     public void attachToOperatingSystem() throws InterruptedException {
         reaper.attachToOperatingSystem();
-        // Thread.sleep(600000);
+        Thread.sleep(60000);
     }
 
     @Test
-    public void attachToJavaProcesses() {
+    public void attachToJavaProcesses() throws InterruptedException {
         reaper.attachToJavaProcesses();
+        Thread.sleep(60000);
     }
 
     @Test

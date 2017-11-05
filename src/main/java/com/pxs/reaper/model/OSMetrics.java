@@ -31,7 +31,7 @@ import java.net.InetAddress;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class OSMetrics {
 
-    private String type = this.getClass().getName();
+    private String type = "com.pxs.reaper.model.OSMetrics";
 
     /**
      * Ip address of the local agent.

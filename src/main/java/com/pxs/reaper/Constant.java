@@ -2,6 +2,8 @@ package com.pxs.reaper;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.pxs.reaper.transport.Transport;
+import com.pxs.reaper.transport.WebSocketTransport;
 import lombok.Getter;
 import lombok.Setter;
 import org.jeasy.props.annotations.Property;
@@ -56,9 +58,17 @@ public interface Constant {
      */
     ExternalConstants EXTERNAL_CONSTANTS = new ExternalConstants();
 
+    /**
+     * Provides TRANSPORT of the metrics from the class to the central analyzer over the wire
+     */
+    Transport TRANSPORT = new WebSocketTransport();
+
     @Getter
     @Setter
     class ExternalConstants {
+        {
+            PROPERTIES_INJECTOR.injectProperties(this);
+        }
         @SuppressWarnings("unused")
         @Property(source = Constant.REAPER_PROPERTIES, key = "sleep-time")
         private int sleepTime = 10000;

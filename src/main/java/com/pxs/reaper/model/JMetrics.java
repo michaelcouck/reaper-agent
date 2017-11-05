@@ -23,7 +23,7 @@ import java.util.Date;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class JMetrics {
 
-    private String type = this.getClass().getName();
+    private String type = "com.pxs.reaper.model.JMetrics";
 
     /**
      * Ip address of the local agent.

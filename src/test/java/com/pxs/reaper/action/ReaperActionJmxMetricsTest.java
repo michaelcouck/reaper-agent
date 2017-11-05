@@ -3,7 +3,9 @@ package com.pxs.reaper.action;
 import com.pxs.reaper.Constant;
 import com.pxs.reaper.model.JMetrics;
 import com.pxs.reaper.transport.Transport;
+import mockit.Deencapsulation;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -24,6 +26,11 @@ public class ReaperActionJmxMetricsTest {
     @InjectMocks
     private ReaperActionJmxMetrics reaperActionJmxMetrics;
 
+    @Before
+    public void before() {
+        Deencapsulation.setField(Constant.class, "TRANSPORT", transport);
+    }
+
     @Test
     @SuppressWarnings("Duplicates")
     public void run() throws IOException {
@@ -37,7 +44,7 @@ public class ReaperActionJmxMetricsTest {
             }
             return null;
         }).when(transport).postMetrics(Mockito.any(Object.class));
-        Constant.PROPERTIES_INJECTOR.injectProperties(reaperActionJmxMetrics);
+        // Constant.PROPERTIES_INJECTOR.injectProperties(reaperActionJmxMetrics);
         reaperActionJmxMetrics.run();
         Assert.assertNotNull(objectAtomicReference.get());
     }

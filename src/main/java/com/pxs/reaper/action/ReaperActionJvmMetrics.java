@@ -3,7 +3,6 @@ package com.pxs.reaper.action;
 import com.pxs.reaper.Constant;
 import com.pxs.reaper.model.JMetrics;
 import com.pxs.reaper.transport.Transport;
-import com.pxs.reaper.transport.WebSocketTransport;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.management.ManagementFactory;
@@ -23,15 +22,6 @@ import java.lang.management.ManagementFactory;
 class ReaperActionJvmMetrics extends ReaperActionMBeanMetrics {
 
     /**
-     * The mechanism for posting metrics data to the central analyzer
-     */
-    private Transport transport;
-
-    ReaperActionJvmMetrics() {
-        transport = new WebSocketTransport();
-    }
-
-    /**
      * {@inheritDoc}
      */
     @Override
@@ -46,7 +36,9 @@ class ReaperActionJvmMetrics extends ReaperActionMBeanMetrics {
         compilation(jMetrics, ManagementFactory.getCompilationMXBean());
         classloading(jMetrics, ManagementFactory.getClassLoadingMXBean());
 
-        transport.postMetrics(jMetrics);
+        jMetrics.setType(JMetrics.class.getName());
+
+        Constant.TRANSPORT.postMetrics(jMetrics);
     }
 
     /**

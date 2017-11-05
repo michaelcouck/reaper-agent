@@ -4,8 +4,6 @@ import com.pxs.reaper.Constant;
 import com.pxs.reaper.model.OSMetrics;
 import com.pxs.reaper.toolkit.HOST;
 import com.pxs.reaper.toolkit.OS;
-import com.pxs.reaper.transport.Transport;
-import com.pxs.reaper.transport.WebSocketTransport;
 import lombok.extern.slf4j.Slf4j;
 import org.hyperic.sigar.*;
 
@@ -31,17 +29,12 @@ public class ReaperActionOSMetrics extends TimerTask implements ReaperAction {
      */
     private Sigar sigar;
     /**
-     * Provides transport of the metrics from the class to the central analyzer over the wire
-     */
-    private Transport transport;
-    /**
      * Proxy class for {@link Sigar} for simplifying the refresh rate of the gathering of data
      */
     private SigarProxy sigarProxy;
 
     public ReaperActionOSMetrics() {
         sigar = new Sigar();
-        transport = new WebSocketTransport();
         sigarProxy = SigarProxyCache.newInstance(sigar, 1000);
         log.info("Attached to operating system : ");
     }
@@ -87,7 +80,9 @@ public class ReaperActionOSMetrics extends TimerTask implements ReaperAction {
             osMetrics.setProcStat(procStat);
             osMetrics.setResourceLimit(resourceLimit);
 
-            transport.postMetrics(osMetrics);
+            osMetrics.setType(OSMetrics.class.getName());
+
+            Constant.TRANSPORT.postMetrics(osMetrics);
         } catch (final SigarException | UnknownHostException e) {
             // TODO: Re-initialize sigar here, and test it
             throw new RuntimeException(e);

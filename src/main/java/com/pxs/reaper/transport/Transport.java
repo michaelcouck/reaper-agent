@@ -1,7 +1,7 @@
 package com.pxs.reaper.transport;
 
 /**
- * Interface for a variety of transport implementations, could be web sockets, or some or other publish subscribe
+ * Interface for a variety of TRANSPORT implementations, could be web sockets, or some or other publish subscribe
  * mechanism, like Kafka or Google Pub/Sub.
  *
  * @author Michael Couck
@@ -11,8 +11,8 @@ package com.pxs.reaper.transport;
 public interface Transport {
 
     /**
-     * Delivers the object to the endpoint for transport over the wire. Typically implementations will convert
-     * the objects to Json for transport, but could be another protocol.
+     * Delivers the object to the endpoint for TRANSPORT over the wire. Typically implementations will convert
+     * the objects to Json for TRANSPORT, but could be another protocol.
      *
      * @param metrics the metrics/telemetry data for a particular process, could be the operating system, but could
      *                be a Java process

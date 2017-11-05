@@ -4,8 +4,6 @@ import com.pxs.reaper.Constant;
 import com.pxs.reaper.model.JMetrics;
 import com.pxs.reaper.toolkit.Retry;
 import com.pxs.reaper.toolkit.RetryIncreasingDelay;
-import com.pxs.reaper.transport.Transport;
-import com.pxs.reaper.transport.WebSocketTransport;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.jeasy.props.annotations.Property;
@@ -66,12 +64,6 @@ public class ReaperActionJmxMetrics extends ReaperActionMBeanMetrics {
     private long finalRetryDelay;
 
     /**
-     * TODO: Centralize the transport for usage across components, and add connect retryWithIncreasingDelay
-     * <p>
-     * Transport to the service for accumulation of telemetry data for analysis.
-     */
-    private Transport transport;
-    /**
      * The JMX connector to the Java process, instance variable so as to release resources on terminate
      */
     private JMXConnector jmxConnector;
@@ -85,13 +77,12 @@ public class ReaperActionJmxMetrics extends ReaperActionMBeanMetrics {
     private Retry retryWithIncreasingDelay;
 
     public ReaperActionJmxMetrics() {
-        transport = new WebSocketTransport();
         retryWithIncreasingDelay = new RetryIncreasingDelay();
     }
 
     /**
      * Connects to the local JMX management beans. Iterates through all the beans, extracting interesting metrics and telemetry data
-     * from the beans. Populates a {@link JMetrics} object that is converted to json for transport the central analyzer.
+     * from the beans. Populates a {@link JMetrics} object that is converted to json for TRANSPORT the central analyzer.
      */
     @Override
     public void run() {
@@ -131,7 +122,7 @@ public class ReaperActionJmxMetrics extends ReaperActionMBeanMetrics {
             }
         }
 
-        transport.postMetrics(jMetrics);
+        Constant.TRANSPORT.postMetrics(jMetrics);
     }
 
     /**

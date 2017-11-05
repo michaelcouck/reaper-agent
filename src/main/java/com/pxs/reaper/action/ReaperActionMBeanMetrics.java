@@ -10,7 +10,7 @@ import java.util.*;
 
 /**
  * Base class for JMX operations on management MBeans for the JVM. Takes various MBeans from the JVM and populates
- * metrics model objects for transport to the micro service for analysis and model building.
+ * metrics model objects for TRANSPORT to the micro service for analysis and model building.
  *
  * @author Michael Couck
  * @version 01.00
@@ -19,9 +19,9 @@ import java.util.*;
 abstract class ReaperActionMBeanMetrics extends TimerTask implements ReaperAction {
 
     /**
-     * Populates the miscellaneous items for transport, the ip address, timestamp etc.
+     * Populates the miscellaneous items for TRANSPORT, the ip address, timestamp etc.
      *
-     * @param jMetrics      the JVM metrics model object for transport
+     * @param jMetrics      the JVM metrics model object for TRANSPORT
      * @param runtimeMXBean the runtime MBean for the name of the JVM
      */
     void misc(final JMetrics jMetrics, final RuntimeMXBean runtimeMXBean) {
@@ -37,9 +37,9 @@ abstract class ReaperActionMBeanMetrics extends TimerTask implements ReaperActio
     }
 
     /**
-     * Populates the thread items for transport, how many threads, the core times, deadlocked, etc.
+     * Populates the thread items for TRANSPORT, how many threads, the core times, deadlocked, etc.
      *
-     * @param jMetrics     the JVM metrics model object for transport
+     * @param jMetrics     the JVM metrics model object for TRANSPORT
      * @param threadMXBean the thread MBean for access to the threads in the JVM
      */
     void threading(final JMetrics jMetrics, final ThreadMXBean threadMXBean) {
@@ -69,7 +69,7 @@ abstract class ReaperActionMBeanMetrics extends TimerTask implements ReaperActio
     /**
      * Populates the memory pool model objects.
      *
-     * @param jMetrics          the JVM metrics model object for transport
+     * @param jMetrics          the JVM metrics model object for TRANSPORT
      * @param memoryPoolMXBeans the memory pool beans from the JVM
      */
     void memoryPool(final JMetrics jMetrics, final List<MemoryPoolMXBean> memoryPoolMXBeans) {
@@ -99,9 +99,9 @@ abstract class ReaperActionMBeanMetrics extends TimerTask implements ReaperActio
     }
 
     /**
-     * Populates the memory objects for transport, the heap and non heap usage.
+     * Populates the memory objects for TRANSPORT, the heap and non heap usage.
      *
-     * @param jMetrics     the JVM metrics model object for transport
+     * @param jMetrics     the JVM metrics model object for TRANSPORT
      * @param memoryMXBean the memory bean from the JVM
      */
     void memory(final JMetrics jMetrics, final MemoryMXBean memoryMXBean) {
@@ -114,9 +114,9 @@ abstract class ReaperActionMBeanMetrics extends TimerTask implements ReaperActio
     }
 
     /**
-     * Populates the garbage collection beans for transport. How many collections, the time taken for each collection etc.
+     * Populates the garbage collection beans for TRANSPORT. How many collections, the time taken for each collection etc.
      *
-     * @param jMetrics                the JVM metrics model object for transport
+     * @param jMetrics                the JVM metrics model object for TRANSPORT
      * @param garbageCollectorMXBeans the garbage collection beans for the JVM
      */
     void garbageCollection(final JMetrics jMetrics, final List<GarbageCollectorMXBean> garbageCollectorMXBeans) {
@@ -137,7 +137,7 @@ abstract class ReaperActionMBeanMetrics extends TimerTask implements ReaperActio
     /**
      * Compilation times, probably not interesting. Could be in environments where there is a lot of instrumentation.
      *
-     * @param jMetrics          the JVM metrics model object for transport
+     * @param jMetrics          the JVM metrics model object for TRANSPORT
      * @param compilationMXBean the compilation bean for the JVM
      */
     void compilation(final JMetrics jMetrics, final CompilationMXBean compilationMXBean) {
@@ -150,7 +150,7 @@ abstract class ReaperActionMBeanMetrics extends TimerTask implements ReaperActio
      * Classloading metrics for the JVM, could be interesting, specially is if there is a class memory leak, and indeed because
      * classes are loaded and stored off heap, it could potentially crash the machine that they are on.
      *
-     * @param jMetrics           the JVM metrics model object for transport
+     * @param jMetrics           the JVM metrics model object for TRANSPORT
      * @param classLoadingMXBean the class loading bean for the JVM
      */
     void classloading(final JMetrics jMetrics, final ClassLoadingMXBean classLoadingMXBean) {

@@ -1,7 +1,5 @@
 package com.pxs.reaper.transport;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.pxs.reaper.Constant;
 import com.pxs.reaper.toolkit.Retry;
 import com.pxs.reaper.toolkit.RetryIncreasingDelay;
@@ -16,7 +14,7 @@ import java.util.function.Function;
 
 /**
  * Transport for the web socket implementation. This implementation connects to the web socket using a parameter in the
- * properties file, converts the metrics objects for transport into Json.
+ * properties file, converts the metrics objects for TRANSPORT into Json.
  *
  * @author Michael Couck
  * @version 1.0
@@ -64,8 +62,9 @@ public class WebSocketTransport implements Transport {
     public WebSocketTransport() {
         loggingInterval = 1000 * 60 * 10;
         lastLoggingTimestamp = System.currentTimeMillis();
-        Constant.PROPERTIES_INJECTOR.injectProperties(this);
         retryWithIncreasingDelay = new RetryIncreasingDelay();
+
+        Constant.PROPERTIES_INJECTOR.injectProperties(this);
     }
 
     /**
@@ -73,20 +72,14 @@ public class WebSocketTransport implements Transport {
      */
     public void postMetrics(final Object metrics) {
         openSession();
-
-        JsonElement jsonElement = Constant.GSON.toJsonTree(metrics);
-        JsonObject jsonObject = new JsonObject();
-        jsonObject.add(metrics.getClass().getName(), jsonElement);
-        String postage = jsonObject.toString();
-
+        String postage = Constant.GSON.toJson(metrics);
         // Periodically log some data
         if (System.currentTimeMillis() - lastLoggingTimestamp > loggingInterval) {
             log.info("Sending metrics : {}", postage);
             lastLoggingTimestamp = System.currentTimeMillis();
         }
-
         RemoteEndpoint.Async async = session.getAsyncRemote();
-        log.debug("Sending metrics : {}", postage);
+        log.info("Sending metrics : {}", postage);
         async.sendText(postage);
     }
 
@@ -94,19 +87,21 @@ public class WebSocketTransport implements Transport {
      * Opens a session to the web socket of the centralized analyzer.
      */
     private void openSession() {
-        if (session == null || !session.isOpen()) {
-            Transport transport = this;
-            Function<Void, Session> function = aVoid -> {
-                WebSocketContainer container = ContainerProvider.getWebSocketContainer();
-                URI uri = URI.create(reaperWebSocketUri);
-                try {
-                    return container.connectToServer(transport, uri);
-                } catch (DeploymentException | IOException e) {
-                    throw new RuntimeException(e);
-                }
-            };
-            session = retryWithIncreasingDelay.retry(function, null, maxRetries, finalRetryDelay);
+        if (session != null && session.isOpen()) {
+            return;
         }
+        WebSocketTransport webSocketTransport = this;
+        Function<Void, Session> function = aVoid -> {
+            WebSocketContainer container = ContainerProvider.getWebSocketContainer();
+            URI uri = URI.create(reaperWebSocketUri);
+            try {
+                log.info("Re-opening web socket session : ");
+                return container.connectToServer(webSocketTransport, uri);
+            } catch (DeploymentException | IOException e) {
+                throw new RuntimeException(e);
+            }
+        };
+        session = retryWithIncreasingDelay.retry(function, null, maxRetries, finalRetryDelay);
     }
 
     /**
@@ -131,13 +126,7 @@ public class WebSocketTransport implements Transport {
      */
     @OnClose
     public void onClose(final Session session) {
-        try {
-            session.close();
-            this.session.close();
-        } catch (final Exception e) {
-            log.error("Exception closing the session : ", e);
-        }
-        log.info("Session closed : {}, {}", session.getId(), this.session.getId());
+        log.info("Session closed : {}", session.getId());
     }
 
     /**
