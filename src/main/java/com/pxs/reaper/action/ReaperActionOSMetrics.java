@@ -75,16 +75,18 @@ public class ReaperActionOSMetrics extends TimerTask implements ReaperAction {
                 osMetrics.setCpu(cpu);
                 osMetrics.setCpuPerc(cpuPerc);
                 osMetrics.setCpuInfo(cpuInfo);
-
                 osMetrics.setLoadAverage(loadAverage);
-                osMetrics.setMem(mem);
+
+
                 osMetrics.setNetInfo(netInfo);
                 osMetrics.setNetStat(netStat);
                 osMetrics.setNetRoutes(netRoutes);
                 osMetrics.setNetConnections(netConnections);
-                osMetrics.setProcStat(procStat);
-                osMetrics.setSwap(swap);
                 osMetrics.setTcp(tcp);
+
+                osMetrics.setMem(mem);
+                osMetrics.setSwap(swap);
+                osMetrics.setProcStat(procStat);
                 osMetrics.setResourceLimit(resourceLimit);
 
                 transport.postMetrics(osMetrics);
