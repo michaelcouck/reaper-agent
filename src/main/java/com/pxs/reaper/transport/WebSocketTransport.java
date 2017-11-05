@@ -62,7 +62,7 @@ public class WebSocketTransport implements Transport {
     private Session session;
 
     public WebSocketTransport() {
-        loggingInterval = 1000 * 60 * 60;
+        loggingInterval = 1000 * 60 * 10;
         lastLoggingTimestamp = System.currentTimeMillis();
         Constant.PROPERTIES_INJECTOR.injectProperties(this);
         retryWithIncreasingDelay = new RetryIncreasingDelay();
@@ -78,7 +78,6 @@ public class WebSocketTransport implements Transport {
         JsonObject jsonObject = new JsonObject();
         jsonObject.add(metrics.getClass().getName(), jsonElement);
         String postage = jsonObject.toString();
-        // System.out.println(postage);
 
         // Periodically log some data
         if (System.currentTimeMillis() - lastLoggingTimestamp > loggingInterval) {
@@ -115,7 +114,7 @@ public class WebSocketTransport implements Transport {
      */
     @OnOpen
     public void onOpen(final Session session) throws IOException {
-        log.debug("Session opened : " + session.getId());
+        log.info("Session opened : {}", session.getId());
     }
 
     /**
@@ -124,7 +123,7 @@ public class WebSocketTransport implements Transport {
     @OnMessage
     @SuppressWarnings("UnusedParameters")
     public void onMessage(final String message, final Session session) throws IOException {
-        log.debug("Got message : " + message);
+        log.info("Got message : {}", message);
     }
 
     /**
@@ -132,7 +131,13 @@ public class WebSocketTransport implements Transport {
      */
     @OnClose
     public void onClose(final Session session) {
-        log.debug("Session closed : " + session.getId());
+        try {
+            session.close();
+            this.session.close();
+        } catch (final Exception e) {
+            log.error("Exception closing the session : ", e);
+        }
+        log.info("Session closed : {}, {}", session.getId(), this.session.getId());
     }
 
     /**
@@ -140,7 +145,7 @@ public class WebSocketTransport implements Transport {
      */
     @OnError
     public void onError(final Session session, final Throwable throwable) {
-        log.error("Error in session : " + session.getId(), throwable);
+        log.error("Error in session : {}", session.getId(), throwable);
     }
 
 }

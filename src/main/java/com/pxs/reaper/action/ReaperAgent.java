@@ -40,7 +40,6 @@ public class ReaperAgent {
      */
     public static void premain(final String args, final Instrumentation instrumentation) {
         Constant.PROPERTIES_INJECTOR.injectProperties(Constant.EXTERNAL_CONSTANTS);
-
         int sleepTime = Constant.EXTERNAL_CONSTANTS.getSleepTime();
         ReaperActionJvmMetrics reaperActionJvmMetrics = new ReaperActionJvmMetrics();
         Constant.TIMER.scheduleAtFixedRate(reaperActionJvmMetrics, sleepTime, sleepTime);

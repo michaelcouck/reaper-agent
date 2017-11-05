@@ -31,7 +31,7 @@ import java.net.InetAddress;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class OSMetrics {
 
-    private Class<?> type = this.getType();
+    private String type = this.getClass().getName();
 
     /**
      * Ip address of the local agent.

@@ -23,7 +23,7 @@ import java.util.Date;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class JMetrics {
 
-    private Class<?> type = this.getType();
+    private String type = this.getClass().getName();
 
     /**
      * Ip address of the local agent.

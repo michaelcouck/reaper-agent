@@ -25,7 +25,6 @@ import java.util.TimerTask;
 @Slf4j
 public class ReaperActionOSMetrics extends TimerTask implements ReaperAction {
 
-    private final Object lock = new Object();
     /**
      * {@link Sigar} is the native operating system access to metrics and telemetry. It provides {@link Cpu},
      * {@link CpuInfo}, {@link Mem} information and several other metrics, some of which are quite low level.
@@ -44,6 +43,7 @@ public class ReaperActionOSMetrics extends TimerTask implements ReaperAction {
         sigar = new Sigar();
         transport = new WebSocketTransport();
         sigarProxy = SigarProxyCache.newInstance(sigar, 1000);
+        log.info("Attached to operating system : ");
     }
 
     /**
@@ -57,40 +57,37 @@ public class ReaperActionOSMetrics extends TimerTask implements ReaperAction {
             InetAddress inetAddress = InetAddress.getByName(HOST.hostname());
             osMetrics.setInetAddress(inetAddress);
 
-            synchronized (lock) {
-                Cpu[] cpu = cpu(sigarProxy);
-                CpuInfo[] cpuInfo = cpuInfo(sigarProxy);
-                CpuPerc[] cpuPerc = cpuPerc(sigarProxy);
-                Swap swap = swap(sigarProxy);
-                double[] loadAverage = loadAverage(sigarProxy);
-                Mem mem = mem(sigarProxy);
-                NetInfo netInfo = netInfo(sigarProxy);
-                NetStat netStat = netStat(sigarProxy);
-                NetRoute[] netRoutes = netRoutes(sigarProxy);
-                NetConnection[] netConnections = netConnections(sigarProxy);
-                ProcStat procStat = procStat(sigarProxy);
-                Tcp tcp = tcp(sigarProxy);
-                ResourceLimit resourceLimit = resourceLimit(sigarProxy);
+            Cpu[] cpu = cpu(sigarProxy);
+            CpuInfo[] cpuInfo = cpuInfo(sigarProxy);
+            CpuPerc[] cpuPerc = cpuPerc(sigarProxy);
+            Swap swap = swap(sigarProxy);
+            double[] loadAverage = loadAverage(sigarProxy);
+            Mem mem = mem(sigarProxy);
+            NetInfo netInfo = netInfo(sigarProxy);
+            NetStat netStat = netStat(sigarProxy);
+            NetRoute[] netRoutes = netRoutes(sigarProxy);
+            NetConnection[] netConnections = netConnections(sigarProxy);
+            ProcStat procStat = procStat(sigarProxy);
+            Tcp tcp = tcp(sigarProxy);
+            ResourceLimit resourceLimit = resourceLimit(sigarProxy);
 
-                osMetrics.setCpu(cpu);
-                osMetrics.setCpuPerc(cpuPerc);
-                osMetrics.setCpuInfo(cpuInfo);
-                osMetrics.setLoadAverage(loadAverage);
+            osMetrics.setCpu(cpu);
+            osMetrics.setCpuPerc(cpuPerc);
+            osMetrics.setCpuInfo(cpuInfo);
+            osMetrics.setLoadAverage(loadAverage);
 
+            osMetrics.setNetInfo(netInfo);
+            osMetrics.setNetStat(netStat);
+            osMetrics.setNetRoutes(netRoutes);
+            osMetrics.setNetConnections(netConnections);
+            osMetrics.setTcp(tcp);
 
-                osMetrics.setNetInfo(netInfo);
-                osMetrics.setNetStat(netStat);
-                osMetrics.setNetRoutes(netRoutes);
-                osMetrics.setNetConnections(netConnections);
-                osMetrics.setTcp(tcp);
+            osMetrics.setMem(mem);
+            osMetrics.setSwap(swap);
+            osMetrics.setProcStat(procStat);
+            osMetrics.setResourceLimit(resourceLimit);
 
-                osMetrics.setMem(mem);
-                osMetrics.setSwap(swap);
-                osMetrics.setProcStat(procStat);
-                osMetrics.setResourceLimit(resourceLimit);
-
-                transport.postMetrics(osMetrics);
-            }
+            transport.postMetrics(osMetrics);
         } catch (final SigarException | UnknownHostException e) {
             // TODO: Re-initialize sigar here, and test it
             throw new RuntimeException(e);
@@ -160,12 +157,10 @@ public class ReaperActionOSMetrics extends TimerTask implements ReaperAction {
      */
     @Override
     public boolean terminate() {
-        synchronized (lock) {
-            try {
-                sigar.close();
-            } catch (final Exception e) {
-                log.error("Exception closing the Sigar : ", e);
-            }
+        try {
+            sigar.close();
+        } catch (final Exception e) {
+            log.error("Exception closing the Sigar : ", e);
         }
         boolean terminated = cancel();
         Constant.TIMER.purge();

@@ -26,6 +26,7 @@ public class ReaperAgentTest {
     @Test
     public void agentmain() throws Exception {
         ReaperAgent.agentmain(args, instrumentation);
+        // Thread.sleep(1000 * 60 * 60);
     }
 
     @Test
