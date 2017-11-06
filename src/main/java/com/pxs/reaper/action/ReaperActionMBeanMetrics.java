@@ -31,6 +31,7 @@ abstract class ReaperActionMBeanMetrics extends TimerTask implements ReaperActio
             jMetrics.setDate(new Date());
             InetAddress inetAddress = InetAddress.getByName(HOST.hostname());
             jMetrics.setInetAddress(inetAddress);
+            jMetrics.setDate(new Date());
         } catch (final UnknownHostException e) {
             throw new RuntimeException(e);
         }

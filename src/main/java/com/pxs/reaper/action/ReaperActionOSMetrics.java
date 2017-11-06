@@ -9,6 +9,7 @@ import org.hyperic.sigar.*;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.Date;
 import java.util.TimerTask;
 
 /**
@@ -81,6 +82,7 @@ public class ReaperActionOSMetrics extends TimerTask implements ReaperAction {
             osMetrics.setResourceLimit(resourceLimit);
 
             osMetrics.setType(OSMetrics.class.getName());
+            osMetrics.setDate(new Date());
 
             Constant.TRANSPORT.postMetrics(osMetrics);
         } catch (final SigarException | UnknownHostException e) {

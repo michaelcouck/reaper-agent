@@ -28,12 +28,12 @@ public class JMetrics {
      */
     private InetAddress inetAddress;
 
+    private Date date;
+
     /**
      * The PID/name of the JVM.
      */
     private String pid;
-
-    private Date date;
 
     private Memory memory;
     private Threading threading;

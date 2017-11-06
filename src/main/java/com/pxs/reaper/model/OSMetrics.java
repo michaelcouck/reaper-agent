@@ -7,6 +7,7 @@ import lombok.ToString;
 import org.hyperic.sigar.*;
 
 import java.net.InetAddress;
+import java.util.Date;
 
 /**
  * Contains operating system metrics, low level.
@@ -35,6 +36,8 @@ public class OSMetrics {
      * Ip address of the local agent.
      */
     private InetAddress inetAddress;
+
+    private Date date;
 
     /**
      * Model objects from Sigar that can be used directly, i.e. transported over the wire

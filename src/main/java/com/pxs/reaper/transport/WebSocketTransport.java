@@ -13,8 +13,8 @@ import java.net.URI;
 import java.util.function.Function;
 
 /**
- * Transport for the web socket implementation. This implementation connects to the web socket using a parameter in the
- * properties file, converts the metrics objects for TRANSPORT into Json.
+ * Transport for the web socket implementation. This implementation connects to the web socket
+ * using a parameter in the properties file, converts the metrics objects for TRANSPORT into Json.
  *
  * @author Michael Couck
  * @version 1.0
@@ -79,7 +79,6 @@ public class WebSocketTransport implements Transport {
             lastLoggingTimestamp = System.currentTimeMillis();
         }
         RemoteEndpoint.Async async = session.getAsyncRemote();
-        log.info("Sending metrics : {}", postage);
         async.sendText(postage);
     }
 
@@ -95,7 +94,7 @@ public class WebSocketTransport implements Transport {
             WebSocketContainer container = ContainerProvider.getWebSocketContainer();
             URI uri = URI.create(reaperWebSocketUri);
             try {
-                log.info("Re-opening web socket session : ");
+                log.debug("Re-opening web socket session : ");
                 return container.connectToServer(webSocketTransport, uri);
             } catch (DeploymentException | IOException e) {
                 throw new RuntimeException(e);
@@ -109,7 +108,7 @@ public class WebSocketTransport implements Transport {
      */
     @OnOpen
     public void onOpen(final Session session) throws IOException {
-        log.info("Session opened : {}", session.getId());
+        log.debug("Session opened : {}", session.getId());
     }
 
     /**
@@ -118,7 +117,7 @@ public class WebSocketTransport implements Transport {
     @OnMessage
     @SuppressWarnings("UnusedParameters")
     public void onMessage(final String message, final Session session) throws IOException {
-        log.info("Got message : {}", message);
+        log.debug("Got message : {}", message);
     }
 
     /**
@@ -126,7 +125,7 @@ public class WebSocketTransport implements Transport {
      */
     @OnClose
     public void onClose(final Session session) {
-        log.info("Session closed : {}", session.getId());
+        log.debug("Session closed : {}", session.getId());
     }
 
     /**
