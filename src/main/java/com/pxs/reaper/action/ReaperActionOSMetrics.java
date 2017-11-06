@@ -46,7 +46,7 @@ public class ReaperActionOSMetrics extends TimerTask implements ReaperAction {
     public void run() {
         try {
             // Gather all the operating system metrics, pop them in a OSMetrics object and post them
-            OSMetrics osMetrics = OSMetrics.builder().build();
+            OSMetrics osMetrics = new OSMetrics();
             InetAddress inetAddress = InetAddress.getByName(HOST.hostname());
             osMetrics.setInetAddress(inetAddress);
 

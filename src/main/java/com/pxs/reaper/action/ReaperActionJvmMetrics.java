@@ -26,7 +26,7 @@ class ReaperActionJvmMetrics extends ReaperActionMBeanMetrics {
      */
     @Override
     public void run() {
-        JMetrics jMetrics = JMetrics.builder().build();
+        JMetrics jMetrics = new JMetrics();
 
         misc(jMetrics, ManagementFactory.getRuntimeMXBean());
         threading(jMetrics, ManagementFactory.getThreadMXBean());

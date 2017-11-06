@@ -93,7 +93,7 @@ public class ReaperActionJmxMetrics extends ReaperActionMBeanMetrics {
             return;
         }
 
-        JMetrics jMetrics = JMetrics.builder().build();
+        JMetrics jMetrics = new JMetrics();
         for (final ObjectName objectName : objectNames) {
             try {
                 MBeanInfo mBeanInfo = mbeanConn.getMBeanInfo(objectName);
