@@ -1,4 +1,4 @@
-image: maven:3-alpine
+image: maven:latest
 
 before_script:
   - echo $JAVA_HOME
