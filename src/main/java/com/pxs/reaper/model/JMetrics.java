@@ -28,6 +28,9 @@ public class JMetrics {
      */
     private InetAddress inetAddress;
 
+    /**
+     * Time stamp at the time of collection.
+     */
     private Date date;
 
     /**

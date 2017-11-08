@@ -37,6 +37,9 @@ public class OSMetrics {
      */
     private InetAddress inetAddress;
 
+    /**
+     * Time stamp at the time of collection.
+     */
     private Date date;
 
     /**
