@@ -19,19 +19,9 @@ import java.util.Date;
 @Setter
 @ToString
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class JMetrics {
+public class JMetrics extends Metrics {
 
     private String type = "com.pxs.reaper.model.JMetrics";
-
-    /**
-     * Ip address of the local agent.
-     */
-    private InetAddress inetAddress;
-
-    /**
-     * Time stamp at the time of collection.
-     */
-    private Date date;
 
     /**
      * The PID/name of the JVM.

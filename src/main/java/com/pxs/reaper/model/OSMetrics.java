@@ -28,19 +28,9 @@ import java.util.Date;
 @Setter
 @ToString
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class OSMetrics {
+public class OSMetrics extends Metrics {
 
     private String type = "com.pxs.reaper.model.OSMetrics";
-
-    /**
-     * Ip address of the local agent.
-     */
-    private InetAddress inetAddress;
-
-    /**
-     * Time stamp at the time of collection.
-     */
-    private Date date;
 
     /**
      * Model objects from Sigar that can be used directly, i.e. transported over the wire
