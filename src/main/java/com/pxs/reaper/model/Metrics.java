@@ -8,7 +8,7 @@ import java.util.Date;
 
 @Getter
 @Setter
-abstract class Metrics {
+public abstract class Metrics {
 
     /**
      * Ip address of the local agent.
