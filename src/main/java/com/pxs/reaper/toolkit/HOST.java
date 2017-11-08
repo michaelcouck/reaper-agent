@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
 
 /**
  * This class looks through the {@link InetAddress}(s) of the host to try find the 'unique' ip address
- * of the machine, or the hostname which hopefully is also unique on the network. Also iterates through the
+ * of the machine, or the HOSTNAME which hopefully is also unique on the network. Also iterates through the
  * {@link NetworkInterface}(s) of the local machine, finding the ip addresses bound to them.
  * <p>
  * Problem statement:
@@ -23,7 +23,7 @@ import java.util.regex.Pattern;
  *     * IP addresses need no be unique on the network, normally yes, but not necessarily
  * </pre>
  * <p>
- * Ergo, this is a best effort to identify the 'best' ip address/hostname.
+ * Ergo, this is a best effort to identify the 'best' ip address/HOSTNAME.
  */
 @Slf4j
 public class HOST {
@@ -31,18 +31,18 @@ public class HOST {
     /**
      * The pattern for ip addresses, i.e. 192.168.1.0 etc.
      */
-    private static Pattern ipPattern = Pattern.compile("^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$");
+    private static Pattern IP_PATTERN = Pattern.compile("^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$");
 
-    private static String hostname;
+    private static String HOSTNAME;
 
     public static String hostname() {
-        if (StringUtils.isNotEmpty(hostname)) {
-            return hostname;
+        if (StringUtils.isNotEmpty(HOSTNAME)) {
+            return HOSTNAME;
         }
         // Try the OpenShift host name environment variable
-        hostname = System.getProperty("HOSTNAME", null);
-        if (StringUtils.isNotEmpty(hostname)) {
-            return hostname;
+        HOSTNAME = System.getProperty("HOSTNAME", null);
+        if (StringUtils.isNotEmpty(HOSTNAME)) {
+            return HOSTNAME;
         }
 
         // Iterate over the interfaces and find an ip address that is not loopback
@@ -53,16 +53,16 @@ public class HOST {
             throw new RuntimeException("Couldn't access the interfaces of this machine : ");
         }
 
-        hostname = networkInterfaces(networkInterfaces);
-        if (StringUtils.isNotEmpty(hostname)) {
-            return hostname;
+        HOSTNAME = networkInterfaces(networkInterfaces);
+        if (StringUtils.isNotEmpty(HOSTNAME)) {
+            return HOSTNAME;
         } else {
             // Return a uuid that is at least unique to this vm/pod
             try {
-                return hostname = UUID.fromString(InetAddress.getLocalHost().getCanonicalHostName()).toString();
+                return HOSTNAME = UUID.fromString(InetAddress.getLocalHost().getCanonicalHostName()).toString();
             } catch (final UnknownHostException e) {
                 log.warn("Couldn't find internet address : ", e);
-                return hostname = UUID.randomUUID().toString();
+                return HOSTNAME = UUID.randomUUID().toString();
             }
         }
     }
@@ -76,9 +76,9 @@ public class HOST {
                 continue;
             }
             Enumeration<InetAddress> inetAddresses = networkInterface.getInetAddresses();
-            hostname = inetAddresses(inetAddresses);
-            if (StringUtils.isNotEmpty(hostname)) {
-                return hostname;
+            HOSTNAME = inetAddresses(inetAddresses);
+            if (StringUtils.isNotEmpty(HOSTNAME)) {
+                return HOSTNAME;
             }
         }
         return null;
@@ -92,14 +92,14 @@ public class HOST {
             log.info("Host address : {}", new Object[]{hostaddress});
 
             // Exclude anything that is mac address, hardware and ipv6
-            if (!ipPattern.matcher(hostaddress).matches()) {
+            if (!IP_PATTERN.matcher(hostaddress).matches()) {
                 continue;
             }
             // Exclude 127... localhost and loopback
             if (hostaddress.startsWith("127")) {
                 continue;
             }
-            return hostname = hostaddress;
+            return HOSTNAME = hostaddress;
         }
         return null;
     }

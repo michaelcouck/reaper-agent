@@ -7,8 +7,6 @@ import com.pxs.reaper.toolkit.OS;
 import lombok.extern.slf4j.Slf4j;
 import org.hyperic.sigar.*;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.Date;
 import java.util.TimerTask;
 
@@ -48,8 +46,7 @@ public class ReaperActionOSMetrics extends TimerTask implements ReaperAction {
         try {
             // Gather all the operating system metrics, pop them in a OSMetrics object and post them
             OSMetrics osMetrics = new OSMetrics();
-            InetAddress inetAddress = InetAddress.getByName(HOST.hostname());
-            osMetrics.setInetAddress(inetAddress);
+            osMetrics.setIpAddress(HOST.hostname());
 
             Cpu[] cpu = cpu(sigarProxy);
             CpuInfo[] cpuInfo = cpuInfo(sigarProxy);
@@ -85,7 +82,7 @@ public class ReaperActionOSMetrics extends TimerTask implements ReaperAction {
             osMetrics.setDate(new Date());
 
             Constant.TRANSPORT.postMetrics(osMetrics);
-        } catch (final SigarException | UnknownHostException e) {
+        } catch (final SigarException e) {
             // TODO: Re-initialize sigar here, and test it
             throw new RuntimeException(e);
         } finally {
