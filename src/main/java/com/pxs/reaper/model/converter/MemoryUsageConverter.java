@@ -1,8 +1,10 @@
 package com.pxs.reaper.model.converter;
 
 import javax.persistence.AttributeConverter;
+import javax.persistence.Converter;
 import java.lang.management.MemoryUsage;
 
+@Converter
 public class MemoryUsageConverter implements AttributeConverter<MemoryUsage, String> {
 
     @Override

@@ -3,7 +3,9 @@ package com.pxs.reaper.model.converter;
 import com.pxs.reaper.Constant;
 
 import javax.persistence.AttributeConverter;
+import javax.persistence.Converter;
 
+@Converter
 @SuppressWarnings("WeakerAccess")
 public abstract class GenericConverter<E> implements AttributeConverter<E, String> {
 
