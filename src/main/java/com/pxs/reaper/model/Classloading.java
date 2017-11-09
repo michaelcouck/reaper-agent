@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import javax.persistence.Column;
+
 /**
  * Contains class loading metrics, not particularly interesting.
  *
@@ -20,8 +22,11 @@ import lombok.ToString;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Classloading {
 
+    @Column
     private long loadedClassCount;
+    @Column
     private long totalLoadedClassCount;
+    @Column
     private long unLoadedClassCount;
 
 }

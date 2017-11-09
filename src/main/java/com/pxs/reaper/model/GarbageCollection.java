@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import javax.persistence.Column;
+
 /**
  * Contains garbage collection metrics, how many, time taken. Will be correlated to performance and
  * memory allocation and leakage.
@@ -21,8 +23,11 @@ import lombok.ToString;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class GarbageCollection {
 
+    @Column
     private String name;
+    @Column
     private long collectionCount;
+    @Column
     private long collectionTime;
 
 }

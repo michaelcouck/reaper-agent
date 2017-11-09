@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import javax.persistence.Column;
 import java.lang.management.ThreadInfo;
 
 /**
@@ -29,9 +30,13 @@ public class Threading {
     private long[] threadCpuTimes;
     private ThreadInfo[] threadInfos;
 
+    @Column
     private int threadCount;
+    @Column
     private int peakThreadCount;
+    @Column
     private int daemonThreadCount;
+    @Column
     private long totalStartedThreadCount;
 
 }

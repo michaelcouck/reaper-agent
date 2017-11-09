@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import javax.persistence.Column;
+
 /**
  * Contains compilation time for the Jit compiler, probably not very highly correlated to performance, but could be.
  *
@@ -20,6 +22,7 @@ import lombok.ToString;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Compilation {
 
+    @Column
     private long compilationTime;
 
 }
