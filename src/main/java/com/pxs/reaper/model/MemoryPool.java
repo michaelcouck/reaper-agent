@@ -1,6 +1,7 @@
 package com.pxs.reaper.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.pxs.reaper.model.converter.MemoryUsageConverter;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;

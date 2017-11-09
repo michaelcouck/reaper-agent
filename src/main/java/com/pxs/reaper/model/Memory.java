@@ -6,8 +6,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import javax.persistence.Column;
-import javax.persistence.Convert;
 import java.lang.management.MemoryUsage;
 
 /**
@@ -24,11 +22,8 @@ import java.lang.management.MemoryUsage;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Memory {
 
-    @Column
     private long objectPendingFinalizationCount;
-    @Convert(converter = MemoryUsageConverter.class)
     private MemoryUsage heapMemoryUsage;
-    @Convert(converter = MemoryUsageConverter.class)
     private MemoryUsage nonHeapMemoryUsage;
 
 }

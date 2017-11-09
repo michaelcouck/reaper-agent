@@ -1,4 +1,4 @@
-package com.pxs.reaper.model;
+package com.pxs.reaper.model.converter;
 
 import javax.persistence.AttributeConverter;
 import java.lang.management.MemoryUsage;

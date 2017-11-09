@@ -2,15 +2,13 @@ package com.pxs.reaper.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.pxs.reaper.model.converter.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.hyperic.sigar.*;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
+import javax.persistence.*;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -45,20 +43,32 @@ public class OSMetrics extends Metrics {
     /**
      * Model objects from Sigar that can be used directly, i.e. transported over the wire
      */
+    @Convert(converter = CpuArrayConverter.class)
     private Cpu[] cpu;
+    @Convert(converter = CpuPercArrayConverter.class)
     private CpuPerc[] cpuPerc;
+    @Convert(converter = CpuInfoArrayConverter.class)
     private CpuInfo[] cpuInfo;
-
+    @Convert(converter = DoubleArrayConverter.class)
     private double[] loadAverage;
 
+    @Convert(converter = TcpConverter.class)
     private Tcp tcp;
+    @Convert(converter = MemConverter.class)
     private Mem mem;
+    @Convert(converter = SwapConverter.class)
     private Swap swap;
+    @Convert(converter = NetInfoConverter.class)
     private NetInfo netInfo;
+    @Convert(converter = NetStatConverter.class)
     private NetStat netStat;
+    @Convert(converter = NetRouteArrayConverter.class)
     private NetRoute[] netRoutes;
+    @Convert(converter = NetConnectionArrayConverter.class)
     private NetConnection[] netConnections;
+    @Convert(converter = ProcStatConverter.class)
     private ProcStat procStat;
+    @Convert(converter = ResourceLimitConverter.class)
     private ResourceLimit resourceLimit;
 
 }

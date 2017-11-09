@@ -379,6 +379,14 @@
             <artifactId>jmockit</artifactId>
             <version>1.13</version>
         </dependency>
+
+        <dependency>
+            <groupId>uk.co.jemos.podam</groupId>
+            <artifactId>podam</artifactId>
+            <version>7.1.0.RELEASE</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
 </project>

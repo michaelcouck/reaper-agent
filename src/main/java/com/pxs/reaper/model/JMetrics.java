@@ -2,14 +2,12 @@ package com.pxs.reaper.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.pxs.reaper.model.converter.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
+import javax.persistence.*;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -39,11 +37,17 @@ public class JMetrics extends Metrics {
     @Column
     private String pid;
 
+    @Convert(converter = MemoryConverter.class)
     private Memory memory;
+    @Convert(converter = ThreadingConverter.class)
     private Threading threading;
+    @Convert(converter = CompilationConverter.class)
     private Compilation compilation;
+    @Convert(converter = MemoryPoolArrayConverter.class)
     private MemoryPool[] memoryPools;
+    @Convert(converter = ClassloadingConverter.class)
     private Classloading classLoading;
+    @Convert(converter = GarbageCollectionArrayConverter.class)
     private GarbageCollection[] garbageCollection;
 
 }
