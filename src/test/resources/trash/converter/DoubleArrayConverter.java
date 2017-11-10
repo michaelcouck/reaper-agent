@@ -1,11 +1,11 @@
-package com.pxs.reaper.model.converter;
+package trash.converter;
 
 import javax.persistence.Converter;
 
 @Converter
 public class DoubleArrayConverter extends GenericConverter<double[]> {
 
-    DoubleArrayConverter() {
+    public DoubleArrayConverter() {
         this.type = double[].class;
     }
 

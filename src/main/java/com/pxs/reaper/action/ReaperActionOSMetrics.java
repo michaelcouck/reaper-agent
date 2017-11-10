@@ -7,7 +7,6 @@ import com.pxs.reaper.toolkit.OS;
 import lombok.extern.slf4j.Slf4j;
 import org.hyperic.sigar.*;
 
-import java.util.Date;
 import java.util.TimerTask;
 
 /**
@@ -79,7 +78,7 @@ public class ReaperActionOSMetrics extends TimerTask implements ReaperAction {
             osMetrics.setResourceLimit(resourceLimit);
 
             osMetrics.setType(OSMetrics.class.getName());
-            osMetrics.setDate(new Date());
+            osMetrics.setCreated(System.currentTimeMillis());
 
             Constant.TRANSPORT.postMetrics(osMetrics);
         } catch (final SigarException e) {

@@ -1,4 +1,4 @@
-package com.pxs.reaper.model.converter;
+package trash.converter;
 
 import org.hyperic.sigar.Cpu;
 
@@ -7,7 +7,7 @@ import javax.persistence.Converter;
 @Converter()
 public class CpuArrayConverter extends GenericConverter<Cpu[]> {
 
-    CpuArrayConverter() {
+    public CpuArrayConverter() {
         this.type = Cpu[].class;
     }
 

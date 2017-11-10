@@ -1,4 +1,4 @@
-package com.pxs.reaper.model.converter;
+package trash.converter;
 
 import com.pxs.reaper.model.GarbageCollection;
 
@@ -7,7 +7,7 @@ import javax.persistence.Converter;
 @Converter
 public class GarbageCollectionArrayConverter extends GenericConverter<GarbageCollection[]> {
 
-    GarbageCollectionArrayConverter() {
+    public GarbageCollectionArrayConverter() {
         this.type = GarbageCollection[].class;
     }
 

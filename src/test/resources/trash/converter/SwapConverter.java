@@ -1,4 +1,4 @@
-package com.pxs.reaper.model.converter;
+package trash.converter;
 
 import org.hyperic.sigar.Swap;
 
@@ -7,7 +7,7 @@ import javax.persistence.Converter;
 @Converter
 public class SwapConverter extends GenericConverter<Swap> {
 
-    SwapConverter() {
+    public SwapConverter() {
         this.type = Swap.class;
     }
 

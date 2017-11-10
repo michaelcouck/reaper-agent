@@ -1,5 +1,5 @@
 
-package com.pxs.reaper.model.converter;
+package trash.converter;
 
 import org.hyperic.sigar.NetStat;
 
@@ -8,7 +8,7 @@ import javax.persistence.Converter;
 @Converter
 public class NetStatConverter extends GenericConverter<NetStat> {
 
-    NetStatConverter() {
+    public NetStatConverter() {
         this.type = NetStat.class;
     }
 

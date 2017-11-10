@@ -1,4 +1,4 @@
-package com.pxs.reaper.model.converter;
+package trash.converter;
 
 import com.pxs.reaper.model.Compilation;
 
@@ -7,7 +7,7 @@ import javax.persistence.Converter;
 @Converter
 public class CompilationConverter extends GenericConverter<Compilation> {
 
-    CompilationConverter() {
+    public CompilationConverter() {
         this.type = Compilation.class;
     }
 

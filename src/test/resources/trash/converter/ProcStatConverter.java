@@ -1,4 +1,4 @@
-package com.pxs.reaper.model.converter;
+package trash.converter;
 
 import org.hyperic.sigar.ProcStat;
 
@@ -7,7 +7,7 @@ import javax.persistence.Converter;
 @Converter
 public class ProcStatConverter extends GenericConverter<ProcStat> {
 
-    ProcStatConverter() {
+    public ProcStatConverter() {
         this.type = ProcStat.class;
     }
 

@@ -10,6 +10,10 @@ import org.jeasy.props.annotations.Property;
 import javax.websocket.*;
 import java.io.IOException;
 import java.net.URI;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.function.Function;
 
 /**
@@ -79,7 +83,12 @@ public class WebSocketTransport implements Transport {
             lastLoggingTimestamp = System.currentTimeMillis();
         }
         RemoteEndpoint.Async async = session.getAsyncRemote();
-        async.sendText(postage);
+        Future<Void> future = async.sendText(postage);
+        try {
+            future.get(1000, TimeUnit.MILLISECONDS);
+        } catch (final InterruptedException | ExecutionException | TimeoutException e) {
+            log.error("Timed out waiting to post metrics, is the service up? : ", e);
+        }
     }
 
     /**
@@ -96,7 +105,7 @@ public class WebSocketTransport implements Transport {
             try {
                 log.debug("Re-opening web socket session : ");
                 return container.connectToServer(webSocketTransport, uri);
-            } catch (DeploymentException | IOException e) {
+            } catch (final DeploymentException | IOException e) {
                 throw new RuntimeException(e);
             }
         };

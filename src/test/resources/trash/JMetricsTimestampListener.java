@@ -1,4 +1,4 @@
-package com.pxs.reaper.model;
+package trash;
 
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
@@ -11,16 +11,16 @@ import java.sql.Timestamp;
  * @version 01.00
  * @since 29-09-2012
  */
-public class TimestampListener {
+public class JMetricsTimestampListener {
 
     @PrePersist
-    public void prePersist(final Metrics persistable) {
+    public void prePersist(final JMetrics persistable) {
         persistable.setCreated(new Timestamp(System.currentTimeMillis()));
         persistable.setUpdated(new Timestamp(System.currentTimeMillis()));
     }
 
     @PreUpdate
-    public void preUpdate(final Metrics persistable) {
+    public void preUpdate(final JMetrics persistable) {
         persistable.setUpdated(new Timestamp(System.currentTimeMillis()));
     }
 

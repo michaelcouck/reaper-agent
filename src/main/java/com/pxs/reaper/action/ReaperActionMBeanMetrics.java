@@ -4,7 +4,10 @@ import com.pxs.reaper.model.*;
 import com.pxs.reaper.toolkit.HOST;
 
 import java.lang.management.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.TimerTask;
 
 /**
  * Base class for JMX operations on management MBeans for the JVM. Takes various MBeans from the JVM and populates
@@ -25,9 +28,8 @@ abstract class ReaperActionMBeanMetrics extends TimerTask implements ReaperActio
     void misc(final JMetrics jMetrics, final RuntimeMXBean runtimeMXBean) {
         String vmName = runtimeMXBean.getName();
         jMetrics.setPid(vmName);
-        jMetrics.setDate(new Date());
+        jMetrics.setCreated(System.currentTimeMillis());
         jMetrics.setIpAddress(HOST.hostname());
-        jMetrics.setDate(new Date());
     }
 
     /**

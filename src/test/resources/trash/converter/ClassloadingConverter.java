@@ -1,4 +1,4 @@
-package com.pxs.reaper.model.converter;
+package trash.converter;
 
 import com.pxs.reaper.model.Classloading;
 
@@ -7,7 +7,7 @@ import javax.persistence.Converter;
 @Converter
 public class ClassloadingConverter extends GenericConverter<Classloading> {
 
-    ClassloadingConverter() {
+    public ClassloadingConverter() {
         this.type = Classloading.class;
     }
 

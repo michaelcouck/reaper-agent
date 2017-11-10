@@ -1,4 +1,4 @@
-package com.pxs.reaper.model.converter;
+package trash;
 
 import com.pxs.reaper.model.JMetrics;
 import com.pxs.reaper.model.OSMetrics;
@@ -10,6 +10,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
+import trash.converter.CpuArrayConverter;
+import trash.converter.CpuPercArrayConverter;
+import trash.converter.GenericConverter;
 import uk.co.jemos.podam.api.PodamFactory;
 import uk.co.jemos.podam.api.PodamFactoryImpl;
 

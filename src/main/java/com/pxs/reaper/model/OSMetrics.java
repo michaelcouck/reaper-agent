@@ -1,15 +1,11 @@
 package com.pxs.reaper.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.pxs.reaper.model.converter.*;
+import com.couchbase.client.java.repository.annotation.Field;
+import com.couchbase.client.java.repository.annotation.Id;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 import org.hyperic.sigar.*;
-
-import javax.persistence.*;
-import javax.xml.bind.annotation.XmlRootElement;
+import org.springframework.data.couchbase.core.mapping.Document;
 
 /**
  * Contains operating system metrics, low level.
@@ -28,47 +24,54 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @Getter
 @Setter
-@ToString
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@Document
+public class OSMetrics {
 
-@Entity
-@XmlRootElement
-@JsonIgnoreProperties(ignoreUnknown = true)
-@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-public class OSMetrics extends Metrics {
+    @Id
+    protected String id;
 
-    @Column
-    private String type = "com.pxs.reaper.model.OSMetrics";
+    @Field
+    private String type = this.getClass().getName();
+
+    /**
+     * Ip address of the local agent.
+     */
+    @Field
+    private String ipAddress;
+
+    @Field
+    private long created;
 
     /**
      * Model objects from Sigar that can be used directly, i.e. transported over the wire
      */
-    @Convert(converter = CpuArrayConverter.class)
-    private Cpu[] cpu;
-    @Convert(converter = CpuPercArrayConverter.class)
-    private CpuPerc[] cpuPerc;
-    @Convert(converter = CpuInfoArrayConverter.class)
-    private CpuInfo[] cpuInfo;
-    @Convert(converter = DoubleArrayConverter.class)
+    @Field
     private double[] loadAverage;
 
-    @Convert(converter = TcpConverter.class)
+    @Field
+    private Cpu[] cpu;
+    @Field
+    private CpuPerc[] cpuPerc;
+    @Field
+    private CpuInfo[] cpuInfo;
+
+    @Field
     private Tcp tcp;
-    @Convert(converter = MemConverter.class)
+    @Field
     private Mem mem;
-    @Convert(converter = SwapConverter.class)
+    @Field
     private Swap swap;
-    @Convert(converter = NetInfoConverter.class)
+    @Field
     private NetInfo netInfo;
-    @Convert(converter = NetStatConverter.class)
+    @Field
     private NetStat netStat;
-    @Convert(converter = NetRouteArrayConverter.class)
+    @Field
     private NetRoute[] netRoutes;
-    @Convert(converter = NetConnectionArrayConverter.class)
+    @Field
     private NetConnection[] netConnections;
-    @Convert(converter = ProcStatConverter.class)
+    @Field
     private ProcStat procStat;
-    @Convert(converter = ResourceLimitConverter.class)
+    @Field
     private ResourceLimit resourceLimit;
 
 }

@@ -1,4 +1,4 @@
-package com.pxs.reaper.model.converter;
+package trash.converter;
 
 import org.hyperic.sigar.Mem;
 
@@ -7,7 +7,7 @@ import javax.persistence.Converter;
 @Converter
 public class MemConverter extends GenericConverter<Mem> {
 
-    MemConverter() {
+    public MemConverter() {
         this.type = Mem.class;
     }
 

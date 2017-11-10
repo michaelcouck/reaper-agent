@@ -1,14 +1,10 @@
 package com.pxs.reaper.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.pxs.reaper.model.converter.*;
+import com.couchbase.client.java.repository.annotation.Field;
+import com.couchbase.client.java.repository.annotation.Id;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
-
-import javax.persistence.*;
-import javax.xml.bind.annotation.XmlRootElement;
+import org.springframework.data.couchbase.core.mapping.Document;
 
 /**
  * Parent class for all Java process telemetry, the memory, the threads etc.
@@ -19,35 +15,41 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @Getter
 @Setter
-@ToString
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@Document
+public class JMetrics {
 
-@Entity
-@XmlRootElement
-@JsonIgnoreProperties(ignoreUnknown = true)
-@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-public class JMetrics extends Metrics {
+    @Id
+    protected String id;
 
-    @Column
-    private String type = "com.pxs.reaper.model.JMetrics";
+    @Field
+    private String type = this.getClass().getName();
+
+    /**
+     * Ip address of the local agent.
+     */
+    @Field
+    private String ipAddress;
+
+    @Field
+    private long created;
 
     /**
      * The PID/name of the JVM.
      */
-    @Column
+    @Field
     private String pid;
 
-    @Convert(converter = MemoryConverter.class)
+    @Field
     private Memory memory;
-    @Convert(converter = ThreadingConverter.class)
+    @Field
     private Threading threading;
-    @Convert(converter = CompilationConverter.class)
+    @Field
     private Compilation compilation;
-    @Convert(converter = MemoryPoolArrayConverter.class)
+    @Field
     private MemoryPool[] memoryPools;
-    @Convert(converter = ClassloadingConverter.class)
+    @Field
     private Classloading classLoading;
-    @Convert(converter = GarbageCollectionArrayConverter.class)
+    @Field
     private GarbageCollection[] garbageCollection;
 
 }

@@ -1,4 +1,4 @@
-package com.pxs.reaper.model.converter;
+package trash.converter;
 
 import com.pxs.reaper.model.Threading;
 
@@ -7,7 +7,7 @@ import javax.persistence.Converter;
 @Converter
 public class ThreadingConverter extends GenericConverter<Threading> {
 
-    ThreadingConverter() {
+    public ThreadingConverter() {
         this.type = Threading.class;
     }
 

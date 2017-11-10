@@ -1,4 +1,4 @@
-package com.pxs.reaper.model;
+package trash;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import java.sql.Timestamp;

@@ -1,5 +1,5 @@
 
-package com.pxs.reaper.model.converter;
+package trash.converter;
 
 import org.hyperic.sigar.NetInfo;
 
@@ -8,7 +8,7 @@ import javax.persistence.Converter;
 @Converter
 public class NetInfoConverter extends GenericConverter<NetInfo> {
 
-    NetInfoConverter() {
+    public NetInfoConverter() {
         this.type = NetInfo.class;
     }
 

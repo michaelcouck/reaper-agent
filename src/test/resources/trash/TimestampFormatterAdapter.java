@@ -1,4 +1,4 @@
-package com.pxs.reaper.model;
+package trash;
 
 import com.pxs.reaper.Constant;
 
