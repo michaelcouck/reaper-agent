@@ -189,13 +189,13 @@
                 <version>1.6</version>
                 <configuration>
                     <tasks>
-                        <copy todir="target/lib" failonerror="false">
+                        <copy todir="target/lib" overwrite="false" failonerror="false">
                             <fileset dir="${project.basedir}/src/main/resources/lib">
                                 <include name="*.*"/>
                             </fileset>
                         </copy>
                         <!-- On linux and in a pod on OpenShift this path must be /deployments/lib, and nothing else. -->
-                        <copy todir="/deployments/lib" failonerror="false">
+                        <copy todir="/deployments/lib" overwrite="false" failonerror="false">
                             <fileset dir="${project.basedir}/target/lib">
                                 <include name="*.*"/>
                             </fileset>
