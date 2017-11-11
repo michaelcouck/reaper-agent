@@ -1,6 +1,5 @@
 package com.pxs.reaper;
 
-import com.pxs.reaper.toolkit.THREAD;
 import lombok.extern.slf4j.Slf4j;
 import mockit.Deencapsulation;
 import org.apache.commons.lang.StringUtils;
@@ -53,23 +52,15 @@ public class ReaperTest {
     }
 
     @Test
-    public void connectToEverything() {
-        // reaper.attachToJavaProcesses();
-        // reaper.attachToJmxProcesses();
-        reaper.attachToOperatingSystem();
-        THREAD.sleep(60000);
-    }
-
-    @Test
     public void attachToOperatingSystem() throws InterruptedException {
         reaper.attachToOperatingSystem();
-        // Thread.sleep(60000);
+        // Thread.sleep(5000);
     }
 
     @Test
     public void attachToJavaProcesses() throws InterruptedException {
         reaper.attachToJavaProcesses();
-        // Thread.sleep(60000);
+        // Thread.sleep(20000);
     }
 
     @Test

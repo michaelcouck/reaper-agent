@@ -1,26 +1,29 @@
 package com.pxs.reaper.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.couchbase.client.java.repository.annotation.Field;
+import com.couchbase.client.java.repository.annotation.Id;
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.data.couchbase.core.mapping.Document;
 
-import java.sql.Timestamp;
-import java.util.Date;
-
-@JsonIgnoreProperties(ignoreUnknown = true)
+@Getter
+@Setter
+@Document
 public abstract class Metrics {
 
-    protected long id;
+    @Id
+    protected String id;
+
+    @Field
+    private String type = this.getClass().getName();
 
     /**
      * Ip address of the local agent.
      */
+    @Field
     private String ipAddress;
 
-    /**
-     * Time stamp at the time of collection.
-     */
-    private Date date;
-
-    private Timestamp created;
-    private Timestamp updated;
+    @Field
+    private long created;
 
 }

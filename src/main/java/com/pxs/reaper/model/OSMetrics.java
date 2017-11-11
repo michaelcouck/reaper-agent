@@ -1,7 +1,6 @@
 package com.pxs.reaper.model;
 
 import com.couchbase.client.java.repository.annotation.Field;
-import com.couchbase.client.java.repository.annotation.Id;
 import lombok.Getter;
 import lombok.Setter;
 import org.hyperic.sigar.*;
@@ -25,22 +24,7 @@ import org.springframework.data.couchbase.core.mapping.Document;
 @Getter
 @Setter
 @Document
-public class OSMetrics {
-
-    @Id
-    protected String id;
-
-    @Field
-    private String type = this.getClass().getName();
-
-    /**
-     * Ip address of the local agent.
-     */
-    @Field
-    private String ipAddress;
-
-    @Field
-    private long created;
+public class OSMetrics extends Metrics {
 
     /**
      * Model objects from Sigar that can be used directly, i.e. transported over the wire
