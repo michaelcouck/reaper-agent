@@ -39,7 +39,7 @@ abstract class ReaperActionMBeanMetrics extends TimerTask implements ReaperActio
      * @param threadMXBean the thread MBean for access to the threads in the JVM
      */
     void threading(final JMetrics jMetrics, final ThreadMXBean threadMXBean) {
-        Threading threading = Threading.builder().build();
+        Threading threading = new Threading();
 
         threading.setDeadLockedThreads(threadMXBean.findDeadlockedThreads());
         threading.setMonitorDeadLockedThreads(threadMXBean.findMonitorDeadlockedThreads());
@@ -74,7 +74,7 @@ abstract class ReaperActionMBeanMetrics extends TimerTask implements ReaperActio
             memoryPools.addAll(Arrays.asList(jMetrics.getMemoryPools()));
         }
         for (final MemoryPoolMXBean memoryPoolMXBean : memoryPoolMXBeans) {
-            MemoryPool memoryPool = MemoryPool.builder().build();
+            MemoryPool memoryPool = new MemoryPool();
             memoryPool.setName(memoryPoolMXBean.getName());
 
             memoryPool.setCollectionUsage(memoryPoolMXBean.getCollectionUsage());
@@ -101,7 +101,7 @@ abstract class ReaperActionMBeanMetrics extends TimerTask implements ReaperActio
      * @param memoryMXBean the memory bean from the JVM
      */
     void memory(final JMetrics jMetrics, final MemoryMXBean memoryMXBean) {
-        Memory memory = Memory.builder().build();
+        Memory memory = new Memory();
 
         memory.setNonHeapMemoryUsage(memoryMXBean.getHeapMemoryUsage());
         memory.setNonHeapMemoryUsage(memoryMXBean.getNonHeapMemoryUsage());
@@ -121,7 +121,7 @@ abstract class ReaperActionMBeanMetrics extends TimerTask implements ReaperActio
             garbageCollections.addAll(Arrays.asList(jMetrics.getGarbageCollection()));
         }
         for (final GarbageCollectorMXBean garbageCollectorMXBean : garbageCollectorMXBeans) {
-            GarbageCollection garbageCollection = GarbageCollection.builder().build();
+            GarbageCollection garbageCollection = new GarbageCollection();
             garbageCollection.setName(garbageCollectorMXBean.getName());
             garbageCollection.setCollectionCount(garbageCollectorMXBean.getCollectionCount());
             garbageCollection.setCollectionTime(garbageCollectorMXBean.getCollectionTime());
@@ -137,7 +137,7 @@ abstract class ReaperActionMBeanMetrics extends TimerTask implements ReaperActio
      * @param compilationMXBean the compilation bean for the JVM
      */
     void compilation(final JMetrics jMetrics, final CompilationMXBean compilationMXBean) {
-        Compilation compilation = Compilation.builder().build();
+        Compilation compilation = new Compilation();
         compilation.setCompilationTime(compilationMXBean.getTotalCompilationTime());
         jMetrics.setCompilation(compilation);
     }
@@ -150,7 +150,7 @@ abstract class ReaperActionMBeanMetrics extends TimerTask implements ReaperActio
      * @param classLoadingMXBean the class loading bean for the JVM
      */
     void classloading(final JMetrics jMetrics, final ClassLoadingMXBean classLoadingMXBean) {
-        Classloading classloading = Classloading.builder().build();
+        Classloading classloading = new Classloading();
         classloading.setLoadedClassCount(classLoadingMXBean.getLoadedClassCount());
         classloading.setTotalLoadedClassCount(classLoadingMXBean.getTotalLoadedClassCount());
         classloading.setTotalLoadedClassCount(classLoadingMXBean.getUnloadedClassCount());

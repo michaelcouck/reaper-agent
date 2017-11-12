@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
  * <pre>
  *     * IP address can be specified, and or spoofd
  *     * There are several ip addresses bound to each interface potentially
- *     * IP addresses need no be unique on the network, normally yes, but not necessarily
+ *     * IP addresses need not be unique on the network, normally yes, but not necessarily
  * </pre>
  * <p>
  * Ergo, this is a best effort to identify the 'best' ip address/HOSTNAME.
@@ -33,12 +33,19 @@ public class HOST {
      */
     private static Pattern IP_PATTERN = Pattern.compile("^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$");
 
+    /**
+     * Sored static iip address for further access.
+     */
     private static String HOSTNAME;
 
+    /**
+     * Finds the best ip address for this machine.
+     */
     public static String hostname() {
         if (StringUtils.isNotEmpty(HOSTNAME)) {
             return HOSTNAME;
         }
+
         // Try the OpenShift host name environment variable
         HOSTNAME = System.getProperty("HOSTNAME", null);
         if (StringUtils.isNotEmpty(HOSTNAME)) {
@@ -52,7 +59,6 @@ public class HOST {
         } catch (final SocketException e) {
             throw new RuntimeException("Couldn't access the interfaces of this machine : ");
         }
-
         HOSTNAME = networkInterfaces(networkInterfaces);
         if (StringUtils.isNotEmpty(HOSTNAME)) {
             return HOSTNAME;
@@ -67,6 +73,7 @@ public class HOST {
         }
     }
 
+    @SuppressWarnings("WeakerAccess")
     static String networkInterfaces(final Enumeration<NetworkInterface> networkInterfaces) {
         while (networkInterfaces.hasMoreElements()) {
             NetworkInterface networkInterface = networkInterfaces.nextElement();
@@ -84,13 +91,12 @@ public class HOST {
         return null;
     }
 
+    @SuppressWarnings("WeakerAccess")
     static String inetAddresses(final Enumeration<InetAddress> inetAddresses) {
         while (inetAddresses.hasMoreElements()) {
             InetAddress inetAddress = inetAddresses.nextElement();
             String hostaddress = inetAddress.getHostAddress();
-
             log.info("Host address : {}", new Object[]{hostaddress});
-
             // Exclude anything that is mac address, hardware and ipv6
             if (!IP_PATTERN.matcher(hostaddress).matches()) {
                 continue;
@@ -101,7 +107,8 @@ public class HOST {
             }
             return HOSTNAME = hostaddress;
         }
-        return null;
+        // Finally if we don't find any address, return the local host
+        return "127.0.0.1";
     }
 
 }

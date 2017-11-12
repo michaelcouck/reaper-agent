@@ -1,10 +1,10 @@
 package com.pxs.reaper.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.springframework.data.couchbase.core.mapping.Document;
 
 /**
  * Contains class loading metrics, not particularly interesting.
@@ -15,8 +15,8 @@ import lombok.ToString;
  */
 @Getter
 @Setter
-@Builder
 @ToString
+@Document
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Classloading {
 
