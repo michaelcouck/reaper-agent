@@ -2,15 +2,17 @@ package com.pxs.reaper.model;
 
 import com.couchbase.client.java.repository.annotation.Field;
 import com.couchbase.client.java.repository.annotation.Id;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 import org.springframework.data.couchbase.core.mapping.Document;
 
 @Getter
 @Setter
+@ToString
 @Document
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@NoArgsConstructor
 @SuppressWarnings("WeakerAccess")
 public abstract class Metrics {
 

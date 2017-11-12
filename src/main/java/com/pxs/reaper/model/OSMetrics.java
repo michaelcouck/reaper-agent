@@ -1,9 +1,10 @@
 package com.pxs.reaper.model;
 
 import com.couchbase.client.java.repository.annotation.Field;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 import org.hyperic.sigar.*;
 import org.springframework.data.couchbase.core.mapping.Document;
 
@@ -24,8 +25,9 @@ import org.springframework.data.couchbase.core.mapping.Document;
  */
 @Getter
 @Setter
+@ToString
 @Document
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@NoArgsConstructor
 public class OSMetrics extends Metrics {
 
     /**

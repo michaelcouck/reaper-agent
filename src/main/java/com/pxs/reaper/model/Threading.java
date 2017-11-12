@@ -1,7 +1,7 @@
 package com.pxs.reaper.model;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.springframework.data.couchbase.core.mapping.Document;
@@ -19,7 +19,7 @@ import java.lang.management.ThreadInfo;
 @Setter
 @ToString
 @Document
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@NoArgsConstructor
 public class Threading {
 
     private long[] threadIds;
