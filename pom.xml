@@ -81,7 +81,6 @@
         <jmx-remoting>-Djava.rmi.server.hostname=localhost -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.local.only=false</jmx-remoting>
         <jmx-ports>-Dcom.sun.management.jmxremote.rmi.port=1100 -Dcom.sun.management.jmxremote.port=1099</jmx-ports>
         <jmx-security>-Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false</jmx-security>
-        <!--${jmx-ports}-->
         <jmx-parameters>${jmx-remoting} ${jmx-ports} ${jmx-security}</jmx-parameters>
     </properties>
 
@@ -205,6 +204,48 @@
                     <!--suppress MavenModelInspection -->
                     <!--<argLine>-javaagent:${project.basedir}/serenity/serenity.jar ${headless-parameters} ${serenity-parameters} ${memory-parameters}</argLine>-->
                 </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>2.18.1</version>
+                <configuration>
+                    <forkMode>once</forkMode>
+                    <!--suppress MavenModelInspection -->
+                    <argLine>${headless-parameters} ${memory-parameters}</argLine>
+                    <testFailureIgnore>true</testFailureIgnore>
+                    <argLine>-Dintegration-test=true</argLine>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>integration-tests</id>
+                        <phase>integration-test</phase>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                        <configuration>
+                            <includes>
+                                <include>**/*Integration*.java</include>
+                            </includes>
+                            <excludes>
+                                <exclude>**/*SystemIntegration*</exclude>
+                            </excludes>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>system-tests</id>
+                        <phase>deploy</phase>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                        <configuration>
+                            <includes>
+                                <include>**/*SystemIntegration*.java</include>
+                            </includes>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
             <!--
                 This plugin is necessary to copy the dependencies to the lib directory

@@ -20,7 +20,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
 @RunWith(MockitoJUnitRunner.class)
-public class ReaperTest {
+public class ReaperIntegration {
 
     @Mock
     private Timer timer;

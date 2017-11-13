@@ -34,7 +34,7 @@ public class ReaperActionOSMetrics extends TimerTask implements ReaperAction {
     public ReaperActionOSMetrics() {
         sigar = new Sigar();
         sigarProxy = SigarProxyCache.newInstance(sigar, 1000);
-        log.info("Attached to operating system : ");
+        log.info("Attached to operating system : " + HOST.hostname());
     }
 
     /**

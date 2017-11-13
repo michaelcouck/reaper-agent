@@ -15,7 +15,7 @@ import java.util.Map;
 
 @Slf4j
 @RunWith(MockitoJUnitRunner.class)
-public class ReaperActionAgentMetricsTest {
+public class ReaperActionAgentMetricsIntegration {
 
     @Mock
     private VirtualMachine virtualMachine;

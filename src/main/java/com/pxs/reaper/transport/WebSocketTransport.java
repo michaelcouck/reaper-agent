@@ -94,22 +94,31 @@ public class WebSocketTransport implements Transport {
     /**
      * Opens a session to the web socket of the centralized analyzer.
      */
+    @SuppressWarnings("StatementWithEmptyBody")
     private void openSession() {
-        if (session != null && session.isOpen()) {
-            return;
-        }
         WebSocketTransport webSocketTransport = this;
         Function<Void, Session> function = aVoid -> {
             WebSocketContainer container = ContainerProvider.getWebSocketContainer();
             URI uri = URI.create(reaperWebSocketUri);
             try {
-                log.debug("Re-opening web socket session : ");
+                log.info("Opening(re) web socket session : " + session);
                 return container.connectToServer(webSocketTransport, uri);
             } catch (final DeploymentException | IOException e) {
                 throw new RuntimeException(e);
             }
         };
-        session = retryWithIncreasingDelay.retry(function, null, maxRetries, finalRetryDelay);
+        if (session == null) {
+            session = retryWithIncreasingDelay.retry(function, null, maxRetries, finalRetryDelay);
+        } else if (!session.isOpen()) {
+            try {
+                session.close();
+            } catch (final IOException e) {
+                log.error("Couldn't close web socket connection : ", e);
+            }
+            session = retryWithIncreasingDelay.retry(function, null, maxRetries, finalRetryDelay);
+        } else {
+            // TODO: Test the connection and re-connect if necessary
+        }
     }
 
     /**
