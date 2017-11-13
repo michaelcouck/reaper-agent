@@ -13,7 +13,9 @@ import sun.jvmstat.monitor.MonitorException;
 import sun.jvmstat.monitor.MonitoredHost;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -119,6 +121,20 @@ public class ReaperActionAgentMetrics extends TimerTask implements ReaperAction 
      * @return the absolute, cleaned, normalized, canonical path to the jar containing 'this' Java agent
      */
     private String getPathToAgent() {
+        try {
+            Manifests.DEFAULT.append(() -> {
+                // This is here because for some reason {@link Manifests} does not look at the file system directly
+                List<File> manifestFiles = FILE.findFilesRecursively(new File("."), new ArrayList<>(), "MANIFEST.MF");
+                List<InputStream> inputStreams = new ArrayList<>();
+                for (final File manifestFile : manifestFiles) {
+                    InputStream inputStream = new FileInputStream(manifestFile);
+                    inputStreams.add(inputStream);
+                }
+                return inputStreams;
+            });
+        } catch (final IOException e) {
+            log.error("Couldn't get manifest file : ", e);
+        }
         String jarFileName = Manifests.read("Agent-Jar-Name");
         File agentJar = FILE.findFileRecursively(new File("."), jarFileName);
         return (agentJar != null) ? FILE.cleanFilePath(agentJar.getAbsolutePath()) : null;

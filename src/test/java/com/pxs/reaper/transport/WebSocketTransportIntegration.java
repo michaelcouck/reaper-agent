@@ -11,7 +11,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.io.File;
 
 @RunWith(MockitoJUnitRunner.class)
-public class WebSocketTransportTest {
+public class WebSocketTransportIntegration {
 
     private WebSocketTransport webSocketTransport;
 
