@@ -16,7 +16,9 @@ public interface Transport {
      *
      * @param metrics the metrics/telemetry data for a particular process, could be the operating system, but could
      *                be a Java process
+     * @return whether the operation succeeded or not. Success being defined as no error response from the target
+     * and being executed in a reasonable time interval
      */
-    void postMetrics(final Object metrics);
+    boolean postMetrics(final Object metrics);
 
 }

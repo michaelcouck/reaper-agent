@@ -3,6 +3,7 @@ package com.pxs.reaper.transport;
 import com.pxs.reaper.Constant;
 import com.pxs.reaper.model.OSMetrics;
 import com.pxs.reaper.toolkit.FILE;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,7 +26,8 @@ public class WebSocketTransportIntegration {
         File file = FILE.findFileRecursively(new File("."), "o-metrics.json");
         String json = FILE.getContent(file);
         OSMetrics osMetrics = Constant.GSON.fromJson(json, OSMetrics.class);
-        webSocketTransport.postMetrics(osMetrics);
+        boolean posted = webSocketTransport.postMetrics(osMetrics);
+        Assert.assertTrue(posted);
     }
 
 }

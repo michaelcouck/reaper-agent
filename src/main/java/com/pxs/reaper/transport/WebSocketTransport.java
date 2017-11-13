@@ -74,7 +74,7 @@ public class WebSocketTransport implements Transport {
     /**
      * {@inheritDoc}
      */
-    public void postMetrics(final Object metrics) {
+    public boolean postMetrics(final Object metrics) {
         openSession();
         String postage = Constant.GSON.toJson(metrics);
         // Periodically log some data
@@ -88,7 +88,9 @@ public class WebSocketTransport implements Transport {
             future.get(1000, TimeUnit.MILLISECONDS);
         } catch (final InterruptedException | ExecutionException | TimeoutException e) {
             log.error("Timed out waiting to post metrics, is the service up? : ", e);
+            return Boolean.FALSE;
         }
+        return Boolean.TRUE;
     }
 
     /**
