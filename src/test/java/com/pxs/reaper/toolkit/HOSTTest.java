@@ -9,6 +9,7 @@ public class HOSTTest {
     public void getHostname() throws Exception {
         String hostName = HOST.hostname();
         Assert.assertNotNull(hostName);
+        Assert.assertFalse(hostName.startsWith("127"));
     }
 
 }

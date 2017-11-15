@@ -2,6 +2,7 @@ package com.pxs.reaper.toolkit;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
+import sun.net.util.IPAddressUtil;
 
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -9,7 +10,6 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.Enumeration;
 import java.util.UUID;
-import java.util.regex.Pattern;
 
 /**
  * This class looks through the {@link InetAddress}(s) of the host to try find the 'unique' ip address
@@ -29,11 +29,6 @@ import java.util.regex.Pattern;
 public class HOST {
 
     /**
-     * The pattern for ip addresses, i.e. 192.168.1.0 etc.
-     */
-    private static Pattern IP_PATTERN = Pattern.compile("^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$");
-
-    /**
      * Sored static iip address for further access.
      */
     private static String HOSTNAME;
@@ -46,12 +41,6 @@ public class HOST {
             return HOSTNAME;
         }
 
-        // Try the OpenShift host name environment variable
-        HOSTNAME = System.getProperty("HOSTNAME", null);
-        if (StringUtils.isNotEmpty(HOSTNAME)) {
-            return HOSTNAME;
-        }
-
         // Iterate over the interfaces and find an ip address that is not loopback
         Enumeration<NetworkInterface> networkInterfaces;
         try {
@@ -59,22 +48,25 @@ public class HOST {
         } catch (final SocketException e) {
             throw new RuntimeException("Couldn't access the interfaces of this machine : ");
         }
-        HOSTNAME = networkInterfaces(networkInterfaces);
-        if (StringUtils.isNotEmpty(HOSTNAME)) {
-            return HOSTNAME;
-        } else {
-            // Return a uuid that is at least unique to this vm/pod
-            try {
-                return HOSTNAME = UUID.fromString(InetAddress.getLocalHost().getCanonicalHostName()).toString();
-            } catch (final UnknownHostException e) {
-                log.warn("Couldn't find internet address : ", e);
-                return HOSTNAME = UUID.randomUUID().toString();
+        networkInterfaces(networkInterfaces);
+        if (StringUtils.isEmpty(HOSTNAME)) {
+            // Try the OpenShift host name environment variable
+            HOSTNAME = System.getProperty("HOSTNAME", null);
+            if (StringUtils.isEmpty(HOSTNAME)) {
+                try {
+                    // Return a uuid that is at least unique to this vm/pod
+                    HOSTNAME = UUID.fromString(InetAddress.getLocalHost().getCanonicalHostName()).toString();
+                } catch (final UnknownHostException e) {
+                    log.warn("Couldn't find internet address : ", e);
+                    HOSTNAME = UUID.randomUUID().toString();
+                }
             }
         }
+        return HOSTNAME;
     }
 
     @SuppressWarnings("WeakerAccess")
-    static String networkInterfaces(final Enumeration<NetworkInterface> networkInterfaces) {
+    static void networkInterfaces(final Enumeration<NetworkInterface> networkInterfaces) {
         while (networkInterfaces.hasMoreElements()) {
             NetworkInterface networkInterface = networkInterfaces.nextElement();
             // Exclude Docker and VMWare interfaces
@@ -83,32 +75,34 @@ public class HOST {
                 continue;
             }
             Enumeration<InetAddress> inetAddresses = networkInterface.getInetAddresses();
-            HOSTNAME = inetAddresses(inetAddresses);
+            inetAddresses(inetAddresses);
             if (StringUtils.isNotEmpty(HOSTNAME)) {
-                return HOSTNAME;
+                // Check if this is the ip address and not the hostname, i.e. laptop
+                if (networkInterfaces.hasMoreElements() && !IPAddressUtil.isIPv4LiteralAddress(HOSTNAME)) {
+                    continue;
+                }
+                return;
             }
         }
-        return null;
     }
 
     @SuppressWarnings("WeakerAccess")
-    static String inetAddresses(final Enumeration<InetAddress> inetAddresses) {
+    static void inetAddresses(final Enumeration<InetAddress> inetAddresses) {
         while (inetAddresses.hasMoreElements()) {
             InetAddress inetAddress = inetAddresses.nextElement();
-            String hostaddress = inetAddress.getHostAddress();
-            log.info("Host address : {}", new Object[]{hostaddress});
-            // Exclude anything that is mac address, hardware and ipv6
-            if (!IP_PATTERN.matcher(hostaddress).matches()) {
-                continue;
-            }
+            String hostAddress = inetAddress.getHostAddress();
+            log.info("Host address : {}", hostAddress);
             // Exclude 127... localhost and loopback
-            if (hostaddress.startsWith("127")) {
+            if (hostAddress.startsWith("127")) {
                 continue;
             }
-            return HOSTNAME = hostaddress;
+            if (!IPAddressUtil.isIPv4LiteralAddress(hostAddress)) {
+                continue;
+            }
+            // Select the first address that is IPV4
+            HOSTNAME = hostAddress;
+            return;
         }
-        // Finally if we don't find any address, return the local host
-        return "127.0.0.1";
     }
 
 }

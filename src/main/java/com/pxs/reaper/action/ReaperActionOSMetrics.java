@@ -78,10 +78,10 @@ public class ReaperActionOSMetrics extends TimerTask implements ReaperAction {
             osMetrics.setProcStat(procStat);
             osMetrics.setResourceLimit(resourceLimit);
 
+            osMetrics.setOperatingSystem(operatingSystem);
+
             osMetrics.setType(OSMetrics.class.getName());
             osMetrics.setCreated(System.currentTimeMillis());
-
-            osMetrics.setOperatingSystem(operatingSystem);
 
             Constant.TRANSPORT.postMetrics(osMetrics);
         } catch (final SigarException e) {
