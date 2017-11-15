@@ -35,8 +35,7 @@ class ReaperActionJvmMetrics extends ReaperActionMBeanMetrics {
         garbageCollection(jMetrics, ManagementFactory.getGarbageCollectorMXBeans());
         compilation(jMetrics, ManagementFactory.getCompilationMXBean());
         classloading(jMetrics, ManagementFactory.getClassLoadingMXBean());
-
-        jMetrics.setType(JMetrics.class.getName());
+        os(jMetrics, ManagementFactory.getOperatingSystemMXBean());
 
         Constant.TRANSPORT.postMetrics(jMetrics);
     }

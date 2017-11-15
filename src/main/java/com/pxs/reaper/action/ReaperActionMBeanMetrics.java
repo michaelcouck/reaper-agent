@@ -20,6 +20,26 @@ import java.util.TimerTask;
 abstract class ReaperActionMBeanMetrics extends TimerTask implements ReaperAction {
 
     /**
+     * Populates the operating system information, like the name and the version, also the load average. Although
+     * this is already published by the {@link OSMetrics}, it is possible that the java agent will be running without
+     * the operating system metrics running.
+     *
+     * @param jMetrics              the metrics object to populate for transport to the collection service
+     * @param operatingSystemMXBean the operating system {@link OperatingSystemMXBean}
+     */
+    void os(final JMetrics jMetrics, final OperatingSystemMXBean operatingSystemMXBean) {
+        OperatingSystem operatingSystem = new OperatingSystem();
+
+        operatingSystem.setName(operatingSystemMXBean.getName());
+        operatingSystem.setVersion(operatingSystemMXBean.getVersion());
+        operatingSystem.setArch(operatingSystemMXBean.getArch());
+        operatingSystem.setAvailableProcessors(operatingSystemMXBean.getAvailableProcessors());
+        operatingSystem.setSystemLoadAverage(operatingSystemMXBean.getSystemLoadAverage());
+
+        jMetrics.setOperatingSystem(operatingSystem);
+    }
+
+    /**
      * Populates the miscellaneous items for TRANSPORT, the ip address, timestamp etc.
      *
      * @param jMetrics      the JVM metrics model object for TRANSPORT
@@ -30,6 +50,7 @@ abstract class ReaperActionMBeanMetrics extends TimerTask implements ReaperActio
         jMetrics.setPid(vmName);
         jMetrics.setCreated(System.currentTimeMillis());
         jMetrics.setIpAddress(HOST.hostname());
+        jMetrics.setType(JMetrics.class.getName());
     }
 
     /**

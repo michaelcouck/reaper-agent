@@ -60,6 +60,7 @@ public class ReaperActionOSMetrics extends TimerTask implements ReaperAction {
             ProcStat procStat = procStat(sigarProxy);
             Tcp tcp = tcp(sigarProxy);
             ResourceLimit resourceLimit = resourceLimit(sigarProxy);
+            OperatingSystem operatingSystem = getOperatingSystem();
 
             osMetrics.setCpu(cpu);
             osMetrics.setCpuPerc(cpuPerc);
@@ -79,6 +80,8 @@ public class ReaperActionOSMetrics extends TimerTask implements ReaperAction {
 
             osMetrics.setType(OSMetrics.class.getName());
             osMetrics.setCreated(System.currentTimeMillis());
+
+            osMetrics.setOperatingSystem(operatingSystem);
 
             Constant.TRANSPORT.postMetrics(osMetrics);
         } catch (final SigarException e) {
@@ -143,6 +146,10 @@ public class ReaperActionOSMetrics extends TimerTask implements ReaperAction {
 
     private ResourceLimit resourceLimit(final SigarProxy sigarProxy) throws SigarException {
         return sigarProxy.getResourceLimit();
+    }
+
+    private OperatingSystem getOperatingSystem() {
+        return OperatingSystem.getInstance();
     }
 
     /**

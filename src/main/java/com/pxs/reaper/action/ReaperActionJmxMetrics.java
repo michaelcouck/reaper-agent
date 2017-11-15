@@ -86,7 +86,8 @@ public class ReaperActionJmxMetrics extends ReaperActionMBeanMetrics {
      */
     @Override
     public void run() {
-        // TODO: Scan for al ports here, just in case... Then save them. Perhaps have a scheduled scan to check for mew exposures.
+        // TODO: Scan for all ports here, just in case... Then save them.
+        // TODO: Perhaps have a scheduled scan to check for mew exposures.
         Set<ObjectName> objectNames = getObjectNames();
         if (objectNames == null) {
             log.debug("No connection to JMX : ");
@@ -116,6 +117,8 @@ public class ReaperActionJmxMetrics extends ReaperActionMBeanMetrics {
                     compilation(jMetrics, JMX.newMXBeanProxy(mbeanConn, objectName, CompilationMXBean.class, true));
                 } else if (ClassLoadingMXBean.class.isAssignableFrom(clazz)) {
                     classloading(jMetrics, JMX.newMXBeanProxy(mbeanConn, objectName, ClassLoadingMXBean.class, true));
+                } else if (OperatingSystemMXBean.class.isAssignableFrom(clazz)) {
+                    os(jMetrics, JMX.newMXBeanProxy(mbeanConn, objectName, OperatingSystemMXBean.class, true));
                 }
             } catch (final ClassNotFoundException | IntrospectionException | InstanceNotFoundException | IOException | ReflectionException e) {
                 log.error("Exception accessing MBean : " + objectName, e);

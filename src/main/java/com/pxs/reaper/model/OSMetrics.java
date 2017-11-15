@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.hyperic.sigar.*;
+import org.hyperic.sigar.OperatingSystem;
 import org.springframework.data.couchbase.core.mapping.Document;
 
 /**
@@ -61,5 +62,7 @@ public class OSMetrics extends Metrics {
     private ProcStat procStat;
     @Field
     private ResourceLimit resourceLimit;
+    @Field
+    private OperatingSystem operatingSystem;
 
 }

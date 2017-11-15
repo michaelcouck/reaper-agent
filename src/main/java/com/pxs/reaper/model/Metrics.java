@@ -12,9 +12,12 @@ import org.springframework.data.couchbase.core.mapping.Document;
 @Setter
 @ToString
 @Document
-@NoArgsConstructor
 @SuppressWarnings("WeakerAccess")
 public abstract class Metrics {
+
+    public Metrics() {
+        setCreated(System.currentTimeMillis());
+    }
 
     @Id
     protected String id;

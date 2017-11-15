@@ -39,5 +39,7 @@ public class JMetrics extends Metrics {
     private Classloading classLoading;
     @Field
     private GarbageCollection[] garbageCollection;
+    @Field
+    private OperatingSystem operatingSystem;
 
 }
