@@ -54,13 +54,11 @@ public class ReaperIntegration {
     @Test
     public void attachToOperatingSystem() throws InterruptedException {
         reaper.attachToOperatingSystem();
-        Thread.sleep(20000);
     }
 
     @Test
     public void attachToJavaProcesses() throws InterruptedException {
         reaper.attachToJavaProcesses();
-        Thread.sleep(45000);
     }
 
     @Test

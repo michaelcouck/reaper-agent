@@ -241,6 +241,7 @@
                         </goals>
                         <configuration>
                             <includes>
+                                <include>**/*Integration*.java</include>
                                 <include>**/*SystemIntegration*.java</include>
                             </includes>
                         </configuration>
@@ -354,12 +355,6 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>${lombok-version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>${jackson-version}</version>
         </dependency>
 
         <dependency>
