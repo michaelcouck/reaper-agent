@@ -10,10 +10,6 @@ import org.jeasy.props.annotations.Property;
 import javax.websocket.*;
 import java.io.IOException;
 import java.net.URI;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 import java.util.function.Function;
 
 /**
@@ -82,12 +78,14 @@ public class WebSocketTransport implements Transport {
         if (System.currentTimeMillis() - lastLoggingTimestamp > loggingInterval) {
             lastLoggingTimestamp = System.currentTimeMillis();
         }
-        RemoteEndpoint.Async async = session.getAsyncRemote();
-        Future<Void> future = async.sendText(postage);
+        // RemoteEndpoint.Async async = session.getAsyncRemote();
+        // Future<Void> future = async.sendText(postage);
         try {
-            future.get(1000, TimeUnit.MILLISECONDS);
-        } catch (final InterruptedException | ExecutionException | TimeoutException e) {
-            log.error("Timed out waiting to post metrics, is the service up? : ", e);
+            session.getBasicRemote().sendText(postage);
+            /*Object result = future.get(60000, TimeUnit.MILLISECONDS);
+            log.info("Result from posting : {}", result);*/
+        } catch (final Exception e) {
+            log.error("Exception posting metrics, is the service up? : " + session, e);
             return Boolean.FALSE;
         }
         return Boolean.TRUE;
@@ -109,13 +107,13 @@ public class WebSocketTransport implements Transport {
                 throw new RuntimeException(e);
             }
         };
-        if (session == null) {
-            session = retryWithIncreasingDelay.retry(function, null, maxRetries, finalRetryDelay);
-        } else if (!session.isOpen()) {
-            try {
-                session.close();
-            } catch (final IOException e) {
-                log.error("Couldn't close web socket connection : ", e);
+        if (session == null || !session.isOpen()) {
+            if (session != null) {
+                try {
+                    session.close();
+                } catch (final IOException e) {
+                    log.error("Couldn't close web socket connection : ", e);
+                }
             }
             session = retryWithIncreasingDelay.retry(function, null, maxRetries, finalRetryDelay);
         } else {
