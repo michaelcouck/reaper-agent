@@ -10,7 +10,6 @@ import org.jeasy.props.annotations.Property;
 import javax.websocket.*;
 import java.io.IOException;
 import java.net.URI;
-import java.nio.ByteBuffer;
 import java.util.function.Function;
 
 /**
@@ -74,20 +73,21 @@ public class WebSocketTransport implements Transport {
     public boolean postMetrics(final Object metrics) {
         openSession();
         String postage = Constant.GSON.toJson(metrics);
-        // Periodically log some data
-        if (System.currentTimeMillis() - lastLoggingTimestamp > loggingInterval) {
-            lastLoggingTimestamp = System.currentTimeMillis();
-        }
         // RemoteEndpoint.Async async = session.getAsyncRemote();
         // Future<Void> future = async.sendText(postage);
         try {
             RemoteEndpoint.Basic basic = session.getBasicRemote();
             basic.sendText(postage);
-            basic.sendPing(ByteBuffer.wrap("Hello World!".getBytes()));
-            basic.sendPong(ByteBuffer.wrap("Hello World!".getBytes()));
-            log.info("Sent metrics : {}", postage);
+            // basic.sendPing(ByteBuffer.wrap("Hello World!".getBytes()));
+            // basic.sendPong(ByteBuffer.wrap("Hello World!".getBytes()));
             /*Object result = future.get(60000, TimeUnit.MILLISECONDS);
             log.info("Result from posting : {}", result);*/
+
+            // Periodically log some data
+            if (System.currentTimeMillis() - lastLoggingTimestamp > loggingInterval) {
+                lastLoggingTimestamp = System.currentTimeMillis();
+                log.info("Sent metrics : {}", postage);
+            }
         } catch (final Exception e) {
             log.error("Exception posting metrics, is the service up? : " + session, e);
             return Boolean.FALSE;
