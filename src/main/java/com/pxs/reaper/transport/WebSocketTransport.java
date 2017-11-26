@@ -10,6 +10,7 @@ import org.jeasy.props.annotations.Property;
 import javax.websocket.*;
 import java.io.IOException;
 import java.net.URI;
+import java.nio.ByteBuffer;
 import java.util.function.Function;
 
 /**
@@ -74,14 +75,17 @@ public class WebSocketTransport implements Transport {
         openSession();
         String postage = Constant.GSON.toJson(metrics);
         // Periodically log some data
-        log.info("Sending metrics : {}", postage);
         if (System.currentTimeMillis() - lastLoggingTimestamp > loggingInterval) {
             lastLoggingTimestamp = System.currentTimeMillis();
         }
         // RemoteEndpoint.Async async = session.getAsyncRemote();
         // Future<Void> future = async.sendText(postage);
         try {
-            session.getBasicRemote().sendText(postage);
+            RemoteEndpoint.Basic basic = session.getBasicRemote();
+            basic.sendText(postage);
+            basic.sendPing(ByteBuffer.wrap("Hello World!".getBytes()));
+            basic.sendPong(ByteBuffer.wrap("Hello World!".getBytes()));
+            log.info("Sent metrics : {}", postage);
             /*Object result = future.get(60000, TimeUnit.MILLISECONDS);
             log.info("Result from posting : {}", result);*/
         } catch (final Exception e) {
@@ -101,7 +105,7 @@ public class WebSocketTransport implements Transport {
             WebSocketContainer container = ContainerProvider.getWebSocketContainer();
             URI uri = URI.create(reaperWebSocketUri);
             try {
-                log.info("Opening(re) web socket session : " + session);
+                log.info("Opening(re) web socket session : {}, with uri : {}", session, reaperWebSocketUri);
                 return container.connectToServer(webSocketTransport, uri);
             } catch (final DeploymentException | IOException e) {
                 throw new RuntimeException(e);
@@ -111,7 +115,7 @@ public class WebSocketTransport implements Transport {
             if (session != null) {
                 try {
                     session.close();
-                } catch (final IOException e) {
+                } catch (final Exception e) {
                     log.error("Couldn't close web socket connection : ", e);
                 }
             }

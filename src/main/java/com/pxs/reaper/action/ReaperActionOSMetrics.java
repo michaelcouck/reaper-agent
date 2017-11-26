@@ -83,7 +83,7 @@ public class ReaperActionOSMetrics extends TimerTask implements ReaperAction {
             osMetrics.setType(OSMetrics.class.getName());
             osMetrics.setCreated(System.currentTimeMillis());
 
-            log.info("Posting OS metrics : {}", osMetrics);
+            // log.info("Posting OS metrics : {}", osMetrics);
             Constant.TRANSPORT.postMetrics(osMetrics);
         } catch (final SigarException e) {
             // TODO: Re-initialize sigar here, and test it
