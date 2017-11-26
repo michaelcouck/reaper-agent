@@ -83,6 +83,7 @@ public class ReaperActionOSMetrics extends TimerTask implements ReaperAction {
             osMetrics.setType(OSMetrics.class.getName());
             osMetrics.setCreated(System.currentTimeMillis());
 
+            log.info("Posting OS metrics : {}", osMetrics);
             Constant.TRANSPORT.postMetrics(osMetrics);
         } catch (final SigarException e) {
             // TODO: Re-initialize sigar here, and test it
@@ -159,6 +160,7 @@ public class ReaperActionOSMetrics extends TimerTask implements ReaperAction {
     public boolean terminate() {
         try {
             sigar.close();
+            log.info("Closed sigar : {}", sigar);
         } catch (final Exception e) {
             log.error("Exception closing the Sigar : ", e);
         }

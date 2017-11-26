@@ -70,8 +70,10 @@ public class HOST {
         while (networkInterfaces.hasMoreElements()) {
             NetworkInterface networkInterface = networkInterfaces.nextElement();
             // Exclude Docker and VMWare interfaces
-            if (networkInterface.getDisplayName().startsWith("doc") ||
-                    networkInterface.getDisplayName().startsWith("vmn")) {
+            boolean docker = networkInterface.getDisplayName().startsWith("doc");
+            boolean vmware = networkInterface.getDisplayName().startsWith("vmn");
+            boolean virtual = networkInterface.getDisplayName().startsWith("virbr");
+            if (docker || vmware || virtual) {
                 continue;
             }
             Enumeration<InetAddress> inetAddresses = networkInterface.getInetAddresses();

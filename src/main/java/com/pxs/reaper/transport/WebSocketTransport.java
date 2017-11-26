@@ -78,8 +78,8 @@ public class WebSocketTransport implements Transport {
         openSession();
         String postage = Constant.GSON.toJson(metrics);
         // Periodically log some data
+        log.info("Sending metrics : {}", postage);
         if (System.currentTimeMillis() - lastLoggingTimestamp > loggingInterval) {
-            log.info("Sending metrics : {}", postage);
             lastLoggingTimestamp = System.currentTimeMillis();
         }
         RemoteEndpoint.Async async = session.getAsyncRemote();

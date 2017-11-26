@@ -54,7 +54,6 @@ public class ReaperIntegration {
     @Test
     public void attachToOperatingSystem() throws InterruptedException {
         reaper.attachToOperatingSystem();
-        Thread.sleep(10000);
     }
 
     @Test
