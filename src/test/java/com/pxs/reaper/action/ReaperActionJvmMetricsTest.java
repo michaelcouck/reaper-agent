@@ -8,12 +8,14 @@ import lombok.extern.slf4j.Slf4j;
 import mockit.Deencapsulation;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -41,6 +43,8 @@ public class ReaperActionJvmMetricsTest {
             for (final Object metric : metrics) {
                 if (metric != null && JMetrics.class.isAssignableFrom(metric.getClass())) {
                     objectAtomicReference.set(metric);
+                    JMetrics jMetrics = (JMetrics) metric;
+                    log.info("Metric : " + jMetrics.getCodeBase());
                 }
             }
             return null;
@@ -54,6 +58,17 @@ public class ReaperActionJvmMetricsTest {
         Constant.TIMER.scheduleAtFixedRate(reaperActionJvmMetrics, Short.MAX_VALUE, Short.MAX_VALUE);
         // The result of the task is dependant on the state and if it has been executed already, so we just run the code
         reaperActionJvmMetrics.terminate();
+    }
+
+    @Test
+    @Ignore
+    public void codeBase() {
+        JMetrics jMetrics = new JMetrics();
+        log.info("n) : " + jMetrics.getCodeBase());
+        log.info("1) : " + jMetrics.getClass().getProtectionDomain().getCodeSource().getLocation());
+        log.info("2) : " + jMetrics.getClass().getProtectionDomain().getCodeSource().getLocation().getPath());
+        log.info("3) : " + jMetrics.getClass().getProtectionDomain().getCodeSource().getLocation().getFile());
+        log.info("4) : " + new File(jMetrics.getClass().getProtectionDomain().getCodeSource().getLocation().getPath()).getName());
     }
 
 }

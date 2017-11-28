@@ -45,7 +45,7 @@ import java.util.function.Function;
 @Slf4j
 @Setter
 @SuppressWarnings("WeakerAccess")
-public class ReaperActionJmxMetrics extends ReaperActionMBeanMetrics {
+public class ReaperActionJmxMetrics extends ReaperActionMetrics {
 
     /**
      * The uri to post the metrics to

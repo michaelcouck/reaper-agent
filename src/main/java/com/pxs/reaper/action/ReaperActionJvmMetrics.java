@@ -19,7 +19,7 @@ import java.lang.management.ManagementFactory;
  * @since 09-10-2017
  */
 @Slf4j
-class ReaperActionJvmMetrics extends ReaperActionMBeanMetrics {
+class ReaperActionJvmMetrics extends ReaperActionMetrics {
 
     /**
      * {@inheritDoc}

@@ -60,6 +60,7 @@ public class ReaperIntegration {
     @Test
     public void attachToJavaProcesses() throws InterruptedException {
         reaper.attachToJavaProcesses();
+        Thread.sleep(20000);
     }
 
     @Test

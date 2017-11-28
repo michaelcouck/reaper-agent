@@ -17,7 +17,7 @@ import java.util.TimerTask;
  * @version 01.00
  * @since 22-10-2017
  */
-abstract class ReaperActionMBeanMetrics extends TimerTask implements ReaperAction {
+abstract class ReaperActionMetrics extends TimerTask implements ReaperAction {
 
     /**
      * Populates the operating system information, like the name and the version, also the load average. Although
@@ -47,6 +47,7 @@ abstract class ReaperActionMBeanMetrics extends TimerTask implements ReaperActio
      */
     void misc(final JMetrics jMetrics, final RuntimeMXBean runtimeMXBean) {
         String vmName = runtimeMXBean.getName();
+
         jMetrics.setPid(vmName);
         jMetrics.setCreated(System.currentTimeMillis());
         jMetrics.setIpAddress(HOST.hostname());
