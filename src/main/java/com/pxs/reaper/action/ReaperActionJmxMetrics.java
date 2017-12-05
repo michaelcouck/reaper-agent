@@ -92,7 +92,7 @@ public class ReaperActionJmxMetrics extends ReaperActionMetrics {
         // TODO: Perhaps have a scheduled scan to check for mew exposures.
         Set<ObjectName> objectNames = getObjectNames();
         if (objectNames == null) {
-            log.info("No connection to JMX : ");
+            log.debug("No connection to JMX : ");
             return;
         }
 
@@ -102,8 +102,8 @@ public class ReaperActionJmxMetrics extends ReaperActionMetrics {
                 MBeanInfo mBeanInfo = mbeanConn.getMBeanInfo(objectName);
                 String className = mBeanInfo.getClassName();
                 Class clazz = Class.forName(className);
+                log.info("Object name : {}, {}, {}", new Object[]{objectName.getCanonicalName(), className, Arrays.toString(clazz.getInterfaces())});
                 if (log.isDebugEnabled()) {
-                    log.debug("Object name : {}, {}, {}", new Object[]{objectName.getCanonicalName(), className, Arrays.toString(clazz.getInterfaces())});
                 }
                 if (RuntimeMXBean.class.isAssignableFrom(clazz)) {
                     misc(jMetrics, JMX.newMXBeanProxy(mbeanConn, objectName, RuntimeMXBean.class, true));
@@ -170,17 +170,19 @@ public class ReaperActionJmxMetrics extends ReaperActionMetrics {
                 return mbeanConn;
             }
             try {
+                log.info("JMX url : " + reaperJmxUri);
                 JMXServiceURL serviceUrl = new JMXServiceURL(reaperJmxUri);
                 jmxConnector = JMXConnectorFactory.connect(serviceUrl, null);
                 return mbeanConn = jmxConnector.getMBeanServerConnection();
             } catch (final Exception e) {
+                log.error("No jmx on this machine : ", e);
                 throw new RuntimeException(e);
             }
         };
         try {
             return retryWithIncreasingDelay.retry(function, null, 5, sleepTime);
         } catch (final Exception e) {
-            log.warn("No jmx on this machine : ", e);
+            log.debug("No jmx on this machine : ", e);
             return null;
         }
     }

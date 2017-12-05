@@ -38,18 +38,17 @@ spec:
     spec:
       containers:
         - env:
-            - name: JAVA_OPTIONS
+            - name: JAVA_OPTS
               value: >-
                 -Dcom.sun.management.jmxremote=false
                 -Dcom.sun.management.jmxremote.local.only=true
                 -Dcom.sun.management.jmxremote.authenticate=false
                 -Dcom.sun.management.jmxremote.ssl=false
-                -Djava.rmi.server.hostname=localhost
-                -Dcom.sun.management.jmxremote.port=8500
-                -Dcom.sun.management.jmxremote.rmi.port=8501 -jar 
-                reaper-agent-1.0-SNAPSHOT.jar 
+                -Djava.rmi.server.hostname=reaper-agent-jmx-reaper.192.168.42.19.nip.io
+                -Dcom.sun.management.jmxremote.port=1099
+                -Dcom.sun.management.jmxremote.rmi.port=1099
           image: >-
-            172.30.1.1:5000/reaper-agent/reaper-agent@sha256:361b171ccdbe41edf1fba730fa6fd7f6ca1ff70a09f60174a3f0ed7d7bc33aeb
+            172.30.1.1:5000/reaper/reaper-agent@sha256:d2543911d367567d091abafb3c0cac8be3500555206fba1c88a1d66d21e62c30
           imagePullPolicy: Always
           name: reaper-agent
           ports:
@@ -59,9 +58,9 @@ spec:
               protocol: TCP
             - containerPort: 8778
               protocol: TCP
-            - containerPort: 8500
+            - containerPort: 1098
               protocol: TCP
-            - containerPort: 8501
+            - containerPort: 1099
               protocol: TCP
           resources: {}
           terminationMessagePath: /dev/termination-log
