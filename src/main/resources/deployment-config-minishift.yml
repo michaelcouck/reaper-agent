@@ -49,7 +49,7 @@ spec:
                 -Dcom.sun.management.jmxremote.rmi.port=8501 -jar 
                 reaper-agent-1.0-SNAPSHOT.jar 
           image: >-
-            172.30.1.1:5000/reaper-telemetry/reaper-agent@sha256:e1972146b0c16875c0f22ccf34429798f3d17494c5a0196b003d256b1adf0bde
+            172.30.1.1:5000/reaper-agent/reaper-agent@sha256:361b171ccdbe41edf1fba730fa6fd7f6ca1ff70a09f60174a3f0ed7d7bc33aeb
           imagePullPolicy: Always
           name: reaper-agent
           ports:

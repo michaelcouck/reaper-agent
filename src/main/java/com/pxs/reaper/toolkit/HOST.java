@@ -8,8 +8,7 @@ import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.net.UnknownHostException;
-import java.util.Enumeration;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * This class looks through the {@link InetAddress}(s) of the host to try find the 'unique' ip address
@@ -48,7 +47,8 @@ public class HOST {
         } catch (final SocketException e) {
             throw new RuntimeException("Couldn't access the interfaces of this machine : ");
         }
-        networkInterfaces(networkInterfaces);
+        Collection<String> ipAddresses = ipAddressesForLocalHost(networkInterfaces);
+        ipAddressForLocalHost(ipAddresses);
         if (StringUtils.isEmpty(HOSTNAME)) {
             // Try the OpenShift host name environment variable
             HOSTNAME = System.getProperty("HOSTNAME", null);
@@ -65,8 +65,8 @@ public class HOST {
         return HOSTNAME;
     }
 
-    @SuppressWarnings("WeakerAccess")
-    static void networkInterfaces(final Enumeration<NetworkInterface> networkInterfaces) {
+    public static List<String> ipAddressesForLocalHost(final Enumeration<NetworkInterface> networkInterfaces) {
+        List<String> ipAddresses = new ArrayList<>();
         while (networkInterfaces.hasMoreElements()) {
             NetworkInterface networkInterface = networkInterfaces.nextElement();
             // Exclude Docker and VMWare interfaces
@@ -77,32 +77,27 @@ public class HOST {
                 continue;
             }
             Enumeration<InetAddress> inetAddresses = networkInterface.getInetAddresses();
-            inetAddresses(inetAddresses);
-            if (StringUtils.isNotEmpty(HOSTNAME)) {
-                // Check if this is the ip address and not the hostname, i.e. laptop
-                if (networkInterfaces.hasMoreElements() && !IPAddressUtil.isIPv4LiteralAddress(HOSTNAME)) {
-                    continue;
-                }
-                return;
+            while (inetAddresses.hasMoreElements()) {
+                InetAddress inetAddress = inetAddresses.nextElement();
+                String ipAddress = inetAddress.getHostAddress();
+                log.info("Host name : " + inetAddress.getHostName());
+                ipAddresses.add(ipAddress);
             }
         }
+        return ipAddresses;
     }
 
-    @SuppressWarnings("WeakerAccess")
-    static void inetAddresses(final Enumeration<InetAddress> inetAddresses) {
-        while (inetAddresses.hasMoreElements()) {
-            InetAddress inetAddress = inetAddresses.nextElement();
-            String hostAddress = inetAddress.getHostAddress();
-            log.info("Host address : {}", hostAddress);
+    private static void ipAddressForLocalHost(final Collection<String> ipAddresses) {
+        for (final String ipAddress : ipAddresses) {
             // Exclude 127... localhost and loopback
-            if (hostAddress.startsWith("127")) {
+            if (ipAddress.startsWith("127")) {
                 continue;
             }
-            if (!IPAddressUtil.isIPv4LiteralAddress(hostAddress)) {
+            if (!IPAddressUtil.isIPv4LiteralAddress(ipAddress)) {
                 continue;
             }
             // Select the first address that is IPV4
-            HOSTNAME = hostAddress;
+            HOSTNAME = ipAddress;
             return;
         }
     }

@@ -1,5 +1,6 @@
 package com.pxs.reaper.action;
 
+import com.pxs.reaper.toolkit.HOST;
 import com.sun.tools.attach.VirtualMachine;
 import lombok.extern.slf4j.Slf4j;
 import mockit.Deencapsulation;
@@ -9,7 +10,14 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.internal.util.reflection.Whitebox;
 import org.mockito.runners.MockitoJUnitRunner;
+import sun.jvmstat.monitor.MonitorException;
+import sun.jvmstat.monitor.MonitoredHost;
+import sun.net.util.IPAddressUtil;
 
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.net.URISyntaxException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -46,6 +54,20 @@ public class ReaperActionAgentMetricsIntegration {
             Assert.assertEquals(virtualMachinesSize, virtualMachines.size());
         } finally {
             reaperActionAgentMetrics.detachFromJavaProcesses();
+        }
+    }
+
+    @Test
+    public void monitoredHosts() throws MonitorException, URISyntaxException, SocketException {
+        Collection<String> ipAddresses = HOST.ipAddressesForLocalHost(NetworkInterface.getNetworkInterfaces());
+        for (final String ipAddress : ipAddresses) {
+            log.info("Ip address : " + ipAddress);
+            try {
+                MonitoredHost monitoredHost = MonitoredHost.getMonitoredHost(ipAddress);
+                log.info("Monitored host : " + monitoredHost);
+            } catch (final Exception e) {
+                // Ignore
+            }
         }
     }
 

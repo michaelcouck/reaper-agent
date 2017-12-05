@@ -107,6 +107,8 @@ public class ReaperActionAgentMetrics extends TimerTask implements ReaperAction 
         MonitoredHost monitoredHost;
         try {
             monitoredHost = MonitoredHost.getMonitoredHost("localhost");
+            Set<Integer> vmIdentifiers = monitoredHost.activeVms();
+            log.info("Active JVM identifiers : " + vmIdentifiers);
             return monitoredHost.activeVms().stream().map(Object::toString).collect(Collectors.toSet());
         } catch (final MonitorException | URISyntaxException e) {
             log.error("Exception getting the pids from the OS : ", e);

@@ -2,6 +2,7 @@ package com.pxs.reaper.action;
 
 import com.pxs.reaper.Constant;
 import com.pxs.reaper.model.JMetrics;
+import com.pxs.reaper.toolkit.HOST;
 import com.pxs.reaper.toolkit.Retry;
 import com.pxs.reaper.toolkit.RetryIncreasingDelay;
 import lombok.Setter;
@@ -78,6 +79,7 @@ public class ReaperActionJmxMetrics extends ReaperActionMetrics {
 
     public ReaperActionJmxMetrics() {
         retryWithIncreasingDelay = new RetryIncreasingDelay();
+        log.info("Attached to JMX system : " + HOST.hostname());
     }
 
     /**
@@ -90,7 +92,7 @@ public class ReaperActionJmxMetrics extends ReaperActionMetrics {
         // TODO: Perhaps have a scheduled scan to check for mew exposures.
         Set<ObjectName> objectNames = getObjectNames();
         if (objectNames == null) {
-            log.debug("No connection to JMX : ");
+            log.info("No connection to JMX : ");
             return;
         }
 
@@ -178,7 +180,7 @@ public class ReaperActionJmxMetrics extends ReaperActionMetrics {
         try {
             return retryWithIncreasingDelay.retry(function, null, 5, sleepTime);
         } catch (final Exception e) {
-            log.debug("No jmx on this machine : ", e);
+            log.warn("No jmx on this machine : ", e);
             return null;
         }
     }
