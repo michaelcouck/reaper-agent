@@ -102,8 +102,8 @@ public class ReaperActionJmxMetrics extends ReaperActionMetrics {
                 MBeanInfo mBeanInfo = mbeanConn.getMBeanInfo(objectName);
                 String className = mBeanInfo.getClassName();
                 Class clazz = Class.forName(className);
-                log.info("Object name : {}, {}, {}", new Object[]{objectName.getCanonicalName(), className, Arrays.toString(clazz.getInterfaces())});
                 if (log.isDebugEnabled()) {
+                    log.debug("Object name : {}, {}, {}", new Object[]{objectName.getCanonicalName(), className, Arrays.toString(clazz.getInterfaces())});
                 }
                 if (RuntimeMXBean.class.isAssignableFrom(clazz)) {
                     misc(jMetrics, JMX.newMXBeanProxy(mbeanConn, objectName, RuntimeMXBean.class, true));
