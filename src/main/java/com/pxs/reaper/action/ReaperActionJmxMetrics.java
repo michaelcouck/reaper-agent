@@ -170,14 +170,15 @@ public class ReaperActionJmxMetrics extends ReaperActionMetrics {
                 return mbeanConn;
             }
             try {
-                log.info("JMX url : " + reaperJmxUri);
+                log.debug("JMX url : ", reaperJmxUri);
                 JMXServiceURL serviceUrl = new JMXServiceURL(reaperJmxUri);
                 jmxConnector = JMXConnectorFactory.connect(serviceUrl, null);
                 return mbeanConn = jmxConnector.getMBeanServerConnection();
             } catch (final Exception e) {
-                log.error("No jmx on this machine : ", e);
-                throw new RuntimeException(e);
+                log.debug("No jmx on this machine : ", e);
+                // throw new RuntimeException(e);
             }
+            return null;
         };
         try {
             return retryWithIncreasingDelay.retry(function, null, 5, sleepTime);
