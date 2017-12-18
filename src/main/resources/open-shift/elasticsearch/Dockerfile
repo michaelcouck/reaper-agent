@@ -35,9 +35,9 @@ RUN apt-get install -y software-properties-common python-software-properties ela
 
 WORKDIR /root
 COPY run.sh /root
-COPY reaper-agent-1.0-SNAPSHOT.jar /root
-RUN mkdir /root/lib
-COPY lib /root/lib
+# COPY reaper-agent-1.0-SNAPSHOT.jar /root
+# RUN mkdir /root/lib
+# COPY lib /root/lib
 RUN chmod 777 /root/*
 ENTRYPOINT ["/root/run.sh"]
 
