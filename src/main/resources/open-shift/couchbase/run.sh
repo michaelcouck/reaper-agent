@@ -1,5 +1,4 @@
 #! /bin/bash -e
-java -jar /root/jenkins/jenkins.war
 
 # System variables to set on command line or in OpenShift for the reaper
 # JMX_URI=service:jmx:rmi:///jndi/rmi://localhost:1099/jmxrmi

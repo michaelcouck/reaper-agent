@@ -17,6 +17,11 @@ COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 EXPOSE 22 80 443 8080
 
+WORKDIR /root
+COPY run.sh /root
+RUN chmod 777 /root/*
+ENTRYPOINT ["/root/run.sh"]
+
 # CMD ["/usr/sbin/sshd", "-D"]
 # RUN ["ifconfig", "-a"]
 # CMD ["/usr/bin/supervisord"]
