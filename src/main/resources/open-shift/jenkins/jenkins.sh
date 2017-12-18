@@ -1,5 +1,4 @@
 #! /bin/bash -e
-java -jar /root/jenkins/jenkins.war
 
 # System variables to set on command line or in OpenShift for the reaper
 # JMX_URI=service:jmx:rmi:///jndi/rmi://localhost:1099/jmxrmi
@@ -23,4 +22,4 @@ chmod 777 -R *
 cd reaper
 
 ls -l
-java -Dlocalhost-jmx-uri=$JMX_URI -Dreaper-web-socket-uri=$WEB_SOCKET_URI -jar reaper-agent-1.0-SNAPSHOT.jar
+java -Dlocalhost-jmx-uri=$JMX_URI -Dreaper-web-socket-uri=$WEB_SOCKET_URI  -jar /root/jenkins/jenkins.war & java -Dlocalhost-jmx-uri=$JMX_URI -Dreaper-web-socket-uri=$WEB_SOCKET_URI -jar reaper-agent-1.0-SNAPSHOT.jar
