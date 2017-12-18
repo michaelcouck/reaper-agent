@@ -6,13 +6,13 @@
 # REAPER_ZIP=https://ikube.be/artifactory/libs-release-local/com/pxs/reaper-agent/1.0-SNAPSHOT/reaper-agent-1.0-SNAPSHOT-linux.zip
 
 # Sanity check
-java -version
-echo $JAVA_HOME
+echo Java version: $(java -version)
+echo JAva home: $JAVA_HOME
 
-# We must be root
+# We must be (g)root
 cd /root
 
-# Install wget first
+# Install wget first, to get the reaper zip from artifactory
 apt-get -y install wget unzip
 
 # Get the agent zip and unpack it
@@ -21,5 +21,5 @@ unzip reaper-agent-1.0-SNAPSHOT-linux.zip
 chmod 777 -R *
 cd reaper
 
-ls -l
+echo Reaper directory: $(ls -l)
 java -Dlocalhost-jmx-uri=$JMX_URI -Dreaper-web-socket-uri=$WEB_SOCKET_URI -jar reaper-agent-1.0-SNAPSHOT.jar

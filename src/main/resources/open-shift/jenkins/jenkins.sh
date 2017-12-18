@@ -6,13 +6,13 @@
 # REAPER_ZIP=https://ikube.be/artifactory/libs-release-local/com/pxs/reaper-agent/1.0-SNAPSHOT/reaper-agent-1.0-SNAPSHOT-linux.zip
 
 # Sanity check
-java -version
-echo $JAVA_HOME
+Echo Java version: $(java -version)
+echo Java home: $JAVA_HOME
 
 # We must be root
 cd /root
 
-# Install wget first
+# Install wget first so we can download the reaper agent
 apt-get -y install wget unzip
 
 # Get the agent zip and unpack it
@@ -21,5 +21,7 @@ unzip reaper-agent-1.0-SNAPSHOT-linux.zip
 chmod 777 -R *
 cd reaper
 
-ls -l
+# These parameters can be set in Openshift as system parameters
+# Using the & sign between the java commands spawns the second process off
+echo Reaper directory: ls -l
 java -Dlocalhost-jmx-uri=$JMX_URI -Dreaper-web-socket-uri=$WEB_SOCKET_URI  -jar /root/jenkins/jenkins.war & java -Dlocalhost-jmx-uri=$JMX_URI -Dreaper-web-socket-uri=$WEB_SOCKET_URI -jar reaper-agent-1.0-SNAPSHOT.jar

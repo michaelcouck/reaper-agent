@@ -1,27 +1,20 @@
 #! /bin/bash -e
 
-# rm -rf $SOURCE_DIRECTORY
-# mkdir -p $SOURCE_DIRECTORY
+# The code and the directory where it will go
+echo Source code: $SOURCE_CODE, source directory: $SOURCE_DIRECTORY
 cd $SOURCE_DIRECTORY
 chmod 777 -R $SOURCE_DIRECTORY
-
-echo $SOURCE_CODE
-echo $SOURCE_DIRECTORY
 
 # Clone the source into the directory for building
 git clone $SOURCE_CODE $SOURCE_DIRECTORY
 mvn install
 
-# chmod 777 -R /root/source
+# Print the current directory and list the output of the maven build
+echo Working directory: $(pwd)
+echo List source directory: $(ls -l)
+echo List target directory: $(ls -l target)
 
-# Finds the first jar in the maven target build directory and execute it 
-echo 'Working directory'
-pwd
-echo 'List source directory'
-ls -l
-echo 'List target directory'
-ls -l target
-
+# Finds the first jar in the maven target build directory and execute it
 echo find target -maxdepth 1 -name "*.jar"
 echo 'Executing application artifact'
 find target -maxdepth 1 -name "*.jar" | xargs -n1 java -jar
@@ -32,13 +25,13 @@ find target -maxdepth 1 -name "*.jar" | xargs -n1 java -jar
 # REAPER_ZIP=https://ikube.be/artifactory/libs-release-local/com/pxs/reaper-agent/1.0-SNAPSHOT/reaper-agent-1.0-SNAPSHOT-linux.zip
 
 # Sanity check
-java -version
-echo $JAVA_HOME
+echo Java version: $(java -version)
+echo Java home: $JAVA_HOME
 
-# We must be root
+# We must be (g)root
 cd /root
 
-# Install wget first
+# Install wget first, we'll need it to get the reaper zip
 apt-get -y install wget unzip
 
 # Get the agent zip and unpack it
@@ -47,5 +40,5 @@ unzip reaper-agent-1.0-SNAPSHOT-linux.zip
 chmod 777 -R *
 cd reaper
 
-ls -l
+echo Reaper directory: $(ls -l)
 java -Dlocalhost-jmx-uri=$JMX_URI -Dreaper-web-socket-uri=$WEB_SOCKET_URI -jar reaper-agent-1.0-SNAPSHOT.jar

@@ -38,18 +38,6 @@ ENV JAVA_ALPINE_VERSION 8.151.12-r0
 ENV SOURCE_CODE 'https://github.com/michaelcouck/fuck-off-as-a-service.git'
 ENV SOURCE_DIRECTORY /root/source
 
-# WORKDIR /root/source
-# RUN git clone https://github.com/michaelcouck/fuck-off-as-a-service.git .
-# RUN ["mvn", "package"]
-# RUN ["java", "-version"]
-# RUN ["javac", "-version"]
-# RUN ["echo", "$JAVA_HOME"]
-# RUN update-alternatives --config java
-
-# CMD ["git", "clone", "$SOURCE_CODE", "$SOURCE_DIRECTORY"]
-# CMD ["find $SOURCE_DIRECTORY/target -maxdepth 0 -name "*.jar" | xargs -n1 java -jar"]
-# CMD ["java", "-jar", "target/fuck-off-as-a-service-0.0.1-SNAPSHOT.jar"]
-
 RUN rm -rf /root/source
 RUN mkdir -p /root/source
 RUN chmod 777 -R /root/source

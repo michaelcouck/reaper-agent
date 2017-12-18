@@ -39,5 +39,3 @@ RUN chmod 777 /root/*
 ENTRYPOINT ["/root/run.sh"]
 
 EXPOSE 22 80 443 5601 8080 9200
-
-# CMD ["java", "-jar", "/root/reaper-agent-1.0-SNAPSHOT.jar"]
