@@ -41,6 +41,10 @@ public class ReaperActionAgentMetrics extends TimerTask implements ReaperAction 
      * The map of {@link VirtualMachine}s, keyed by the pid on the local machine
      */
     private final Map<String, VirtualMachine> virtualMachines = new HashMap<>();
+    /**
+     * List of pid(s) that we couldn't connect to, so we don't keep throwing exceptions
+     */
+    private List<String> virtualMachineErrorPids = new LinkedList<>();
 
     /**
      * {@inheritDoc}
@@ -61,10 +65,11 @@ public class ReaperActionAgentMetrics extends TimerTask implements ReaperAction 
         for (final String pid : pids) {
             VirtualMachine virtualMachine;
             try {
-                if (virtualMachines.containsKey(pid)) {
-                    log.debug("Already attached to : {}", pid);
+                if (virtualMachines.containsKey(pid) || virtualMachineErrorPids.contains(pid)) {
+                    log.debug("Already attached/tried to attach to : {}", pid);
                     continue;
                 }
+                virtualMachineErrorPids.add(pid);
                 virtualMachine = VirtualMachine.attach(pid);
                 if (StringUtils.isNotEmpty(pathToAgent)) {
                     virtualMachine.loadAgent(pathToAgent);
@@ -72,7 +77,7 @@ public class ReaperActionAgentMetrics extends TimerTask implements ReaperAction 
                     log.warn("Agent jar not found : ");
                 }
                 virtualMachines.put(pid, virtualMachine);
-                log.info("Attached to pid : {}, {}", pid, virtualMachine.getClass().getName());
+                log.debug("Attached to pid : {}, {}", pid, virtualMachine.getClass().getName());
             } catch (final AttachNotSupportedException | IOException | AgentLoadException | AgentInitializationException e) {
                 log.error("Exception attaching to pid : " + pid, e);
             }

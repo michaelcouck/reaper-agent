@@ -71,7 +71,7 @@ public interface Constant {
         }
         @SuppressWarnings("unused")
         @Property(source = Constant.REAPER_PROPERTIES, key = "sleep-time")
-        private int sleepTime = 10000;
+        private int sleepTime = 15000;
     }
 
 }

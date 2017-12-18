@@ -6,6 +6,7 @@ import com.pxs.reaper.toolkit.RetryIncreasingDelay;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.jeasy.props.annotations.Property;
+import org.jeasy.props.annotations.SystemProperty;
 
 import javax.websocket.*;
 import java.io.IOException;
@@ -31,7 +32,8 @@ public class WebSocketTransport implements Transport {
     /**
      * The uri to the central analyzer for posting metrics to
      */
-    @Property(source = Constant.REAPER_PROPERTIES, key = "reaper-web-socket-uri")
+    // @Property(source = Constant.REAPER_PROPERTIES, key = "reaper-web-socket-uri")
+    @SystemProperty("reaper-web-socket-uri")
     private String reaperWebSocketUri;
     /**
      * Delay between logging the metrics posted

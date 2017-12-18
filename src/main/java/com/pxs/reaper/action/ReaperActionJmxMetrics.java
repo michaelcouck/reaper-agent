@@ -8,6 +8,7 @@ import com.pxs.reaper.toolkit.RetryIncreasingDelay;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.jeasy.props.annotations.Property;
+import org.jeasy.props.annotations.SystemProperty;
 
 import javax.management.*;
 import javax.management.remote.JMXConnector;
@@ -51,7 +52,8 @@ public class ReaperActionJmxMetrics extends ReaperActionMetrics {
     /**
      * The uri to post the metrics to
      */
-    @Property(source = Constant.REAPER_PROPERTIES, key = "localhost-jmx-uri")
+    // @Property(source = Constant.REAPER_PROPERTIES, key = "localhost-jmx-uri")
+    @SystemProperty("localhost-jmx-uri")
     private String reaperJmxUri = "service:jmx:rmi:///jndi/rmi://localhost:1099/jmxrmi";
     /**
      * Time to sleep between accessing the JMX telemetry.
@@ -79,7 +81,7 @@ public class ReaperActionJmxMetrics extends ReaperActionMetrics {
 
     public ReaperActionJmxMetrics() {
         retryWithIncreasingDelay = new RetryIncreasingDelay();
-        log.info("Attached to JMX system : " + HOST.hostname());
+        log.debug("Attempting to attach to JMX system : ", HOST.hostname());
     }
 
     /**
@@ -123,7 +125,7 @@ public class ReaperActionJmxMetrics extends ReaperActionMetrics {
                     os(jMetrics, JMX.newMXBeanProxy(mbeanConn, objectName, OperatingSystemMXBean.class, true));
                 }
             } catch (final ClassNotFoundException | IntrospectionException | InstanceNotFoundException | IOException | ReflectionException e) {
-                log.error("Exception accessing MBean : " + objectName, e);
+                log.debug("Exception accessing MBean : " + objectName, e);
             }
         }
 

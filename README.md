@@ -6,7 +6,7 @@ alerting micro service. The target micro service is in the reaper.properties fil
 
 The agent is started as a java application i.e.:
 
-     * java -jar reaper-agent-SNAPSHOT.1.0.jar
+     * java -Dreaper-web-socket-uri=ws://ikube.be:8090/reaper-websocket -jar reaper-agent-SNAPSHOT.1.0.jar
      
 It will connect to all the JVM(s) that are running on the local operating system, and additionally start an agent 
 running on the local operating system that collects metrics from the OS. In the event there is a JVM on the local host that 
