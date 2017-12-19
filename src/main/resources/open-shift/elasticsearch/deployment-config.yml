@@ -1,0 +1,109 @@
+apiVersion: v1
+kind: DeploymentConfig
+metadata:
+  annotations:
+    openshift.io/generated-by: OpenShiftWebConsole
+  creationTimestamp: '2017-12-18T12:37:07Z'
+  generation: 13
+  labels:
+    app: elasticsearch
+  name: elasticsearch
+  namespace: reaper
+  resourceVersion: '75938'
+  selfLink: /oapi/v1/namespaces/reaper/deploymentconfigs/elasticsearch
+  uid: 2892639a-e3f0-11e7-b51b-1254757a1cff
+spec:
+  replicas: 1
+  selector:
+    app: elasticsearch
+    deploymentconfig: elasticsearch
+  strategy:
+    activeDeadlineSeconds: 21600
+    resources: {}
+    rollingParams:
+      intervalSeconds: 1
+      maxSurge: 25%
+      maxUnavailable: 25%
+      timeoutSeconds: 600
+      updatePeriodSeconds: 1
+    type: Rolling
+  template:
+    metadata:
+      annotations:
+        openshift.io/generated-by: OpenShiftWebConsole
+      creationTimestamp: null
+      labels:
+        app: elasticsearch
+        deploymentconfig: elasticsearch
+    spec:
+      containers:
+        - env:
+            - name: JMX_URI
+              value: 'service:jmx:rmi:///jndi/rmi://localhost:1099/jmxrmi'
+            - name: WEB_SOCKET_URI
+              value: 'ws://ikube.be:8090/reaper-websocket'
+            - name: REAPER_ZIP
+              value: >-
+                https://ikube.be/artifactory/libs-release-local/com/pxs/reaper-agent/1.0-SNAPSHOT/reaper-agent-1.0-SNAPSHOT-linux.zip
+          image: >-
+            michaelcouck/elasticsearch@sha256:db9f5fcab01235aaae5d4d85cb3a33033e43d0ecb8333cc083269006c0cbe6ef
+          imagePullPolicy: Always
+          name: elasticsearch
+          ports:
+            - containerPort: 22
+              protocol: TCP
+            - containerPort: 80
+              protocol: TCP
+            - containerPort: 443
+              protocol: TCP
+            - containerPort: 5601
+              protocol: TCP
+            - containerPort: 8080
+              protocol: TCP
+            - containerPort: 9200
+              protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+  test: false
+  triggers:
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+          - elasticsearch
+        from:
+          kind: ImageStreamTag
+          name: 'elasticsearch:latest'
+          namespace: reaper
+        lastTriggeredImage: >-
+          michaelcouck/elasticsearch@sha256:db9f5fcab01235aaae5d4d85cb3a33033e43d0ecb8333cc083269006c0cbe6ef
+      type: ImageChange
+status:
+  availableReplicas: 1
+  conditions:
+    - lastTransitionTime: '2017-12-18T14:17:28Z'
+      lastUpdateTime: '2017-12-18T14:17:28Z'
+      message: replication controller "elasticsearch-4" successfully rolled out
+      reason: NewReplicationControllerAvailable
+      status: 'True'
+      type: Progressing
+    - lastTransitionTime: '2017-12-19T05:07:25Z'
+      lastUpdateTime: '2017-12-19T05:07:25Z'
+      message: Deployment config has minimum availability.
+      status: 'True'
+      type: Available
+  details:
+    causes:
+      - type: Manual
+    message: manual change
+  latestVersion: 4
+  observedGeneration: 13
+  readyReplicas: 1
+  replicas: 1
+  unavailableReplicas: 0
+  updatedReplicas: 1

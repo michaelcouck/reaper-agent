@@ -1,0 +1,100 @@
+apiVersion: v1
+kind: DeploymentConfig
+metadata:
+  annotations:
+    openshift.io/generated-by: OpenShiftWebConsole
+  creationTimestamp: '2017-12-10T12:11:42Z'
+  generation: 49
+  labels:
+    app: jenkins
+  name: jenkins
+  namespace: reaper
+  resourceVersion: '75930'
+  selfLink: /oapi/v1/namespaces/reaper/deploymentconfigs/jenkins
+  uid: 4899470e-dda3-11e7-a3e3-a2b13c8f9ecf
+spec:
+  replicas: 1
+  selector:
+    app: jenkins
+    deploymentconfig: jenkins
+  strategy:
+    activeDeadlineSeconds: 21600
+    resources: {}
+    rollingParams:
+      intervalSeconds: 1
+      maxSurge: 25%
+      maxUnavailable: 25%
+      timeoutSeconds: 60
+      updatePeriodSeconds: 1
+    type: Rolling
+  template:
+    metadata:
+      annotations:
+        openshift.io/generated-by: OpenShiftWebConsole
+      creationTimestamp: null
+      labels:
+        app: jenkins
+        deploymentconfig: jenkins
+    spec:
+      containers:
+        - image: >-
+            michaelcouck/jenkins@sha256:eb983257d2d151044fb51ad34fe9de7a7b4640741c6d3715ff3cd806b1b94908
+          imagePullPolicy: Always
+          name: jenkins
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+            - containerPort: 50000
+              protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+            - mountPath: /var/jenkins_home
+              name: volume-rbg7x
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+      volumes:
+        - name: volume-rbg7x
+          persistentVolumeClaim:
+            claimName: persistent-volume-shared-claim
+  test: false
+  triggers:
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+          - jenkins
+        from:
+          kind: ImageStreamTag
+          name: 'jenkins:latest'
+          namespace: reaper
+        lastTriggeredImage: >-
+          michaelcouck/jenkins@sha256:eb983257d2d151044fb51ad34fe9de7a7b4640741c6d3715ff3cd806b1b94908
+      type: ImageChange
+status:
+  availableReplicas: 1
+  conditions:
+    - lastTransitionTime: '2017-12-18T12:56:29Z'
+      lastUpdateTime: '2017-12-18T12:56:29Z'
+      message: replication controller "jenkins-16" successfully rolled out
+      reason: NewReplicationControllerAvailable
+      status: 'True'
+      type: Progressing
+    - lastTransitionTime: '2017-12-19T05:07:23Z'
+      lastUpdateTime: '2017-12-19T05:07:23Z'
+      message: Deployment config has minimum availability.
+      status: 'True'
+      type: Available
+  details:
+    causes:
+      - type: Manual
+    message: manual change
+  latestVersion: 16
+  observedGeneration: 49
+  readyReplicas: 1
+  replicas: 1
+  unavailableReplicas: 0
+  updatedReplicas: 1

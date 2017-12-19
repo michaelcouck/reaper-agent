@@ -1,0 +1,13 @@
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+ name: persistent-volume-shared-claim
+spec:
+ accessModes:
+  - ReadWriteMany
+ resources:
+  requests:
+   storage: 100Gi
+ storageClassName: fast
+ selector:
+  name: persistent-volume-shared

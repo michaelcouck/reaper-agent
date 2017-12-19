@@ -1,0 +1,13 @@
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+ name: registryclaim-config
+spec:
+ accessModes:
+  - ReadWriteOnce
+ resources:
+  requests:
+   storage: 5Gi
+ storageClassName: slow
+ selector:
+  name: registry-config

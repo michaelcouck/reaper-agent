@@ -1,0 +1,109 @@
+apiVersion: v1
+kind: DeploymentConfig
+metadata:
+  annotations:
+    openshift.io/generated-by: OpenShiftWebConsole
+  creationTimestamp: '2017-12-17T07:54:57Z'
+  generation: 11
+  labels:
+    app: java-8-maven
+  name: java-8-maven
+  namespace: reaper
+  resourceVersion: '75956'
+  selfLink: /oapi/v1/namespaces/reaper/deploymentconfigs/java-8-maven
+  uid: 9352eee2-e2ff-11e7-9d40-ae6974e3d1a6
+spec:
+  replicas: 1
+  selector:
+    app: java-8-maven
+    deploymentconfig: java-8-maven
+  strategy:
+    activeDeadlineSeconds: 21600
+    resources: {}
+    rollingParams:
+      intervalSeconds: 1
+      maxSurge: 25%
+      maxUnavailable: 25%
+      timeoutSeconds: 600
+      updatePeriodSeconds: 1
+    type: Rolling
+  template:
+    metadata:
+      annotations:
+        openshift.io/generated-by: OpenShiftWebConsole
+      creationTimestamp: null
+      labels:
+        app: java-8-maven
+        deploymentconfig: java-8-maven
+    spec:
+      containers:
+        - env:
+            - name: COURCE_CODE
+              value: 'https://github.com/michaelcouck/fuck-off-as-a-service.git'
+            - name: SOURCE_DIRECTORY
+              value: /root/source
+          image: >-
+            michaelcouck/java-8-maven@sha256:de1b51fde144a4090de735f293596c7027e2d0298e32de82c0fa470bf4aa106d
+            volumeMounts:
+              - mountPath: /root
+                name: volume-rbg7x
+          imagePullPolicy: Always
+          name: java-8-maven
+          ports:
+            - containerPort: 22
+              protocol: TCP
+            - containerPort: 80
+              protocol: TCP
+            - containerPort: 443
+              protocol: TCP
+            - containerPort: 8080
+              protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumes:
+            - name: volume-rbg7x
+              persistentVolumeClaim:
+                claimName: persistent-volume-shared-claim
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+  test: false
+  triggers:
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+          - java-8-maven
+        from:
+          kind: ImageStreamTag
+          name: 'java-8-maven:latest'
+          namespace: reaper
+        lastTriggeredImage: >-
+          michaelcouck/java-8-maven@sha256:de1b51fde144a4090de735f293596c7027e2d0298e32de82c0fa470bf4aa106d
+      type: ImageChange
+status:
+  availableReplicas: 1
+  conditions:
+    - lastTransitionTime: '2017-12-18T14:02:07Z'
+      lastUpdateTime: '2017-12-18T14:02:09Z'
+      message: replication controller "java-8-maven-6" successfully rolled out
+      reason: NewReplicationControllerAvailable
+      status: 'True'
+      type: Progressing
+    - lastTransitionTime: '2017-12-19T05:07:29Z'
+      lastUpdateTime: '2017-12-19T05:07:29Z'
+      message: Deployment config has minimum availability.
+      status: 'True'
+      type: Available
+  details:
+    causes:
+      - type: Manual
+    message: manual change
+  latestVersion: 6
+  observedGeneration: 11
+  readyReplicas: 1
+  replicas: 1
+  unavailableReplicas: 0
+  updatedReplicas: 1
