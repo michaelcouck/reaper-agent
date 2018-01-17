@@ -60,7 +60,6 @@ public class ReaperActionJmxMetrics extends ReaperActionMetrics {
      */
     @Property(source = Constant.REAPER_PROPERTIES, key = "sleep-time")
     private long sleepTime = 1000 * 60 * 15;
-
     @Property(source = Constant.REAPER_PROPERTIES, key = "max-retries")
     private long maxRetries;
     @Property(source = Constant.REAPER_PROPERTIES, key = "final-retry-delay")

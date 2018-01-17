@@ -1,46 +1,46 @@
 {
-  "type": "com.pxs.reaper.model.OSMetrics",
-  "inetAddress": "192.168.1.13",
-  "pid": "2923@laptop",
-  "date": "Nov 4, 2017 9:34:51 AM",
+  "pid": "18154@new-host",
+  "userDir": "reaper-agent",
   "memory": {
+    "objectPendingFinalizationCount": 0,
     "nonHeapMemoryUsage": {
       "init": 2555904,
-      "used": 16944472,
-      "committed": 17760256,
+      "used": 20889416,
+      "committed": 21495808,
       "max": -1
-    },
-    "objectPendingFinalizationCount": 0
+    }
   },
   "threading": {
     "threadIds": [
+      18,
       17,
       16,
       15,
-      14,
+      10,
       4,
       3,
       2,
       1
     ],
     "threadCpuTimes": [
-      11428443,
-      113396,
-      241614,
-      453290,
-      54071,
-      147498,
-      120516,
-      628003381
+      2870279,
+      2556188,
+      14072920,
+      25432318,
+      227421035,
+      175555,
+      169173,
+      167260,
+      380154442
     ],
     "threadInfos": [
       {
-        "threadName": "Timer-0",
-        "threadId": 17,
+        "threadName": "Attach Listener",
+        "threadId": 18,
         "blockedTime": -1,
-        "blockedCount": 1,
+        "blockedCount": 0,
         "waitedTime": -1,
-        "waitedCount": 2,
+        "waitedCount": 0,
         "lockOwnerId": -1,
         "inNative": false,
         "suspended": false,
@@ -50,27 +50,52 @@
         "lockedSynchronizers": []
       },
       {
-        "threadName": "RMI TCP Accept-0",
+        "threadName": "Grizzly(2)",
+        "threadId": 17,
+        "blockedTime": -1,
+        "blockedCount": 2,
+        "waitedTime": -1,
+        "waitedCount": 3,
+        "lock": {
+          "className": "java.util.concurrent.LinkedTransferQueue",
+          "identityHashCode": 1190180342
+        },
+        "lockName": "java.util.concurrent.LinkedTransferQueue@46f0b5f6",
+        "lockOwnerId": -1,
+        "inNative": false,
+        "suspended": false,
+        "threadState": "WAITING",
+        "stackTrace": [],
+        "lockedMonitors": [],
+        "lockedSynchronizers": []
+      },
+      {
+        "threadName": "Grizzly(1)",
         "threadId": 16,
         "blockedTime": -1,
-        "blockedCount": 0,
+        "blockedCount": 5,
         "waitedTime": -1,
-        "waitedCount": 0,
+        "waitedCount": 3,
+        "lock": {
+          "className": "java.util.concurrent.LinkedTransferQueue",
+          "identityHashCode": 1190180342
+        },
+        "lockName": "java.util.concurrent.LinkedTransferQueue@46f0b5f6",
         "lockOwnerId": -1,
-        "inNative": true,
+        "inNative": false,
         "suspended": false,
-        "threadState": "RUNNABLE",
+        "threadState": "WAITING",
         "stackTrace": [],
         "lockedMonitors": [],
         "lockedSynchronizers": []
       },
       {
-        "threadName": "RMI TCP Accept-1099",
+        "threadName": "Grizzly(1) SelectorRunner",
         "threadId": 15,
         "blockedTime": -1,
-        "blockedCount": 0,
+        "blockedCount": 3,
         "waitedTime": -1,
-        "waitedCount": 0,
+        "waitedCount": 1,
         "lockOwnerId": -1,
         "inNative": true,
         "suspended": false,
@@ -80,14 +105,14 @@
         "lockedSynchronizers": []
       },
       {
-        "threadName": "RMI TCP Accept-1100",
-        "threadId": 14,
+        "threadName": "Timer-0",
+        "threadId": 10,
         "blockedTime": -1,
-        "blockedCount": 0,
+        "blockedCount": 3,
         "waitedTime": -1,
-        "waitedCount": 0,
+        "waitedCount": 9,
         "lockOwnerId": -1,
-        "inNative": true,
+        "inNative": false,
         "suspended": false,
         "threadState": "RUNNABLE",
         "stackTrace": [],
@@ -118,9 +143,9 @@
         "waitedCount": 2,
         "lock": {
           "className": "java.lang.ref.ReferenceQueue$Lock",
-          "identityHashCode": 1456762100
+          "identityHashCode": 360453541
         },
-        "lockName": "java.lang.ref.ReferenceQueue$Lock@56d46cf4",
+        "lockName": "java.lang.ref.ReferenceQueue$Lock@157c15a5",
         "lockOwnerId": -1,
         "inNative": false,
         "suspended": false,
@@ -138,9 +163,9 @@
         "waitedCount": 1,
         "lock": {
           "className": "java.lang.ref.Reference$Lock",
-          "identityHashCode": 858140211
+          "identityHashCode": 629355071
         },
-        "lockName": "java.lang.ref.Reference$Lock@33262e33",
+        "lockName": "java.lang.ref.Reference$Lock@2583323f",
         "lockOwnerId": -1,
         "inNative": false,
         "suspended": false,
@@ -165,91 +190,91 @@
         "lockedSynchronizers": []
       }
     ],
-    "threadCount": 8,
-    "peakThreadCount": 8,
-    "daemonThreadCount": 7,
-    "totalStartedThreadCount": 8
+    "threadCount": 9,
+    "peakThreadCount": 9,
+    "daemonThreadCount": 8,
+    "totalStartedThreadCount": 9
   },
   "compilation": {
-    "compilationTime": 694
+    "compilationTime": 881
   },
   "memoryPools": [
     {
       "name": "Code Cache",
-      "type": "NON_HEAP",
       "usageThreshold": 0,
       "usageThresholdCount": 0,
       "collectionUsageThreshold": 0,
       "collectionUsageThresholdCount": 0,
+      "type": "NON_HEAP",
       "usage": {
         "init": 2555904,
-        "used": 3294976,
-        "committed": 3342336,
+        "used": 4416320,
+        "committed": 4456448,
         "max": 251658240
       },
       "peakUsage": {
         "init": 2555904,
-        "used": 3294976,
-        "committed": 3342336,
+        "used": 4425280,
+        "committed": 4456448,
         "max": 251658240
       }
     },
     {
       "name": "Metaspace",
-      "type": "NON_HEAP",
       "usageThreshold": 0,
       "usageThresholdCount": 0,
       "collectionUsageThreshold": 0,
       "collectionUsageThresholdCount": 0,
+      "type": "NON_HEAP",
       "usage": {
         "init": 0,
-        "used": 12146328,
-        "committed": 12713984,
+        "used": 14660112,
+        "committed": 15073280,
         "max": -1
       },
       "peakUsage": {
         "init": 0,
-        "used": 12146328,
-        "committed": 12713984,
+        "used": 14660112,
+        "committed": 15073280,
         "max": -1
       }
     },
     {
       "name": "Compressed Class Space",
-      "type": "NON_HEAP",
       "usageThreshold": 0,
       "usageThresholdCount": 0,
       "collectionUsageThreshold": 0,
       "collectionUsageThresholdCount": 0,
+      "type": "NON_HEAP",
       "usage": {
         "init": 0,
-        "used": 1494112,
-        "committed": 1703936,
+        "used": 1807824,
+        "committed": 1966080,
         "max": 1073741824
       },
       "peakUsage": {
         "init": 0,
-        "used": 1494112,
-        "committed": 1703936,
+        "used": 1807824,
+        "committed": 1966080,
         "max": 1073741824
       }
     },
     {
       "name": "PS Eden Space",
-      "type": "HEAP",
       "usageThreshold": 0,
       "usageThresholdCount": 0,
       "collectionUsageThreshold": 0,
       "collectionUsageThresholdCount": 0,
+      "type": "HEAP",
       "usage": {
         "init": 66060288,
-        "used": 35708648,
+        "used": 63477680,
         "committed": 66060288,
         "max": 1370488832
       },
       "peakUsage": {
         "init": 66060288,
-        "used": 35708648,
+        "used": 63477680,
         "committed": 66060288,
         "max": 1370488832
       },
@@ -262,11 +287,11 @@
     },
     {
       "name": "PS Survivor Space",
-      "type": "HEAP",
       "usageThreshold": 0,
       "usageThresholdCount": 0,
       "collectionUsageThreshold": 0,
       "collectionUsageThresholdCount": 0,
+      "type": "HEAP",
       "usage": {
         "init": 10485760,
         "used": 0,
@@ -288,11 +313,11 @@
     },
     {
       "name": "PS Old Gen",
-      "type": "HEAP",
       "usageThreshold": 0,
       "usageThresholdCount": 0,
       "collectionUsageThreshold": 0,
       "collectionUsageThresholdCount": 0,
+      "type": "HEAP",
       "usage": {
         "init": 175112192,
         "used": 0,
@@ -314,7 +339,7 @@
     }
   ],
   "classLoading": {
-    "loadedClassCount": 2292,
+    "loadedClassCount": 2725,
     "totalLoadedClassCount": 0,
     "unLoadedClassCount": 0
   },
@@ -329,5 +354,16 @@
       "collectionCount": 0,
       "collectionTime": 0
     }
-  ]
+  ],
+  "operatingSystem": {
+    "name": "Linux",
+    "version": "4.4.0-104-generic",
+    "arch": "amd64",
+    "availableProcessors": 8,
+    "systemLoadAverage": 0.79
+  },
+  "codeBase": "reaper-agent-1.0-SNAPSHOT.jar",
+  "type": "com.pxs.reaper.model.JMetrics",
+  "ipAddress": "192.168.1.26",
+  "created": 1516192780641
 }

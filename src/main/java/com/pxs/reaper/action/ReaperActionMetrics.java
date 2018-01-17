@@ -2,6 +2,7 @@ package com.pxs.reaper.action;
 
 import com.pxs.reaper.model.*;
 import com.pxs.reaper.toolkit.HOST;
+import org.apache.commons.io.FilenameUtils;
 
 import java.lang.management.*;
 import java.util.ArrayList;
@@ -11,7 +12,7 @@ import java.util.TimerTask;
 
 /**
  * Base class for JMX operations on management MBeans for the JVM. Takes various MBeans from the JVM and populates
- * metrics model objects for TRANSPORT to the micro service for analysis and model building.
+ * metrics model objects for transport to the micro service for analysis and model building.
  *
  * @author Michael Couck
  * @version 01.00
@@ -49,6 +50,7 @@ abstract class ReaperActionMetrics extends TimerTask implements ReaperAction {
         String vmName = runtimeMXBean.getName();
 
         jMetrics.setPid(vmName);
+        jMetrics.setUserDir(FilenameUtils.getName(System.getProperty("user.dir")));
         jMetrics.setCreated(System.currentTimeMillis());
         jMetrics.setIpAddress(HOST.hostname());
         jMetrics.setType(JMetrics.class.getName());

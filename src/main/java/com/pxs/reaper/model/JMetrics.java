@@ -26,6 +26,9 @@ public class JMetrics extends Metrics {
      */
     @Field
     private String pid;
+    @Field
+    private String userDir;
+
 
     @Field
     private Memory memory;

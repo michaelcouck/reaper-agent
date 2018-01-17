@@ -6,6 +6,7 @@ import com.pxs.reaper.model.JMetrics;
 import com.pxs.reaper.transport.Transport;
 import lombok.extern.slf4j.Slf4j;
 import mockit.Deencapsulation;
+import org.apache.commons.io.FilenameUtils;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -58,6 +59,11 @@ public class ReaperActionJvmMetricsTest {
         Constant.TIMER.scheduleAtFixedRate(reaperActionJvmMetrics, Short.MAX_VALUE, Short.MAX_VALUE);
         // The result of the task is dependant on the state and if it has been executed already, so we just run the code
         reaperActionJvmMetrics.terminate();
+    }
+
+    @Test
+    public void applicationName() {
+        log.info(FilenameUtils.getName(System.getProperty("user.dir")));
     }
 
     @Test

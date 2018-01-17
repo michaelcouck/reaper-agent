@@ -34,7 +34,7 @@ public class WebSocketTransport implements Transport {
      */
     // @Property(source = Constant.REAPER_PROPERTIES, key = "reaper-web-socket-uri")
     @SystemProperty("reaper-web-socket-uri")
-    private String reaperWebSocketUri;
+    private String reaperWebSocketUri = "ws://ikube.be:8090/reaper-websocket";
     /**
      * Delay between logging the metrics posted
      */
@@ -84,9 +84,11 @@ public class WebSocketTransport implements Transport {
                 lastLoggingTimestamp = System.currentTimeMillis();
                 log.info("Sent metrics : {}, {}", reaperWebSocketUri, postage);
             }
+            // log.info(postage);
             RemoteEndpoint.Async async = session.getAsyncRemote();
             Future<Void> future = async.sendText(postage);
             future.get(1000, TimeUnit.MILLISECONDS);
+            // Another possibility... Rather than async, sync.
             // RemoteEndpoint.Basic basic = session.getBasicRemote();
             // basic.sendText(postage);
         } catch (final Exception e) {
