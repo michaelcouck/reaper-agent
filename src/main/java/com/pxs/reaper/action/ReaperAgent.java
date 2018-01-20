@@ -39,6 +39,13 @@ public class ReaperAgent {
      * @param instrumentation the instrumentation implementation of the JVM
      */
     public static void premain(final String args, final Instrumentation instrumentation) {
+        String reaperMicroservice = "reaper-microservice";
+        String classpath = System.getProperty("java.class.path", "");
+        System.out.println("Reaper microservice on class path : " + classpath.indexOf(reaperMicroservice));
+        if (classpath.contains(reaperMicroservice)) {
+            System.out.println("Shutting down, don't monitor the micro service : " + classpath);
+            return;
+        }
         Constant.PROPERTIES_INJECTOR.injectProperties(Constant.EXTERNAL_CONSTANTS);
         int sleepTime = Constant.EXTERNAL_CONSTANTS.getSleepTime();
         ReaperActionJvmMetrics reaperActionJvmMetrics = new ReaperActionJvmMetrics();

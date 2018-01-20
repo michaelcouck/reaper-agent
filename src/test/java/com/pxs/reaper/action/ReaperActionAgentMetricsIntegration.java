@@ -2,7 +2,6 @@ package com.pxs.reaper.action;
 
 import com.pxs.reaper.Constant;
 import com.pxs.reaper.toolkit.HOST;
-import com.pxs.reaper.toolkit.THREAD;
 import com.sun.tools.attach.VirtualMachine;
 import lombok.extern.slf4j.Slf4j;
 import mockit.Deencapsulation;
@@ -15,7 +14,6 @@ import org.mockito.internal.util.reflection.Whitebox;
 import org.mockito.runners.MockitoJUnitRunner;
 import sun.jvmstat.monitor.MonitorException;
 import sun.jvmstat.monitor.MonitoredHost;
-import sun.net.util.IPAddressUtil;
 
 import java.net.NetworkInterface;
 import java.net.SocketException;
@@ -61,12 +59,11 @@ public class ReaperActionAgentMetricsIntegration {
     }
 
     @Test
-    @Ignore
+    // @Ignore
     public void attachToJmxProcess() {
         ReaperActionJmxMetrics reaperActionJmxMetrics = new ReaperActionJmxMetrics();
         Constant.PROPERTIES_INJECTOR.injectProperties(reaperActionJmxMetrics);
         reaperActionJmxMetrics.run();
-        THREAD.sleep(30000);
     }
 
     @Test

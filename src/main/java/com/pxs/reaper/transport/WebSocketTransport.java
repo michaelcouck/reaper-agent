@@ -1,6 +1,7 @@
 package com.pxs.reaper.transport;
 
 import com.pxs.reaper.Constant;
+import com.pxs.reaper.model.Metrics;
 import com.pxs.reaper.toolkit.Retry;
 import com.pxs.reaper.toolkit.RetryIncreasingDelay;
 import lombok.Setter;
@@ -82,7 +83,9 @@ public class WebSocketTransport implements Transport {
             // Periodically log some data
             if (System.currentTimeMillis() - lastLoggingTimestamp > loggingInterval) {
                 lastLoggingTimestamp = System.currentTimeMillis();
-                log.info("Sent metrics : {}, {}", reaperWebSocketUri, postage);
+                String ipAddress = ((Metrics) metrics).getIpAddress();
+                String codeBase = ((Metrics) metrics).getCodeBase();
+                log.info("Sent metrics : {}, {}", reaperWebSocketUri, ipAddress + ":" + codeBase);
             }
             // log.info(postage);
             RemoteEndpoint.Async async = session.getAsyncRemote();
