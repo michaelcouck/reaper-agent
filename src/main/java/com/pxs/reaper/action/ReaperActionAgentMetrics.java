@@ -62,12 +62,12 @@ public class ReaperActionAgentMetrics extends TimerTask implements ReaperAction 
         removeTerminatedProcesses();
         // Get the pids for the local operating system
         Set<String> pids = getPidsFromOperatingSystem();
-        log.info("Pids : {}", pids);
+        log.debug("Pids : {}", pids);
         for (final String pid : pids) {
             VirtualMachine virtualMachine;
             try {
                 if (virtualMachines.containsKey(pid) || virtualMachineErrorPids.contains(pid)) {
-                    log.info("Already attached/tried to attach to : {}", pid);
+                    log.debug("Already attached/tried to attach to : {}", pid);
                     continue;
                 }
                 virtualMachineErrorPids.add(pid);
