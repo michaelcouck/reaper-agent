@@ -7,7 +7,6 @@ import com.pxs.reaper.toolkit.RetryIncreasingDelay;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.jeasy.props.annotations.Property;
-import org.jeasy.props.annotations.SystemProperty;
 
 import javax.websocket.*;
 import java.io.IOException;
@@ -33,8 +32,8 @@ public class WebSocketTransport implements Transport {
     /**
      * The uri to the central analyzer for posting metrics to
      */
-    // @Property(source = Constant.REAPER_PROPERTIES, key = "reaper-web-socket-uri")
-    @SystemProperty("reaper-web-socket-uri")
+    // @SystemProperty("reaper-web-socket-uri")
+    @Property(source = Constant.REAPER_PROPERTIES, key = "reaper-web-socket-uri")
     private String reaperWebSocketUri = "ws://ikube.be:8090/reaper-websocket";
     /**
      * Delay between logging the metrics posted
@@ -85,12 +84,14 @@ public class WebSocketTransport implements Transport {
                 lastLoggingTimestamp = System.currentTimeMillis();
                 String ipAddress = ((Metrics) metrics).getIpAddress();
                 String codeBase = ((Metrics) metrics).getCodeBase();
-                log.info("Sent metrics : {}, {}", reaperWebSocketUri, ipAddress + ":" + codeBase);
+                log.info("Sent metrics : {}, {}", reaperWebSocketUri, ipAddress + " : " + codeBase + " : " + metrics.getClass().getSimpleName());
             }
+
             // log.info(postage);
             RemoteEndpoint.Async async = session.getAsyncRemote();
             Future<Void> future = async.sendText(postage);
             future.get(1000, TimeUnit.MILLISECONDS);
+
             // Another possibility... Rather than async, sync.
             // RemoteEndpoint.Basic basic = session.getBasicRemote();
             // basic.sendText(postage);
@@ -104,15 +105,19 @@ public class WebSocketTransport implements Transport {
     /**
      * Opens a session to the web socket of the centralized analyzer.
      */
-    @SuppressWarnings("StatementWithEmptyBody")
     private void openSession() {
         WebSocketTransport webSocketTransport = this;
         Function<Void, Session> function = aVoid -> {
             WebSocketContainer container = ContainerProvider.getWebSocketContainer();
             URI uri = URI.create(reaperWebSocketUri);
             try {
-                log.info("Opening(re) web socket session : {}, with uri : {}", reaperWebSocketUri);
-                return session = container.connectToServer(webSocketTransport, uri);
+                log.info("Session null : {}, session open : {}", session, session != null ? session.isOpen() : null);
+                if (session == null || !session.isOpen()) {
+                    log.info("Opening(re) web socket session : {}, with uri : {}", reaperWebSocketUri);
+                    session = container.connectToServer(webSocketTransport, uri);
+                    session.setMaxIdleTimeout(600000);
+                }
+                return session;
             } catch (final DeploymentException | IOException e) {
                 throw new RuntimeException(e);
             } finally {

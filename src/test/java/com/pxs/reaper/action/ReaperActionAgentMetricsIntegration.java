@@ -59,7 +59,7 @@ public class ReaperActionAgentMetricsIntegration {
     }
 
     @Test
-    // @Ignore
+    @Ignore
     public void attachToJmxProcess() {
         ReaperActionJmxMetrics reaperActionJmxMetrics = new ReaperActionJmxMetrics();
         Constant.PROPERTIES_INJECTOR.injectProperties(reaperActionJmxMetrics);

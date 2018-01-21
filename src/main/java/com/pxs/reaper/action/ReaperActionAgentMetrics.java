@@ -62,11 +62,12 @@ public class ReaperActionAgentMetrics extends TimerTask implements ReaperAction 
         removeTerminatedProcesses();
         // Get the pids for the local operating system
         Set<String> pids = getPidsFromOperatingSystem();
+        log.info("Pids : {}", pids);
         for (final String pid : pids) {
             VirtualMachine virtualMachine;
             try {
                 if (virtualMachines.containsKey(pid) || virtualMachineErrorPids.contains(pid)) {
-                    log.debug("Already attached/tried to attach to : {}", pid);
+                    log.info("Already attached/tried to attach to : {}", pid);
                     continue;
                 }
                 virtualMachineErrorPids.add(pid);
@@ -77,7 +78,7 @@ public class ReaperActionAgentMetrics extends TimerTask implements ReaperAction 
                     log.warn("Agent jar not found : ");
                 }
                 virtualMachines.put(pid, virtualMachine);
-                log.debug("Attached to pid : {}, {}", pid, virtualMachine.getClass().getName());
+                log.info("Attached to pid : {}, {}", pid, virtualMachine.getClass().getName());
             } catch (final AttachNotSupportedException | IOException | AgentLoadException | AgentInitializationException e) {
                 log.error("Exception attaching to pid : " + pid, e);
             }

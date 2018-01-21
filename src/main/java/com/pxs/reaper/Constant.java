@@ -2,6 +2,7 @@ package com.pxs.reaper;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.pxs.reaper.transport.RestTransport;
 import com.pxs.reaper.transport.Transport;
 import com.pxs.reaper.transport.WebSocketTransport;
 import lombok.Getter;
@@ -20,6 +21,7 @@ import static org.jeasy.props.PropertiesInjectorBuilder.aNewPropertiesInjector;
  * @version 1.0
  * @since 20-10-2017
  */
+@SuppressWarnings("unused")
 public interface Constant {
 
     /**
@@ -61,7 +63,9 @@ public interface Constant {
     /**
      * Provides TRANSPORT of the metrics from the class to the central analyzer over the wire
      */
-    Transport TRANSPORT = new WebSocketTransport();
+    Transport TRANSPORT_REST = new RestTransport();
+    Transport TRANSPORT_WEB_SOCKET = new WebSocketTransport();
+    Transport TRANSPORT = TRANSPORT_REST;
 
     @Getter
     @Setter
@@ -69,6 +73,7 @@ public interface Constant {
         {
             PROPERTIES_INJECTOR.injectProperties(this);
         }
+
         @SuppressWarnings("unused")
         @Property(source = Constant.REAPER_PROPERTIES, key = "sleep-time")
         private int sleepTime = 15000;

@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import org.springframework.data.couchbase.core.mapping.Document;
+// import org.springframework.data.couchbase.core.mapping.Document;
 
 import java.lang.management.MemoryUsage;
 
@@ -18,7 +18,7 @@ import java.lang.management.MemoryUsage;
 @Getter
 @Setter
 @ToString
-@Document
+// @Document
 @NoArgsConstructor
 public class Memory {
 

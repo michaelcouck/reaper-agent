@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import org.springframework.data.couchbase.core.mapping.Document;
+// import org.springframework.data.couchbase.core.mapping.Document;
 
 /**
  * Contains class loading metrics, not particularly interesting.
@@ -16,7 +16,7 @@ import org.springframework.data.couchbase.core.mapping.Document;
 @Getter
 @Setter
 @ToString
-@Document
+// @Document
 @NoArgsConstructor
 public class Classloading {
 

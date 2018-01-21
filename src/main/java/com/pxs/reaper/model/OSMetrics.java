@@ -1,13 +1,13 @@
 package com.pxs.reaper.model;
 
-import com.couchbase.client.java.repository.annotation.Field;
+// import com.couchbase.client.java.repository.annotation.Field;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.hyperic.sigar.*;
 import org.hyperic.sigar.OperatingSystem;
-import org.springframework.data.couchbase.core.mapping.Document;
+// import org.springframework.data.couchbase.core.mapping.Document;
 
 /**
  * Contains operating system metrics, low level.
@@ -27,42 +27,42 @@ import org.springframework.data.couchbase.core.mapping.Document;
 @Getter
 @Setter
 @ToString
-@Document
+// @Document
 @NoArgsConstructor
 public class OSMetrics extends Metrics {
 
     /**
      * Model objects from Sigar that can be used directly, i.e. transported over the wire
      */
-    @Field
+    // @Field
     private double[] loadAverage;
 
-    @Field
+    // @Field
     private Cpu[] cpu;
-    @Field
+    // @Field
     private CpuPerc[] cpuPerc;
-    @Field
+    // @Field
     private CpuInfo[] cpuInfo;
 
-    @Field
+    // @Field
     private Tcp tcp;
-    @Field
+    // @Field
     private Mem mem;
-    @Field
+    // @Field
     private Swap swap;
-    @Field
+    // @Field
     private NetInfo netInfo;
-    @Field
+    // @Field
     private NetStat netStat;
-    @Field
+    // @Field
     private NetRoute[] netRoutes;
-    @Field
+    // @Field
     private NetConnection[] netConnections;
-    @Field
+    // @Field
     private ProcStat procStat;
-    @Field
+    // @Field
     private ResourceLimit resourceLimit;
-    @Field
+    // @Field
     private OperatingSystem operatingSystem;
 
 }

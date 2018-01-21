@@ -1,6 +1,7 @@
 package com.pxs.reaper.action;
 
 import com.pxs.reaper.Constant;
+import lombok.extern.slf4j.Slf4j;
 
 import java.lang.instrument.IllegalClassFormatException;
 import java.lang.instrument.Instrumentation;
@@ -15,6 +16,7 @@ import java.security.ProtectionDomain;
  * @version 01.00
  * @since 09-10-2017
  */
+@Slf4j
 public class ReaperAgent {
 
     /**
@@ -41,12 +43,17 @@ public class ReaperAgent {
     public static void premain(final String args, final Instrumentation instrumentation) {
         String reaperMicroservice = "reaper-microservice";
         String classpath = System.getProperty("java.class.path", "");
-        System.out.println("Reaper microservice on class path : " + classpath.indexOf(reaperMicroservice));
-        if (classpath.contains(reaperMicroservice)) {
+        log.info("Reaper microservice on class path, offset : {}", classpath.indexOf(reaperMicroservice));
+
+        /*if (classpath.contains(reaperMicroservice)) {
             System.out.println("Shutting down, don't monitor the micro service : " + classpath);
             return;
-        }
+        }*/
+
+        log.info("Starting the reaper in the target jvm : {}", classpath);
+        Constant.PROPERTIES_INJECTOR.injectProperties(Constant.TRANSPORT);
         Constant.PROPERTIES_INJECTOR.injectProperties(Constant.EXTERNAL_CONSTANTS);
+
         int sleepTime = Constant.EXTERNAL_CONSTANTS.getSleepTime();
         ReaperActionJvmMetrics reaperActionJvmMetrics = new ReaperActionJvmMetrics();
         Constant.TIMER.scheduleAtFixedRate(reaperActionJvmMetrics, sleepTime, sleepTime);

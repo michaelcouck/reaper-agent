@@ -1,17 +1,19 @@
 package com.pxs.reaper.model;
 
-import com.couchbase.client.java.repository.annotation.Field;
-import com.couchbase.client.java.repository.annotation.Id;
+// import com.couchbase.client.java.repository.annotation.Field;
+// import com.couchbase.client.java.repository.annotation.Id;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.apache.commons.io.FilenameUtils;
-import org.springframework.data.couchbase.core.mapping.Document;
+import org.springframework.data.annotation.Id;
+// import org.springframework.data.couchbase.core.mapping.Document;
 
 @Getter
 @Setter
 @ToString
-@Document
+// @Document
 @SuppressWarnings("WeakerAccess")
 public abstract class Metrics {
 
@@ -20,23 +22,23 @@ public abstract class Metrics {
         setCodeBase(FilenameUtils.getName(this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath()));
     }
 
+    // @Id
     @Id
-    @org.springframework.data.annotation.Id
     protected String id;
 
-    @Field
+    // @Field
     private String codeBase;
 
-    @Field
+    // @Field
     private String type = this.getClass().getName();
 
     /**
      * Ip address of the local agent.
      */
-    @Field
+    // @Field
     private String ipAddress;
 
-    @Field
+    // @Field
     private long created;
 
 }

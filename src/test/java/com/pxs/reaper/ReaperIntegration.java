@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import mockit.Deencapsulation;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -26,6 +27,13 @@ public class ReaperIntegration {
     private Timer timer;
     @Spy
     private Reaper reaper;
+
+    @Before
+    public void before() {
+        Constant.PROPERTIES_INJECTOR.injectProperties(Constant.TRANSPORT);
+        Constant.PROPERTIES_INJECTOR.injectProperties(Constant.TRANSPORT_REST);
+        Constant.PROPERTIES_INJECTOR.injectProperties(Constant.TRANSPORT_WEB_SOCKET);
+    }
 
     @Test
     public void main() {
