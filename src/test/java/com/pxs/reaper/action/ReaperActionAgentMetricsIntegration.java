@@ -3,7 +3,6 @@ package com.pxs.reaper.action;
 import com.pxs.reaper.Constant;
 import com.pxs.reaper.toolkit.HOST;
 import com.sun.tools.attach.VirtualMachine;
-import lombok.extern.slf4j.Slf4j;
 import mockit.Deencapsulation;
 import org.junit.Assert;
 import org.junit.Ignore;
@@ -21,10 +20,12 @@ import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
-@Slf4j
 @RunWith(MockitoJUnitRunner.class)
 public class ReaperActionAgentMetricsIntegration {
+
+    private final Logger log = Logger.getLogger(this.getClass().getSimpleName());
 
     @Mock
     private VirtualMachine virtualMachine;

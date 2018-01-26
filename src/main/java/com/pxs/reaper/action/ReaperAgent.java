@@ -1,11 +1,13 @@
 package com.pxs.reaper.action;
 
 import com.pxs.reaper.Constant;
-import lombok.extern.slf4j.Slf4j;
 
 import java.lang.instrument.IllegalClassFormatException;
 import java.lang.instrument.Instrumentation;
 import java.security.ProtectionDomain;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.logging.Logger;
 
 /**
  * This class is attached to the running Java processes on the local operating system by the {@link com.pxs.reaper.Reaper}. It
@@ -16,8 +18,9 @@ import java.security.ProtectionDomain;
  * @version 01.00
  * @since 09-10-2017
  */
-@Slf4j
 public class ReaperAgent {
+
+    private static Logger log = Logger.getLogger(ReaperAgent.class.getSimpleName());
 
     /**
      * JVM hook to dynamically load javaagent at runtime.
@@ -41,23 +44,21 @@ public class ReaperAgent {
      * @param instrumentation the instrumentation implementation of the JVM
      */
     public static void premain(final String args, final Instrumentation instrumentation) {
-        String reaperMicroservice = "reaper-microservice";
-        String classpath = System.getProperty("java.class.path", "");
-        log.info("Reaper microservice on class path, offset : {}", classpath.indexOf(reaperMicroservice));
+        TimerTask timerTask = new TimerTask() {
+            @Override
+            public void run() {
+                Constant.PROPERTIES_INJECTOR.injectProperties(Constant.TRANSPORT);
+                Constant.PROPERTIES_INJECTOR.injectProperties(Constant.EXTERNAL_CONSTANTS);
+                log.warning("Starting the reaper in the target jvm :");
 
-        /*if (classpath.contains(reaperMicroservice)) {
-            System.out.println("Shutting down, don't monitor the micro service : " + classpath);
-            return;
-        }*/
-
-        log.info("Starting the reaper in the target jvm : {}", classpath);
-        Constant.PROPERTIES_INJECTOR.injectProperties(Constant.TRANSPORT);
-        Constant.PROPERTIES_INJECTOR.injectProperties(Constant.EXTERNAL_CONSTANTS);
-
-        int sleepTime = Constant.EXTERNAL_CONSTANTS.getSleepTime();
-        ReaperActionJvmMetrics reaperActionJvmMetrics = new ReaperActionJvmMetrics();
-        Constant.TIMER.scheduleAtFixedRate(reaperActionJvmMetrics, sleepTime, sleepTime);
-        Runtime.getRuntime().addShutdownHook(new Thread(reaperActionJvmMetrics::terminate));
+                int sleepTime = Constant.EXTERNAL_CONSTANTS.getSleepTime();
+                ReaperActionJvmMetrics reaperActionJvmMetrics = new ReaperActionJvmMetrics();
+                Constant.TIMER.scheduleAtFixedRate(reaperActionJvmMetrics, sleepTime, sleepTime);
+                Runtime.getRuntime().addShutdownHook(new Thread(reaperActionJvmMetrics::terminate));
+                log.warning("Started the reaper in the target jvm :");
+            }
+        };
+        new Timer(Boolean.TRUE).schedule(timerTask, 60000);
     }
 
     /**

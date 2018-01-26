@@ -1,8 +1,8 @@
 package com.pxs.reaper.toolkit;
 
-import lombok.extern.slf4j.Slf4j;
-
 import java.util.function.Function;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * This class takes a function and retries a specified number of times with an increasing delay between retries.
@@ -11,8 +11,9 @@ import java.util.function.Function;
  * @version 01.00
  * @since 01-11-2017
  */
-@Slf4j
 public class RetryIncreasingDelay implements Retry {
+
+    private Logger log = Logger.getLogger(this.getClass().getSimpleName());
 
     /**
      * {@inheritDoc}
@@ -44,7 +45,7 @@ public class RetryIncreasingDelay implements Retry {
 
     private void sleep(final long time) {
         try {
-            log.debug("Sleeping for : {}", time);
+            log.log(Level.INFO, "Sleeping for : {}", time);
             Thread.sleep(time);
         } catch (final InterruptedException e) {
             Thread.currentThread().interrupt();

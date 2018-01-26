@@ -7,7 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.apache.commons.io.FilenameUtils;
-import org.springframework.data.annotation.Id;
+// import org.springframework.data.annotation.Id;
 // import org.springframework.data.couchbase.core.mapping.Document;
 
 @Getter
@@ -23,7 +23,7 @@ public abstract class Metrics {
     }
 
     // @Id
-    @Id
+    // @Id
     protected String id;
 
     // @Field

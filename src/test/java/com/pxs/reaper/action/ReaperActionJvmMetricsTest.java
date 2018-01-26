@@ -4,7 +4,6 @@ import com.pxs.reaper.Constant;
 import com.pxs.reaper.Reaper;
 import com.pxs.reaper.model.JMetrics;
 import com.pxs.reaper.transport.Transport;
-import lombok.extern.slf4j.Slf4j;
 import mockit.Deencapsulation;
 import org.apache.commons.io.FilenameUtils;
 import org.junit.Assert;
@@ -19,10 +18,12 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.logging.Logger;
 
-@Slf4j
 @RunWith(MockitoJUnitRunner.class)
 public class ReaperActionJvmMetricsTest {
+
+    private final Logger log = Logger.getLogger(this.getClass().getSimpleName());
 
     @Mock
     private Transport transport;

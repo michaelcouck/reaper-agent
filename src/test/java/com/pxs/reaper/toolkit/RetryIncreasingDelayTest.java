@@ -1,6 +1,5 @@
 package com.pxs.reaper.toolkit;
 
-import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -8,14 +7,11 @@ import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.Spy;
-import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.mockito.stubbing.Answer;
 
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 
-@Slf4j
 @RunWith(MockitoJUnitRunner.class)
 public class RetryIncreasingDelayTest {
 

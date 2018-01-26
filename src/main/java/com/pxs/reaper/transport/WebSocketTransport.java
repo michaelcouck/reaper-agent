@@ -5,7 +5,6 @@ import com.pxs.reaper.model.Metrics;
 import com.pxs.reaper.toolkit.Retry;
 import com.pxs.reaper.toolkit.RetryIncreasingDelay;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import org.jeasy.props.annotations.Property;
 
 import javax.websocket.*;
@@ -15,6 +14,8 @@ import java.nio.ByteBuffer;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Transport for the web socket implementation. This implementation connects to the web socket
@@ -24,10 +25,11 @@ import java.util.function.Function;
  * @version 1.0
  * @since 20-10-2017
  */
-@Slf4j
 @Setter
 @ClientEndpoint
 public class WebSocketTransport implements Transport {
+
+    private Logger log = Logger.getLogger(this.getClass().getSimpleName());
 
     /**
      * The uri to the central analyzer for posting metrics to
@@ -84,7 +86,7 @@ public class WebSocketTransport implements Transport {
                 lastLoggingTimestamp = System.currentTimeMillis();
                 String ipAddress = ((Metrics) metrics).getIpAddress();
                 String codeBase = ((Metrics) metrics).getCodeBase();
-                log.info("Sent metrics : {}, {}", reaperWebSocketUri, ipAddress + " : " + codeBase + " : " + metrics.getClass().getSimpleName());
+                log.info("Sent metrics : " + reaperWebSocketUri + ", address : " + ipAddress + " : " + codeBase + " : " + metrics.getClass().getSimpleName());
             }
 
             // log.info(postage);
@@ -96,7 +98,7 @@ public class WebSocketTransport implements Transport {
             // RemoteEndpoint.Basic basic = session.getBasicRemote();
             // basic.sendText(postage);
         } catch (final Exception e) {
-            log.error("Exception posting metrics, is the service up? : " + session, e);
+            log.log(Level.SEVERE, "Exception posting metrics, is the service up? : " + session, e);
             return Boolean.FALSE;
         }
         return Boolean.TRUE;
@@ -111,9 +113,9 @@ public class WebSocketTransport implements Transport {
             WebSocketContainer container = ContainerProvider.getWebSocketContainer();
             URI uri = URI.create(reaperWebSocketUri);
             try {
-                log.info("Session null : {}, session open : {}", session, session != null ? session.isOpen() : null);
+                log.log(Level.INFO, "Session null : " + session + ", session open : " + (session != null ? session.isOpen() : null));
                 if (session == null || !session.isOpen()) {
-                    log.info("Opening(re) web socket session : {}, with uri : {}", reaperWebSocketUri);
+                    log.log(Level.INFO, "Opening(re) web socket session with uri : {}", reaperWebSocketUri);
                     session = container.connectToServer(webSocketTransport, uri);
                     session.setMaxIdleTimeout(600000);
                 }
@@ -122,12 +124,12 @@ public class WebSocketTransport implements Transport {
                 throw new RuntimeException(e);
             } finally {
                 if (session == null || !session.isOpen()) {
-                    log.warn("Websocket session not open : ");
+                    log.log(Level.INFO, "Websocket session not open : ");
                 } else {
                     try {
                         session.getBasicRemote().sendPing(ByteBuffer.wrap("ping".getBytes()));
                     } catch (final IOException e) {
-                        log.error("Couldn't ping target micro service : ", e);
+                        log.log(Level.SEVERE, "Couldn't ping target micro service : ", e);
                     }
                 }
             }
@@ -137,7 +139,7 @@ public class WebSocketTransport implements Transport {
                 try {
                     session.close();
                 } catch (final Exception e) {
-                    log.error("Couldn't close web socket connection : ", e);
+                    log.log(Level.SEVERE, "Couldn't close web socket connection : ", e);
                 }
             }
             retryWithIncreasingDelay.retry(function, null, maxRetries, finalRetryDelay);
@@ -149,7 +151,7 @@ public class WebSocketTransport implements Transport {
      */
     @OnOpen
     public void onOpen(final Session session) throws IOException {
-        log.debug("Session opened : {}", session.getId());
+        log.log(Level.INFO, "Session opened : {}", session.getId());
     }
 
     /**
@@ -158,7 +160,7 @@ public class WebSocketTransport implements Transport {
     @OnMessage
     @SuppressWarnings("UnusedParameters")
     public void onMessage(final String message, final Session session) throws IOException {
-        log.debug("Got message : {}", message);
+        log.log(Level.INFO, "Got message : {}", message);
     }
 
     /**
@@ -166,7 +168,7 @@ public class WebSocketTransport implements Transport {
      */
     @OnClose
     public void onClose(final Session session) {
-        log.debug("Session closed : {}", session.getId());
+        log.log(Level.FINE, "Session closed : {}", session.getId());
     }
 
     /**
@@ -174,7 +176,7 @@ public class WebSocketTransport implements Transport {
      */
     @OnError
     public void onError(final Session session, final Throwable throwable) {
-        log.error("Error in session : {}", session.getId(), throwable);
+        log.log(Level.FINE, "Error in session : {}", throwable);
     }
 
 }

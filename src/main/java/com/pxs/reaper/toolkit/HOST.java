@@ -1,6 +1,5 @@
 package com.pxs.reaper.toolkit;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import sun.net.util.IPAddressUtil;
 
@@ -9,6 +8,7 @@ import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.*;
+import java.util.logging.Logger;
 
 /**
  * This class looks through the {@link InetAddress}(s) of the host to try find the 'unique' ip address
@@ -24,8 +24,9 @@ import java.util.*;
  * <p>
  * Ergo, this is a best effort to identify the 'best' ip address/HOSTNAME.
  */
-@Slf4j
 public class HOST {
+
+    private static Logger log = Logger.getLogger(HOST.class.getSimpleName());
 
     /**
      * Sored static iip address for further access.
@@ -57,7 +58,7 @@ public class HOST {
                     // Return a uuid that is at least unique to this vm/pod
                     HOSTNAME = UUID.fromString(InetAddress.getLocalHost().getCanonicalHostName()).toString();
                 } catch (final UnknownHostException e) {
-                    log.warn("Couldn't find internet address : ", e);
+                    log.warning("Couldn't find internet address : " + e);
                     HOSTNAME = UUID.randomUUID().toString();
                 }
             }

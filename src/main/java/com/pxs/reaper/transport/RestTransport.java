@@ -6,14 +6,8 @@ import com.pxs.reaper.Constant;
 import com.pxs.reaper.model.JMetrics;
 import com.pxs.reaper.model.OSMetrics;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import org.jeasy.props.annotations.Property;
-/*import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.web.client.RestTemplate;*/
 
-@Slf4j
 @Setter
 public class RestTransport implements Transport {
 
@@ -29,17 +23,14 @@ public class RestTransport implements Transport {
     @Override
     public boolean postMetrics(final Object metrics) {
         try {
+            String json = Constant.GSON.toJson(metrics);
             if (JMetrics.class.isAssignableFrom(metrics.getClass())) {
-                Unirest.post(reaperJMetricsRestUri)
-                        .body(Constant.GSON.toJson(metrics))
-                        .asString();
+                Unirest.post(reaperJMetricsRestUri).body(json).asString();
             } else if (OSMetrics.class.isAssignableFrom(metrics.getClass())) {
-                Unirest.post(reaperOMetricsRestUri)
-                        .body(Constant.GSON.toJson(metrics))
-                        .asString();
+                Unirest.post(reaperOMetricsRestUri).body(json).asString();
             }
         } catch (final UnirestException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Exception posting to the micro service : ", e);
         }
         return true;
     }

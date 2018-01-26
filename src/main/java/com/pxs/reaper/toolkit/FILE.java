@@ -2,14 +2,14 @@ package com.pxs.reaper.toolkit;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 /**
@@ -24,7 +24,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings({"WeakerAccess", "unused"})
 public final class FILE {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(FILE.class);
+    private static Logger log = Logger.getLogger(FILE.class.getSimpleName());
 
     /**
      * This method looks through all the files defined in the folder in the parameter
@@ -243,11 +243,11 @@ public final class FILE {
                 try {
                     String parentPath = cleanFilePath(parent.getAbsolutePath());
                     File createdFile = new File(parentPath, file.getName());
-                    LOGGER.debug("Creating file : " + file.getAbsolutePath());
+                    log.fine("Creating file : " + file.getAbsolutePath());
                     createdFile.createNewFile();
                     return createdFile;
                 } catch (final IOException e) {
-                    LOGGER.error("Exception creating file : " + file, e);
+                    log.log(Level.SEVERE, "Exception creating file : " + file, e);
                 }
             }
             return file;
@@ -268,11 +268,11 @@ public final class FILE {
                 return directory;
             }
             String directoryPath = cleanFilePath(directory.getPath());
-            LOGGER.debug("Creating directory : " + directoryPath);
+            log.fine("Creating directory : " + directoryPath);
             File createdDirectory = new File(directoryPath);
             boolean created = createdDirectory.mkdirs();
             if (!created || !directory.exists()) {
-                LOGGER.warn("Couldn't create directory(ies) " + directory.getAbsolutePath());
+                log.warning("Couldn't create directory(ies) " + directory.getAbsolutePath());
             }
             return createdDirectory;
         } finally {
@@ -295,7 +295,7 @@ public final class FILE {
             int read = fileInputStream.read(bytes);
             return new String(bytes, 0, read);
         } catch (final Exception e) {
-            LOGGER.error("Exception getting contents from file : " + file, e);
+            log.log(Level.SEVERE, "Exception getting contents from file : " + file, e);
         }
         return "";
     }
@@ -326,7 +326,7 @@ public final class FILE {
         // doing this will result in all the files from the working directory being deleted, which is
         // almost 99.99999% of the time the desired result
         if (cleanFilePath(file.getPath()).equals(cleanFilePath(new File(".").getAbsolutePath()))) {
-            LOGGER.warn("Not deleting dot folder : " + file.getAbsolutePath());
+            log.warning("Not deleting dot folder : " + file.getAbsolutePath());
             return;
         }
         if (file.isDirectory()) {
@@ -390,7 +390,7 @@ public final class FILE {
         boolean readable = file.setReadable(true, false);
         boolean writable = file.setWritable(true, false);
         if (!readable || !writable) {
-            LOGGER.info("Didn't set file : " + file + ", readable : " + readable + ", writable : " + writable);
+            log.info("Didn't set file : " + file + ", readable : " + readable + ", writable : " + writable);
         }
     }
 
@@ -411,13 +411,13 @@ public final class FILE {
         }
         if (retryCount >= maxRetryCount) {
             if (file.exists()) {
-                LOGGER.debug("Couldn't delete file : " + file);
-                LOGGER.debug("Will try to delete on exit : ");
+                log.fine("Couldn't delete file : " + file);
+                log.fine("Will try to delete on exit : ");
                 file.deleteOnExit();
             }
             return Boolean.FALSE;
         }
-        LOGGER.debug("Retrying count : " + retryCount + ", file : " + file);
+        log.fine("Retrying count : " + retryCount + ", file : " + file);
         return deleteFile(file, maxRetryCount, retryCount + 1);
     }
 
@@ -445,7 +445,7 @@ public final class FILE {
             fileOutputStream = new FileOutputStream(file);
             IOUtils.copyLarge(inputStream, fileOutputStream);
         } catch (final IOException e) {
-            LOGGER.error("IO exception writing file contents", e);
+            log.log(Level.SEVERE, "IO exception writing file contents", e);
         } finally {
             close(fileOutputStream);
         }
@@ -486,14 +486,14 @@ public final class FILE {
             if (file != null && file.exists()) {
                 makeReadWrite(file);
             } else {
-                LOGGER.warn("Didn't create directory/file : " + filePath);
+                log.warning("Didn't create directory/file : " + filePath);
             }
         } else {
             file = getOrCreateFile(file);
             if (file != null && !file.exists()) {
                 makeReadWrite(file);
             } else {
-                LOGGER.warn("Didn't create directory/file : " + filePath);
+                log.warning("Didn't create directory/file : " + filePath);
             }
         }
         return file;
@@ -512,7 +512,7 @@ public final class FILE {
             fileOutputStream = new FileOutputStream(outputFile);
             setContents(fileOutputStream, bytes);
         } catch (final FileNotFoundException e) {
-            LOGGER.error("File " + outputFile + " not found", e);
+            log.log(Level.SEVERE, "File " + outputFile + " not found", e);
         } finally {
             close(fileOutputStream);
         }
@@ -522,7 +522,7 @@ public final class FILE {
         try {
             outputStream.write(bytes, 0, bytes.length);
         } catch (final IOException e) {
-            LOGGER.error("IO exception writing file contents", e);
+            log.log(Level.SEVERE, "IO exception writing file contents", e);
         }
     }
 
@@ -537,9 +537,9 @@ public final class FILE {
         try {
             inputStream = new FileInputStream(file);
         } catch (final FileNotFoundException e) {
-            LOGGER.error("No file by that name : " + file, e);
+            log.log(Level.SEVERE, "No file by that name : " + file, e);
         } catch (final Exception e) {
-            LOGGER.error("General error accessing the file : " + file, e);
+            log.log(Level.SEVERE, "General error accessing the file : " + file, e);
         }
         return getContents(inputStream, maxReadLength);
     }
@@ -555,7 +555,7 @@ public final class FILE {
                 builder.append(new String(chars, 0, read));
             }
         } catch (final Exception e) {
-            LOGGER.error("Exception reading stream : " + reader, e);
+            log.log(Level.SEVERE, "Exception reading stream : " + reader, e);
         } finally {
             close(reader);
         }
@@ -586,7 +586,7 @@ public final class FILE {
                 read = inputStream.read(bytes);
             }
         } catch (final Exception e) {
-            LOGGER.error("Exception accessing the file contents : " + inputStream, e);
+            log.log(Level.SEVERE, "Exception accessing the file contents : " + inputStream, e);
         } finally {
             if (close) {
                 close(inputStream);
@@ -616,7 +616,7 @@ public final class FILE {
                 read = inputStream.read(bytes);
             }
         } catch (final Exception e) {
-            LOGGER.error("Exception accessing the stream contents.", e);
+            log.log(Level.SEVERE, "Exception accessing the stream contents.", e);
         } finally {
             close(inputStream);
         }
@@ -640,12 +640,12 @@ public final class FILE {
                 read = reader.read(chars);
             }
         } catch (final Exception e) {
-            LOGGER.error("Exception accessing the file contents.", e);
+            log.log(Level.SEVERE, "Exception accessing the file contents.", e);
         } finally {
             try {
                 reader.close();
             } catch (final Exception e) {
-                LOGGER.error("Exception closing input stream " + reader, e);
+                log.log(Level.SEVERE, "Exception closing input stream " + reader, e);
             }
         }
     }
@@ -655,7 +655,7 @@ public final class FILE {
             try {
                 reader.close();
             } catch (final Exception e) {
-                LOGGER.error("Exception closing the reader : " + reader, e);
+                log.log(Level.SEVERE, "Exception closing the reader : " + reader, e);
             }
         }
     }
@@ -665,12 +665,12 @@ public final class FILE {
             try {
                 writer.flush();
             } catch (final Exception e) {
-                LOGGER.error("Exception closing the writer : " + writer, e);
+                log.log(Level.SEVERE, "Exception closing the writer : " + writer, e);
             }
             try {
                 writer.close();
             } catch (final Exception e) {
-                LOGGER.error("Exception closing the writer : " + writer, e);
+                log.log(Level.SEVERE, "Exception closing the writer : " + writer, e);
             }
         }
     }
@@ -681,7 +681,7 @@ public final class FILE {
                 inputStream.close();
             }
         } catch (final Exception e) {
-            LOGGER.error("Exception closing stream : " + inputStream, e);
+            log.log(Level.SEVERE, "Exception closing stream : " + inputStream, e);
         }
     }
 
@@ -690,12 +690,12 @@ public final class FILE {
             try {
                 outputStream.flush();
             } catch (final Exception e) {
-                LOGGER.error("Exception flushing stream : " + outputStream, e);
+                log.log(Level.SEVERE, "Exception flushing stream : " + outputStream, e);
             }
             try {
                 outputStream.close();
             } catch (final Exception e) {
-                LOGGER.error("Exception closing stream : " + outputStream, e);
+                log.log(Level.SEVERE, "Exception closing stream : " + outputStream, e);
             }
         }
     }

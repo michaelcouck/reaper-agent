@@ -28,6 +28,8 @@ public class JMetrics extends Metrics {
     private String pid;
     // @Field
     private String userDir;
+    // @Field
+    private double throughput;
 
     // @Field
     private Memory memory;

@@ -18,7 +18,7 @@ import java.util.TimerTask;
  * @version 01.00
  * @since 22-10-2017
  */
-abstract class ReaperActionMetrics extends TimerTask implements ReaperAction {
+public abstract class ReaperActionMetrics extends TimerTask implements ReaperAction {
 
     /**
      * Populates the operating system information, like the name and the version, also the load average. Although

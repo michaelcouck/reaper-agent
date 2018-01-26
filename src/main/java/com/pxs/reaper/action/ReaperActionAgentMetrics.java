@@ -1,23 +1,25 @@
 package com.pxs.reaper.action;
 
-import com.jcabi.manifests.Manifests;
 import com.pxs.reaper.Constant;
 import com.pxs.reaper.toolkit.FILE;
 import com.sun.tools.attach.AgentInitializationException;
 import com.sun.tools.attach.AgentLoadException;
 import com.sun.tools.attach.AttachNotSupportedException;
 import com.sun.tools.attach.VirtualMachine;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.builder.ToStringBuilder;
 import sun.jvmstat.monitor.MonitorException;
 import sun.jvmstat.monitor.MonitoredHost;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.*;
+import java.util.jar.Attributes;
+import java.util.jar.Manifest;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 /**
@@ -29,9 +31,10 @@ import java.util.stream.Collectors;
  * @version 1.0
  * @since 20-10-2017
  */
-@Slf4j
 @SuppressWarnings("WeakerAccess")
 public class ReaperActionAgentMetrics extends TimerTask implements ReaperAction {
+
+    private final Logger log = Logger.getLogger(this.getClass().getSimpleName());
 
     /**
      * The path to the agent jar, which is needed to attach to the Java processes
@@ -62,12 +65,12 @@ public class ReaperActionAgentMetrics extends TimerTask implements ReaperAction 
         removeTerminatedProcesses();
         // Get the pids for the local operating system
         Set<String> pids = getPidsFromOperatingSystem();
-        log.debug("Pids : {}", pids);
+        log.fine("Pids : " + pids);
         for (final String pid : pids) {
             VirtualMachine virtualMachine;
             try {
                 if (virtualMachines.containsKey(pid) || virtualMachineErrorPids.contains(pid)) {
-                    log.debug("Already attached/tried to attach to : {}", pid);
+                    log.fine("Already attached/tried to attach to : " + pid);
                     continue;
                 }
                 virtualMachineErrorPids.add(pid);
@@ -75,12 +78,12 @@ public class ReaperActionAgentMetrics extends TimerTask implements ReaperAction 
                 if (StringUtils.isNotEmpty(pathToAgent)) {
                     virtualMachine.loadAgent(pathToAgent);
                 } else {
-                    log.warn("Agent jar not found : ");
+                    log.warning("Agent jar not found : ");
                 }
                 virtualMachines.put(pid, virtualMachine);
-                log.info("Attached to pid : {}, {}", pid, virtualMachine.getClass().getName());
+                log.info("Attached to pid : " + pid + ":" + virtualMachine.getClass().getName());
             } catch (final AttachNotSupportedException | IOException | AgentLoadException | AgentInitializationException e) {
-                log.error("Exception attaching to pid : " + pid, e);
+                log.log(Level.SEVERE, "Exception attaching to pid : " + pid, e);
             }
         }
     }
@@ -92,10 +95,10 @@ public class ReaperActionAgentMetrics extends TimerTask implements ReaperAction 
         Collection<VirtualMachine> machines = virtualMachines.values();
         machines.forEach(virtualMachine -> {
             try {
-                log.info("Detaching from : {}, {}", virtualMachine.id(), virtualMachine.getClass().getName());
+                log.info("Detaching from : " + virtualMachine.id() + ":" + virtualMachine.getClass().getName());
                 virtualMachine.detach();
             } catch (final IOException e) {
-                log.error("Exception detaching from java process : " + virtualMachine.id(), e);
+                log.log(Level.SEVERE, "Exception detaching from java process : " + virtualMachine.id(), e);
             }
         });
         Set<String> pids = new TreeSet<>(virtualMachines.keySet());
@@ -114,10 +117,10 @@ public class ReaperActionAgentMetrics extends TimerTask implements ReaperAction 
         try {
             monitoredHost = MonitoredHost.getMonitoredHost("localhost");
             Set<Integer> vmIdentifiers = monitoredHost.activeVms();
-            log.debug("Active JVM identifiers : ", vmIdentifiers);
+            log.fine("Active JVM identifiers : " + vmIdentifiers);
             return monitoredHost.activeVms().stream().map(Object::toString).collect(Collectors.toSet());
         } catch (final MonitorException | URISyntaxException e) {
-            log.error("Exception getting the pids from the OS : ", e);
+            log.log(Level.SEVERE, "Exception getting the pids from the OS : ", e);
             //noinspection unchecked
             return Collections.EMPTY_SET;
         }
@@ -128,24 +131,42 @@ public class ReaperActionAgentMetrics extends TimerTask implements ReaperAction 
      *
      * @return the absolute, cleaned, normalized, canonical path to the jar containing 'this' Java agent
      */
-    private String getPathToAgent() {
+    @SuppressWarnings("ConstantConditions")
+    String getPathToAgent() {
+        Enumeration<URL> resources;
         try {
-            Manifests.DEFAULT.append(() -> {
-                // This is here because for some reason {@link Manifests} does not look at the file system directly
-                List<File> manifestFiles = FILE.findFilesRecursively(new File("."), new ArrayList<>(), "MANIFEST.MF");
-                List<InputStream> inputStreams = new ArrayList<>();
-                for (final File manifestFile : manifestFiles) {
-                    InputStream inputStream = new FileInputStream(manifestFile);
-                    inputStreams.add(inputStream);
-                }
-                return inputStreams;
-            });
+            resources = Thread.currentThread().getContextClassLoader().getResources("META-INF/MANIFEST.MF");
         } catch (final IOException e) {
-            log.error("Couldn't get manifest file : ", e);
+            throw new RuntimeException("Exception reading the manifest files : ", e);
         }
-        String jarFileName = Manifests.read("Agent-Jar-Name");
-        File agentJar = FILE.findFileRecursively(new File("."), jarFileName);
-        return (agentJar != null) ? FILE.cleanFilePath(agentJar.getAbsolutePath()) : null;
+        String agentJarName = "reaper-agent-1.0-SNAPSHOT.jar";
+        //noinspection ConstantConditions
+        while (resources.hasMoreElements()) {
+            try {
+                URL url = resources.nextElement();
+                log.finest("Url to manifest : " + url);
+                Manifest manifest = new Manifest(url.openStream());
+                log.finest("Main attributes : " + ToStringBuilder.reflectionToString(manifest.getMainAttributes()));
+                // check that this is your manifest and do what you need or get the next one
+                Map<String, Attributes> attributeMap = manifest.getEntries();
+                log.finest("Attributes map : " + attributeMap);
+
+                Attributes attrs = manifest.getMainAttributes();
+                for (final Object key : attrs.keySet()) {
+                    String value = attrs.getValue(Attributes.Name.class.cast(key));
+                    log.finest("Key : " + key.toString() + ", value : " + value);
+                    if (key.toString().equals("Agent-Jar-Name") && value.contains("reaper-agent-")) {
+                        agentJarName = value;
+                    }
+                }
+            } catch (final IOException e) {
+                log.log(Level.SEVERE, "Exception reading the manifests : ", e);
+            }
+        }
+        File agentJar = FILE.findFileRecursively(new File("."), agentJarName);
+        String canonicalPathToReaperAgentJar = FILE.cleanFilePath(agentJar.getAbsolutePath());
+        log.log(Level.INFO, "Found agent jar file : " + canonicalPathToReaperAgentJar);
+        return (agentJar != null) ? canonicalPathToReaperAgentJar : null;
     }
 
     /**
@@ -173,7 +194,7 @@ public class ReaperActionAgentMetrics extends TimerTask implements ReaperAction 
                 try {
                     virtualMachine.detach();
                 } catch (final Exception e) {
-                    log.error("Exception detaching from process : {}", pid, e);
+                    log.log(Level.SEVERE, "Exception detaching from process : " + pid, e);
                 }
             }
         });

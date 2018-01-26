@@ -1,6 +1,5 @@
 package com.pxs.reaper;
 
-import lombok.extern.slf4j.Slf4j;
 import mockit.Deencapsulation;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Assert;
@@ -19,7 +18,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicInteger;
 
-@Slf4j
 @RunWith(MockitoJUnitRunner.class)
 public class ReaperIntegration {
 

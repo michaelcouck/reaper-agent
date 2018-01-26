@@ -6,7 +6,6 @@ import com.pxs.reaper.toolkit.HOST;
 import com.pxs.reaper.toolkit.Retry;
 import com.pxs.reaper.toolkit.RetryIncreasingDelay;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import org.jeasy.props.annotations.Property;
 
 import javax.management.*;
@@ -19,6 +18,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * The pid for the Java processes are often not exposed, for example on OpenShift, consequently it is not possible to dynamically attach a n agent
@@ -43,10 +44,11 @@ import java.util.function.Function;
  * @version 01.00
  * @since 21-10-2017
  */
-@Slf4j
 @Setter
 @SuppressWarnings("WeakerAccess")
 public class ReaperActionJmxMetrics extends ReaperActionMetrics {
+
+    private final Logger log = Logger.getLogger(this.getClass().getSimpleName());
 
     /**
      * The uri to post the metrics to
@@ -79,7 +81,7 @@ public class ReaperActionJmxMetrics extends ReaperActionMetrics {
 
     public ReaperActionJmxMetrics() {
         retryWithIncreasingDelay = new RetryIncreasingDelay();
-        log.debug("Attempting to attach to JMX system : ", HOST.hostname());
+        log.fine("Attempting to attach to JMX system : " + HOST.hostname());
     }
 
     /**
@@ -92,7 +94,7 @@ public class ReaperActionJmxMetrics extends ReaperActionMetrics {
         // TODO: Perhaps have a scheduled scan to check for mew exposures.
         Set<ObjectName> objectNames = getObjectNames();
         if (objectNames == null) {
-            log.debug("No connection to JMX : ");
+            log.fine("No connection to JMX : ");
             return;
         }
 
@@ -102,9 +104,10 @@ public class ReaperActionJmxMetrics extends ReaperActionMetrics {
                 MBeanInfo mBeanInfo = mbeanConn.getMBeanInfo(objectName);
                 String className = mBeanInfo.getClassName();
                 Class clazz = Class.forName(className);
-                if (log.isDebugEnabled()) {
-                    log.debug("Object name : {}, {}, {}", new Object[]{objectName.getCanonicalName(), className, Arrays.toString(clazz.getInterfaces())});
-                }
+                log.fine("Object name : " +
+                        Arrays.toString(new Object[]{objectName.getCanonicalName() +
+                                ":" + className +
+                                ":" + Arrays.toString(clazz.getInterfaces())}));
                 if (RuntimeMXBean.class.isAssignableFrom(clazz)) {
                     misc(jMetrics, JMX.newMXBeanProxy(mbeanConn, objectName, RuntimeMXBean.class, true));
                 } else if (ThreadMXBean.class.isAssignableFrom(clazz)) {
@@ -123,7 +126,7 @@ public class ReaperActionJmxMetrics extends ReaperActionMetrics {
                     os(jMetrics, JMX.newMXBeanProxy(mbeanConn, objectName, OperatingSystemMXBean.class, true));
                 }
             } catch (final ClassNotFoundException | IntrospectionException | InstanceNotFoundException | IOException | ReflectionException e) {
-                log.debug("Exception accessing MBean : " + objectName, e);
+                log.log(Level.SEVERE, "Exception accessing MBean : " + objectName, e);
             }
         }
 
@@ -141,7 +144,7 @@ public class ReaperActionJmxMetrics extends ReaperActionMetrics {
             try {
                 jmxConnector.close();
             } catch (final IOException e) {
-                log.warn("Exception disconnecting from JMX : ", e);
+                log.log(Level.SEVERE, "Exception disconnecting from JMX : ", e);
             }
         }
         boolean terminated = cancel();
@@ -170,20 +173,19 @@ public class ReaperActionJmxMetrics extends ReaperActionMetrics {
                 return mbeanConn;
             }
             try {
-                log.debug("JMX url : ", reaperJmxUri);
+                log.fine("JMX url : " + reaperJmxUri);
                 JMXServiceURL serviceUrl = new JMXServiceURL(reaperJmxUri);
                 jmxConnector = JMXConnectorFactory.connect(serviceUrl, null);
                 return mbeanConn = jmxConnector.getMBeanServerConnection();
             } catch (final Exception e) {
-                log.debug("No jmx on this machine : ", e);
-                // throw new RuntimeException(e);
+                log.log(Level.FINEST, "No jmx on this machine : ");
             }
             return null;
         };
         try {
             return retryWithIncreasingDelay.retry(function, null, 5, sleepTime);
         } catch (final Exception e) {
-            log.debug("No jmx on this machine : ", e);
+            log.log(Level.FINEST, "No jmx on this machine : ");
             return null;
         }
     }

@@ -6,12 +6,12 @@ import com.pxs.reaper.action.ReaperActionOSMetrics;
 import com.pxs.reaper.toolkit.FILE;
 import com.pxs.reaper.toolkit.THREAD;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.math.NumberUtils;
 import org.jeasy.props.annotations.Property;
 
 import java.io.File;
 import java.lang.management.ManagementFactory;
+import java.util.logging.Logger;
 
 /**
  * This class sets up the agents running on the local operating system and in the JVMs potentially. Functions that it
@@ -39,7 +39,6 @@ import java.lang.management.ManagementFactory;
  *     String pathToAgentJar = ClassLoader.class.getProtectionDomain().getCodeSource().getLocation().getPath();
  * </pre>
  */
-@Slf4j
 @Setter
 public class Reaper {
 
@@ -91,6 +90,8 @@ public class Reaper {
 
         return libDirectory.getAbsolutePath();
     }
+
+    private static Logger log = Logger.getLogger(Reaper.class.getSimpleName());
 
     /**
      * The amount of time to sleep in milliseconds before sampling the operating system and

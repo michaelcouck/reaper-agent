@@ -3,7 +3,6 @@ package com.pxs.reaper.action;
 import com.pxs.reaper.Constant;
 import com.pxs.reaper.model.JMetrics;
 import com.pxs.reaper.transport.Transport;
-import lombok.extern.slf4j.Slf4j;
 
 import java.lang.management.ManagementFactory;
 
@@ -18,14 +17,18 @@ import java.lang.management.ManagementFactory;
  * @version 01.00
  * @since 09-10-2017
  */
-@Slf4j
-class ReaperActionJvmMetrics extends ReaperActionMetrics {
+public class ReaperActionJvmMetrics extends ReaperActionMetrics {
 
     /**
      * {@inheritDoc}
      */
     @Override
     public void run() {
+        JMetrics jMetrics = getMetrics();
+        Constant.TRANSPORT.postMetrics(jMetrics);
+    }
+
+    public JMetrics getMetrics() {
         JMetrics jMetrics = new JMetrics();
 
         misc(jMetrics, ManagementFactory.getRuntimeMXBean());
@@ -37,7 +40,7 @@ class ReaperActionJvmMetrics extends ReaperActionMetrics {
         classloading(jMetrics, ManagementFactory.getClassLoadingMXBean());
         os(jMetrics, ManagementFactory.getOperatingSystemMXBean());
 
-        Constant.TRANSPORT.postMetrics(jMetrics);
+        return jMetrics;
     }
 
     /**

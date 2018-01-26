@@ -27,7 +27,7 @@ public interface Constant {
     /**
      * Properties file for various parameterization. Used in conjunction with {@link Property} annotations is quite convenient
      */
-    String REAPER_PROPERTIES = "reaper.properties";
+    String REAPER_PROPERTIES = "application.properties";
     /**
      * The $PATH variable in the Java process for linking the native libraries to
      */
@@ -44,6 +44,7 @@ public interface Constant {
      * The Json serializer and de serializer.
      */
     Gson GSON = new GsonBuilder().setDateFormat(DATE_FORMAT).create();
+    // JSONParser GSON = new JSONParser();
 
     /**
      * The timer for all the actions, {@link com.pxs.reaper.action.ReaperActionAgentMetrics}, {@link com.pxs.reaper.action.ReaperActionJmxMetrics} etc.

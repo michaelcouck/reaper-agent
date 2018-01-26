@@ -4,10 +4,11 @@ import com.pxs.reaper.Constant;
 import com.pxs.reaper.model.OSMetrics;
 import com.pxs.reaper.toolkit.HOST;
 import com.pxs.reaper.toolkit.OS;
-import lombok.extern.slf4j.Slf4j;
 import org.hyperic.sigar.*;
 
 import java.util.TimerTask;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * The action will inspect the local operating system for metrics and telemetry data, populate an {@link OSMetrics} object
@@ -18,8 +19,9 @@ import java.util.TimerTask;
  * @version 1.0
  * @since 20-10-2017
  */
-@Slf4j
 public class ReaperActionOSMetrics extends TimerTask implements ReaperAction {
+
+    private Logger log = Logger.getLogger(this.getClass().getSimpleName());
 
     /**
      * {@link Sigar} is the native operating system access to metrics and telemetry. It provides {@link Cpu},
@@ -44,45 +46,7 @@ public class ReaperActionOSMetrics extends TimerTask implements ReaperAction {
     public void run() {
         try {
             // Gather all the operating system metrics, pop them in a OSMetrics object and post them
-            OSMetrics osMetrics = new OSMetrics();
-            osMetrics.setIpAddress(HOST.hostname());
-
-            Cpu[] cpu = cpu(sigarProxy);
-            CpuInfo[] cpuInfo = cpuInfo(sigarProxy);
-            CpuPerc[] cpuPerc = cpuPerc(sigarProxy);
-            Swap swap = swap(sigarProxy);
-            double[] loadAverage = loadAverage(sigarProxy);
-            Mem mem = mem(sigarProxy);
-            NetInfo netInfo = netInfo(sigarProxy);
-            NetStat netStat = netStat(sigarProxy);
-            NetRoute[] netRoutes = netRoutes(sigarProxy);
-            NetConnection[] netConnections = netConnections(sigarProxy);
-            ProcStat procStat = procStat(sigarProxy);
-            Tcp tcp = tcp(sigarProxy);
-            ResourceLimit resourceLimit = resourceLimit(sigarProxy);
-            OperatingSystem operatingSystem = getOperatingSystem();
-
-            osMetrics.setCpu(cpu);
-            osMetrics.setCpuPerc(cpuPerc);
-            osMetrics.setCpuInfo(cpuInfo);
-            osMetrics.setLoadAverage(loadAverage);
-
-            osMetrics.setNetInfo(netInfo);
-            osMetrics.setNetStat(netStat);
-            osMetrics.setNetRoutes(netRoutes);
-            osMetrics.setNetConnections(netConnections);
-            osMetrics.setTcp(tcp);
-
-            osMetrics.setMem(mem);
-            osMetrics.setSwap(swap);
-            osMetrics.setProcStat(procStat);
-            osMetrics.setResourceLimit(resourceLimit);
-
-            osMetrics.setOperatingSystem(operatingSystem);
-
-            osMetrics.setType(OSMetrics.class.getName());
-            osMetrics.setCreated(System.currentTimeMillis());
-
+            OSMetrics osMetrics = getMetrics();
             // log.info("Posting OS metrics : {}", osMetrics);
             Constant.TRANSPORT.postMetrics(osMetrics);
         } catch (final SigarException e) {
@@ -91,6 +55,49 @@ public class ReaperActionOSMetrics extends TimerTask implements ReaperAction {
         } finally {
             SigarProxyCache.clear(sigarProxy);
         }
+    }
+
+    public OSMetrics getMetrics() throws SigarException {
+        OSMetrics osMetrics = new OSMetrics();
+        osMetrics.setIpAddress(HOST.hostname());
+
+        Cpu[] cpu = cpu(sigarProxy);
+        CpuInfo[] cpuInfo = cpuInfo(sigarProxy);
+        CpuPerc[] cpuPerc = cpuPerc(sigarProxy);
+        Swap swap = swap(sigarProxy);
+        double[] loadAverage = loadAverage(sigarProxy);
+        Mem mem = mem(sigarProxy);
+        NetInfo netInfo = netInfo(sigarProxy);
+        NetStat netStat = netStat(sigarProxy);
+        NetRoute[] netRoutes = netRoutes(sigarProxy);
+        NetConnection[] netConnections = netConnections(sigarProxy);
+        ProcStat procStat = procStat(sigarProxy);
+        Tcp tcp = tcp(sigarProxy);
+        ResourceLimit resourceLimit = resourceLimit(sigarProxy);
+        OperatingSystem operatingSystem = getOperatingSystem();
+
+        osMetrics.setCpu(cpu);
+        osMetrics.setCpuPerc(cpuPerc);
+        osMetrics.setCpuInfo(cpuInfo);
+        osMetrics.setLoadAverage(loadAverage);
+
+        osMetrics.setNetInfo(netInfo);
+        osMetrics.setNetStat(netStat);
+        osMetrics.setNetRoutes(netRoutes);
+        osMetrics.setNetConnections(netConnections);
+        osMetrics.setTcp(tcp);
+
+        osMetrics.setMem(mem);
+        osMetrics.setSwap(swap);
+        osMetrics.setProcStat(procStat);
+        osMetrics.setResourceLimit(resourceLimit);
+
+        osMetrics.setOperatingSystem(operatingSystem);
+
+        osMetrics.setType(OSMetrics.class.getName());
+        osMetrics.setCreated(System.currentTimeMillis());
+
+        return osMetrics;
     }
 
     private Tcp tcp(final SigarProxy sigarProxy) throws SigarException {
@@ -160,9 +167,9 @@ public class ReaperActionOSMetrics extends TimerTask implements ReaperAction {
     public boolean terminate() {
         try {
             sigar.close();
-            log.info("Closed sigar : {}", sigar);
+            log.info("Closed sigar : {}" + sigar);
         } catch (final Exception e) {
-            log.error("Exception closing the Sigar : ", e);
+            log.log(Level.SEVERE, "Exception closing the Sigar : ", e);
         }
         boolean terminated = cancel();
         Constant.TIMER.purge();
