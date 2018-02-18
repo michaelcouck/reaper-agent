@@ -1,0 +1,110 @@
+{
+  "RAW": {
+    "BTC": {
+      "EUR": {
+        "TYPE": "2",
+        "MARKET": "Coinbase",
+        "FROMSYMBOL": "BTC",
+        "TOSYMBOL": "EUR",
+        "FLAGS": "4",
+        "PRICE": 8753.08,
+        "LASTUPDATE": 1518965473,
+        "LASTVOLUME": 0.01,
+        "LASTVOLUMETO": 87.5308,
+        "LASTTRADEID": "12212892",
+        "VOLUME24HOUR": 4113.511535999986,
+        "VOLUME24HOURTO": 35780236.84037059,
+        "OPEN24HOUR": 8684.13,
+        "HIGH24HOUR": 9199,
+        "LOW24HOUR": 8196.57,
+        "CHANGE24HOUR": 68.95000000000073,
+        "CHANGEPCT24HOUR": 0.7939770593024371,
+        "CHANGEDAY": 0,
+        "CHANGEPCTDAY": 0,
+        "SUPPLY": 16872175,
+        "MKTCAP": 147683497549,
+        "TOTALVOLUME24H": 709858.9629765125,
+        "TOTALVOLUME24HTO": 6213226632.935291
+      }
+    },
+    "ETH": {
+      "EUR": {
+        "TYPE": "2",
+        "MARKET": "Coinbase",
+        "FROMSYMBOL": "ETH",
+        "TOSYMBOL": "EUR",
+        "FLAGS": "4",
+        "PRICE": 767.21,
+        "LASTUPDATE": 1518965119,
+        "LASTVOLUME": 0.38811095,
+        "LASTVOLUMETO": 297.76260194950004,
+        "LASTTRADEID": "3224563",
+        "VOLUME24HOUR": 9885.15150522999,
+        "VOLUME24HOURTO": 7557768.456120388,
+        "OPEN24HOUR": 783.22,
+        "HIGH24HOUR": 795,
+        "LOW24HOUR": 733.29,
+        "CHANGE24HOUR": -16.00999999999999,
+        "CHANGEPCT24HOUR": -2.044125533055845,
+        "CHANGEDAY": 0,
+        "CHANGEPCTDAY": 0,
+        "SUPPLY": 97692393.499,
+        "MKTCAP": 74950581216.3678,
+        "TOTALVOLUME24H": 1355235.034078736,
+        "TOTALVOLUME24HTO": 1039723651.86534
+      }
+    }
+  },
+  "DISPLAY": {
+    "BTC": {
+      "EUR": {
+        "FROMSYMBOL": "Ƀ",
+        "TOSYMBOL": "€",
+        "MARKET": "GDAX",
+        "PRICE": "€ 8,753.08",
+        "LASTUPDATE": "Just now",
+        "LASTVOLUME": "Ƀ 0.01000",
+        "LASTVOLUMETO": "€ 87.53",
+        "LASTTRADEID": "12212892",
+        "VOLUME24HOUR": "Ƀ 4,113.51",
+        "VOLUME24HOURTO": "€ 35,780,236.8",
+        "OPEN24HOUR": "€ 8,684.13",
+        "HIGH24HOUR": "€ 9,199.00",
+        "LOW24HOUR": "€ 8,196.57",
+        "CHANGE24HOUR": "€ 68.95",
+        "CHANGEPCT24HOUR": "0.79",
+        "CHANGEDAY": "€ 0",
+        "CHANGEPCTDAY": "0",
+        "SUPPLY": "Ƀ 16,872,175.0",
+        "MKTCAP": "€ 147.68 B",
+        "TOTALVOLUME24H": "Ƀ 709.86 K",
+        "TOTALVOLUME24HTO": "€ 6,213.23 M"
+      }
+    },
+    "ETH": {
+      "EUR": {
+        "FROMSYMBOL": "Ξ",
+        "TOSYMBOL": "€",
+        "MARKET": "GDAX",
+        "PRICE": "€ 767.21",
+        "LASTUPDATE": "5 min ago",
+        "LASTVOLUME": "Ξ 0.3881",
+        "LASTVOLUMETO": "€ 297.76",
+        "LASTTRADEID": "3224563",
+        "VOLUME24HOUR": "Ξ 9,885.15",
+        "VOLUME24HOURTO": "€ 7,557,768.5",
+        "OPEN24HOUR": "€ 783.22",
+        "HIGH24HOUR": "€ 795.00",
+        "LOW24HOUR": "€ 733.29",
+        "CHANGE24HOUR": "€ -16.01",
+        "CHANGEPCT24HOUR": "-2.04",
+        "CHANGEDAY": "€ 0",
+        "CHANGEPCTDAY": "0",
+        "SUPPLY": "Ξ 97,692,393.5",
+        "MKTCAP": "€ 74.95 B",
+        "TOTALVOLUME24H": "Ξ 1,355.24 K",
+        "TOTALVOLUME24HTO": "€ 1,039.72 M"
+      }
+    }
+  }
+}
