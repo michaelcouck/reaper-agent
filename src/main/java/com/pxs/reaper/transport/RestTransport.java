@@ -8,8 +8,12 @@ import com.pxs.reaper.model.OSMetrics;
 import lombok.Setter;
 import org.jeasy.props.annotations.Property;
 
+import java.util.logging.Logger;
+
 @Setter
 public class RestTransport implements Transport {
+
+    private static Logger log = Logger.getLogger(RestTransport.class.getSimpleName());
 
     @Property(source = Constant.REAPER_PROPERTIES, key = "reaper-rest-uri-j-metrics")
     private String reaperJMetricsRestUri = "http://ikube.be:8090/j-metrics";
@@ -28,26 +32,13 @@ public class RestTransport implements Transport {
                 Unirest.post(reaperJMetricsRestUri).body(json).asString();
             } else if (OSMetrics.class.isAssignableFrom(metrics.getClass())) {
                 Unirest.post(reaperOMetricsRestUri).body(json).asString();
+            } else {
+                log.warning("No endpoint for object : " + metrics);
             }
         } catch (final UnirestException e) {
             throw new RuntimeException("Exception posting to the micro service : ", e);
         }
         return true;
     }
-
-    /*@Override
-    public boolean postMetrics(final Object metrics) {
-        RestTemplate restTemplate = new RestTemplate();
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<Object> request = new HttpEntity<>(Constant.GSON.toJson(metrics), headers);
-
-        if (JMetrics.class.isAssignableFrom(metrics.getClass())) {
-            restTemplate.postForEntity(reaperJMetricsRestUri, request, String.class);
-        } else if (OSMetrics.class.isAssignableFrom(metrics.getClass())) {
-            restTemplate.postForEntity(reaperOMetricsRestUri, request, String.class);
-        }
-        return true;
-    }*/
 
 }
