@@ -6,7 +6,7 @@ import com.pxs.reaper.Constant;
 import com.pxs.reaper.model.JMetrics;
 import com.pxs.reaper.model.OSMetrics;
 import lombok.Setter;
-import org.jeasy.props.annotations.Property;
+import org.jeasy.props.annotations.SystemProperty;
 
 import java.util.logging.Logger;
 
@@ -15,9 +15,9 @@ public class RestTransport implements Transport {
 
     private static Logger log = Logger.getLogger(RestTransport.class.getSimpleName());
 
-    @Property(source = Constant.REAPER_PROPERTIES, key = "reaper-rest-uri-j-metrics")
+    @SystemProperty(value = "reaper-rest-uri-j-metrics", defaultValue = "http://ikube.be:8090/j-metrics")
     private String reaperJMetricsRestUri = "http://ikube.be:8090/j-metrics";
-    @Property(source = Constant.REAPER_PROPERTIES, key = "reaper-rest-uri-o-metrics")
+    @SystemProperty(value = "reaper-rest-uri-o-metrics", defaultValue = "http://ikube.be:8090/o-metrics")
     private String reaperOMetricsRestUri = "http://ikube.be:8090/o-metrics";
 
     public RestTransport() {
