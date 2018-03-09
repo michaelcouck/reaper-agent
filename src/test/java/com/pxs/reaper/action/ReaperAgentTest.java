@@ -1,5 +1,11 @@
 package com.pxs.reaper.action;
 
+import com.pxs.reaper.transport.RestTransport;
+import com.pxs.reaper.transport.Transport;
+import mockit.Deencapsulation;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -7,6 +13,7 @@ import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.lang.instrument.Instrumentation;
+import java.util.Properties;
 
 /**
  * @author Michael Couck
@@ -16,12 +23,27 @@ import java.lang.instrument.Instrumentation;
 @RunWith(MockitoJUnitRunner.class)
 public class ReaperAgentTest {
 
-    private String args = null;
+    private String args =
+            "localhost-jmx-uri=service:jmx:rmi:///jndi/rmi://el5753:1099/jmxrmi|" +
+                    "reaper-rest-uri-j-metrics=http://el5753:8090/j-metrics|" +
+                    "reaper-rest-uri-o-metrics=http://el5753:8090/o-metrics|" +
+                    "reaper-web-socket-uri=ws://el5753:8090/reaper-websocket";
 
+    private Properties properties;
     @Spy
     private ReaperAgent reaperAgent;
     @Mock
     private Instrumentation instrumentation;
+
+    @Before
+    public void before() {
+        properties = System.getProperties();
+    }
+
+    @After
+    public void after() {
+        System.getProperties().putAll(properties);
+    }
 
     @Test
     public void agentmain() throws Exception {
@@ -32,6 +54,11 @@ public class ReaperAgentTest {
     @Test
     public void premain() throws Exception {
         ReaperAgent.premain(args, instrumentation);
+        Transport transport = new RestTransport();
+        String reaperJMetricsRestUri = Deencapsulation.getField(transport, "reaperJMetricsRestUri");
+        Assert.assertEquals("http://el5753:8090/j-metrics", reaperJMetricsRestUri);
+        String reaperOMetricsRestUri = Deencapsulation.getField(transport, "reaperOMetricsRestUri");
+        Assert.assertEquals("http://el5753:8090/o-metrics", reaperOMetricsRestUri);
     }
 
     @Test

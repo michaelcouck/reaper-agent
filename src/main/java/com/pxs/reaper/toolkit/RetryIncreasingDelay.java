@@ -45,7 +45,7 @@ public class RetryIncreasingDelay implements Retry {
 
     private void sleep(final long time) {
         try {
-            log.log(Level.INFO, "Sleeping for : {}", time);
+            log.log(Level.INFO, "Sleeping for : " + time);
             Thread.sleep(time);
         } catch (final InterruptedException e) {
             Thread.currentThread().interrupt();

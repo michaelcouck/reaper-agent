@@ -76,7 +76,14 @@ public class ReaperActionAgentMetrics extends TimerTask implements ReaperAction 
                 virtualMachineErrorPids.add(pid);
                 virtualMachine = VirtualMachine.attach(pid);
                 if (StringUtils.isNotEmpty(pathToAgent)) {
-                    virtualMachine.loadAgent(pathToAgent);
+                    final StringBuilder systemPropertiesStringBuilder = new StringBuilder();
+                    System.getProperties().keySet().forEach(key -> {
+                        if (systemPropertiesStringBuilder.length() > 0) {
+                            systemPropertiesStringBuilder.append("|");
+                        }
+                        systemPropertiesStringBuilder.append(key).append("=").append(System.getProperty((String) key));
+                    });
+                    virtualMachine.loadAgent(pathToAgent, systemPropertiesStringBuilder.toString());
                 } else {
                     log.warning("Agent jar not found : ");
                 }

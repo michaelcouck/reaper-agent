@@ -1,7 +1,7 @@
 package com.pxs.reaper.transport;
 
-import com.pxs.reaper.Constant;
 import com.pxs.reaper.model.JMetrics;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Spy;
@@ -15,9 +15,9 @@ public class RestTransportIntegration {
 
     @Test
     public void postMetrics() {
-        Constant.PROPERTIES_INJECTOR.injectProperties(restTransport);
         JMetrics jMetrics = new JMetrics();
-        restTransport.postMetrics(jMetrics);
+        boolean success = restTransport.postMetrics(jMetrics);
+        Assert.assertTrue(success);
     }
 
 }

@@ -1,6 +1,7 @@
 package com.pxs.reaper.action;
 
 import com.pxs.reaper.Constant;
+import org.apache.commons.lang.StringUtils;
 
 import java.lang.instrument.IllegalClassFormatException;
 import java.lang.instrument.Instrumentation;
@@ -33,7 +34,7 @@ public class ReaperAgent {
      * @throws Exception anything happens to block the startup
      */
     @SuppressWarnings("WeakerAccess")
-    public static void agentmain(String args, Instrumentation instrumentation) throws Exception {
+    public static void agentmain(final String args, final Instrumentation instrumentation) throws Exception {
         premain(args, instrumentation);
     }
 
@@ -44,11 +45,17 @@ public class ReaperAgent {
      * @param instrumentation the instrumentation implementation of the JVM
      */
     public static void premain(final String args, final Instrumentation instrumentation) {
+        String[] arguments = StringUtils.split(args, ";|");
+        for (final String argument : arguments) {
+            String[] argumentAndValue = StringUtils.split(argument, '=');
+            System.setProperty(argumentAndValue[0], argumentAndValue[1]);
+            log.warning("Set system property from args : " + argumentAndValue[0] + "=" + argumentAndValue[1]);
+        }
         TimerTask timerTask = new TimerTask() {
             @Override
             public void run() {
-                Constant.PROPERTIES_INJECTOR.injectProperties(Constant.TRANSPORT);
-                Constant.PROPERTIES_INJECTOR.injectProperties(Constant.EXTERNAL_CONSTANTS);
+                // Constant.PROPERTIES_INJECTOR.injectProperties(Constant.TRANSPORT);
+                // Constant.PROPERTIES_INJECTOR.injectProperties(Constant.EXTERNAL_CONSTANTS);
                 log.warning("Starting the reaper in the target jvm :");
 
                 int sleepTime = Constant.EXTERNAL_CONSTANTS.getSleepTime();
@@ -58,7 +65,7 @@ public class ReaperAgent {
                 log.warning("Started the reaper in the target jvm :");
             }
         };
-        new Timer(Boolean.TRUE).schedule(timerTask, 60000);
+        new Timer(Boolean.TRUE).schedule(timerTask, 15000);
     }
 
     /**

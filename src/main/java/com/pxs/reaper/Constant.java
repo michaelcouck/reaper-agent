@@ -18,10 +18,9 @@ import static org.jeasy.props.PropertiesInjectorBuilder.aNewPropertiesInjector;
  * Holds constant variables and utility objects that many classes in the agent require.
  *
  * @author Michael Couck
- * @version 1.0
+ * @version 1.1
  * @since 20-10-2017
  */
-@SuppressWarnings("unused")
 public interface Constant {
 
     /**
@@ -44,7 +43,6 @@ public interface Constant {
      * The Json serializer and de serializer.
      */
     Gson GSON = new GsonBuilder().setDateFormat(DATE_FORMAT).create();
-    // JSONParser GSON = new JSONParser();
 
     /**
      * The timer for all the actions, {@link com.pxs.reaper.action.ReaperActionAgentMetrics}, {@link com.pxs.reaper.action.ReaperActionJmxMetrics} etc.
@@ -68,14 +66,18 @@ public interface Constant {
     Transport TRANSPORT_WEB_SOCKET = new WebSocketTransport();
     Transport TRANSPORT = TRANSPORT_REST;
 
+    default Transport getTransport() {
+        return new RestTransport();
+    }
+
     @Getter
     @Setter
     class ExternalConstants {
+
         {
             PROPERTIES_INJECTOR.injectProperties(this);
         }
 
-        @SuppressWarnings("unused")
         @Property(source = Constant.REAPER_PROPERTIES, key = "sleep-time")
         private int sleepTime = 15000;
     }
