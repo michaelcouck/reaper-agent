@@ -47,7 +47,13 @@ public class ReaperAgent {
     public static void premain(final String args, final Instrumentation instrumentation) {
         String[] arguments = StringUtils.split(args, ";|");
         for (final String argument : arguments) {
+            if (StringUtils.isEmpty(argument)) {
+                continue;
+            }
             String[] argumentAndValue = StringUtils.split(argument, '=');
+            if (argumentAndValue == null || argumentAndValue.length < 2) {
+                continue;
+            }
             System.setProperty(argumentAndValue[0], argumentAndValue[1]);
             log.warning("Set system property from args : " + argumentAndValue[0] + "=" + argumentAndValue[1]);
         }
