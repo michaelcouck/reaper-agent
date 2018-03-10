@@ -2,6 +2,7 @@ package com.pxs.reaper.action;
 
 import com.pxs.reaper.Constant;
 import com.pxs.reaper.toolkit.FILE;
+import com.pxs.reaper.toolkit.OS;
 import com.sun.tools.attach.AgentInitializationException;
 import com.sun.tools.attach.AgentLoadException;
 import com.sun.tools.attach.AttachNotSupportedException;
@@ -74,6 +75,9 @@ public class ReaperActionAgentMetrics extends TimerTask implements ReaperAction 
                     continue;
                 }
                 virtualMachineErrorPids.add(pid);
+                if (OS.isOs("Windows")) {
+                    System.loadLibrary("attach");
+                }
                 virtualMachine = VirtualMachine.attach(pid);
                 if (StringUtils.isNotEmpty(pathToAgent)) {
                     final StringBuilder systemPropertiesStringBuilder = new StringBuilder();
