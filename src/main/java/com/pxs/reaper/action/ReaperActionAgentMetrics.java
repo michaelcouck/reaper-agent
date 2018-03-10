@@ -68,7 +68,7 @@ public class ReaperActionAgentMetrics extends TimerTask implements ReaperAction 
         Set<String> pids = getPidsFromOperatingSystem();
         log.fine("Pids : " + pids);
         for (final String pid : pids) {
-            VirtualMachine virtualMachine;
+            VirtualMachine virtualMachine = null;
             try {
                 if (virtualMachines.containsKey(pid) || virtualMachineErrorPids.contains(pid)) {
                     log.fine("Already attached/tried to attach to : " + pid);
@@ -78,21 +78,17 @@ public class ReaperActionAgentMetrics extends TimerTask implements ReaperAction 
                 if (OS.isOs("Windows")) {
                     System.loadLibrary("attach");
                 }
-                virtualMachine = VirtualMachine.attach(pid);
                 if (StringUtils.isNotEmpty(pathToAgent)) {
-                    final StringBuilder systemPropertiesStringBuilder = new StringBuilder();
-                    System.getProperties().keySet().forEach(key -> {
-                        if (systemPropertiesStringBuilder.length() > 0) {
-                            systemPropertiesStringBuilder.append("|");
-                        }
-                        systemPropertiesStringBuilder.append(key).append("=").append(System.getProperty((String) key));
-                    });
-                    virtualMachine.loadAgent(pathToAgent, systemPropertiesStringBuilder.toString());
+                    virtualMachine = VirtualMachine.attach(pid);
+                    // This doesn't seem to work on linux????!!! OMG WTF?!
+                    // virtualMachine.loadAgent(pathToAgent, systemPropertiesStringBuilder.toString());
+                    // virtualMachine.loadAgentLibrary(pathToAgent, systemPropertiesStringBuilder.toString());
+                    // virtualMachine.loadAgentPath(pathToAgent, systemPropertiesStringBuilder.toString());
+                    virtualMachine.loadAgent(pathToAgent);
                 } else {
                     log.warning("Agent jar not found : ");
                 }
                 virtualMachines.put(pid, virtualMachine);
-                log.info("Attached to pid : " + pid + ":" + virtualMachine.getClass().getName());
             } catch (final AttachNotSupportedException | IOException | AgentLoadException | AgentInitializationException e) {
                 log.log(Level.SEVERE, "Exception attaching to pid : " + pid, e);
             }

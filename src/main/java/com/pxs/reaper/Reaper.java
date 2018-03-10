@@ -43,7 +43,6 @@ import java.util.logging.Logger;
 public class Reaper {
 
     static {
-        Constant.PROPERTIES_INJECTOR.injectProperties(Constant.EXTERNAL_CONSTANTS);
         addNativeLibrariesToPath();
     }
 

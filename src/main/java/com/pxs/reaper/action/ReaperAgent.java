@@ -24,6 +24,8 @@ public class ReaperAgent {
     private static Logger log = Logger.getLogger(ReaperAgent.class.getSimpleName());
 
     /**
+     * TODO: Log bug report for linux. Passing arguments does not work on linux, string concatenation logical error in the code.
+     * <p>
      * JVM hook to dynamically load javaagent at runtime.
      * <p>
      * The agent class may have an agentmain method for use when the agent is
@@ -35,17 +37,18 @@ public class ReaperAgent {
      */
     @SuppressWarnings("WeakerAccess")
     public static void agentmain(final String args, final Instrumentation instrumentation) throws Exception {
+        properties(args);
         premain(args, instrumentation);
     }
 
-    /**
-     * These instructions tell the JVM to call this method when loading class files.
-     *
-     * @param args            a set of arguments that the JVM will call the method with
-     * @param instrumentation the instrumentation implementation of the JVM
-     */
-    public static void premain(final String args, final Instrumentation instrumentation) {
+    private static void properties(final String args) {
+        if (StringUtils.isEmpty(args)) {
+            return;
+        }
         String[] arguments = StringUtils.split(args, ";|");
+        if (arguments == null || arguments.length == 0) {
+            return;
+        }
         for (final String argument : arguments) {
             if (StringUtils.isEmpty(argument)) {
                 continue;
@@ -55,13 +58,20 @@ public class ReaperAgent {
                 continue;
             }
             System.setProperty(argumentAndValue[0], argumentAndValue[1]);
-            log.warning("Set system property from args : " + argumentAndValue[0] + "=" + argumentAndValue[1]);
+            log.info("Set system property from args : " + argumentAndValue[0] + "=" + argumentAndValue[1]);
         }
+    }
+
+    /**
+     * These instructions tell the JVM to call this method when loading class files.
+     *
+     * @param args            a set of arguments that the JVM will call the method with
+     * @param instrumentation the instrumentation implementation of the JVM
+     */
+    public static void premain(final String args, final Instrumentation instrumentation) {
         TimerTask timerTask = new TimerTask() {
             @Override
             public void run() {
-                // Constant.PROPERTIES_INJECTOR.injectProperties(Constant.TRANSPORT);
-                // Constant.PROPERTIES_INJECTOR.injectProperties(Constant.EXTERNAL_CONSTANTS);
                 log.warning("Starting the reaper in the target jvm :");
 
                 int sleepTime = Constant.EXTERNAL_CONSTANTS.getSleepTime();

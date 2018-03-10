@@ -7,7 +7,6 @@ import com.pxs.reaper.toolkit.Retry;
 import com.pxs.reaper.toolkit.RetryIncreasingDelay;
 import lombok.Setter;
 import org.jeasy.props.annotations.Property;
-import org.jeasy.props.annotations.SystemProperty;
 
 import javax.management.*;
 import javax.management.remote.JMXConnector;
@@ -54,8 +53,8 @@ public class ReaperActionJmxMetrics extends ReaperActionMetrics {
     /**
      * The uri to post the metrics to
      */
-    @SystemProperty(value = "localhost-jmx-uri", defaultValue = "service:jmx:rmi:///jndi/rmi://localhost:1099/jmxrmi")
-    private String reaperJmxUri = "service:jmx:rmi:///jndi/rmi://localhost:1099/jmxrmi";
+    @Property(key = Constant.LOCAL_JMX_URI, source = Constant.REAPER_PROPERTIES)
+    private String reaperJmxUri;
     /**
      * Time to sleep between accessing the JMX telemetry.
      */

@@ -59,6 +59,11 @@ public interface Constant {
      */
     ExternalConstants EXTERNAL_CONSTANTS = new ExternalConstants();
 
+    String WEB_SOCKET_URI = "reaper-web-socket-uri";
+    String LOCAL_JMX_URI = "localhost-jmx-uri";
+    String REST_URI_J_METRICS = "reaper-rest-uri-j-metrics";
+    String REST_URI_O_METRICS = "reaper-rest-uri-o-metrics";
+
     /**
      * Provides TRANSPORT of the metrics from the class to the central analyzer over the wire
      */
