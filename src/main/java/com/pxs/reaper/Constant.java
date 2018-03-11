@@ -76,24 +76,30 @@ public interface Constant {
      * Provides TRANSPORT of the metrics from the class to the central analyzer over the wire
      */
     Transport TRANSPORT_REST = new RestTransport();
+    @SuppressWarnings("unused")
     Transport TRANSPORT_WEB_SOCKET = new WebSocketTransport();
     Transport TRANSPORT = TRANSPORT_REST;
 
-    default Transport getTransport() {
-        return new RestTransport();
-    }
+    long SLEEP_TIME = EXTERNAL_CONSTANTS.getSleepTime();
 
     @Getter
     @Setter
-    class ExternalConstants implements Constant {
+    class ExternalConstants {
 
         {
             getProperties();
             PROPERTIES_INJECTOR.injectProperties(this);
+            LOG.log(Level.INFO, "Sleep time set to : {0}", new Object[]{getSleepTime()});
         }
 
+        /**
+         * The amount of time to sleep in milliseconds before sampling the operating system and
+         * the java processes for telemetry data, and posting to the central analyzer. Note that the
+         * average size of a posting is 12 kb, if there are 1000 virtual machines, the network impact
+         * will be 1200 kb/second metrics posting.
+         */
         @Property(source = Constant.REAPER_PROPERTIES, key = "sleep-time")
-        private int sleepTime = 15000;
+        private int sleepTime;
 
         void getProperties() {
             // If there is no properties file outside the jar, then extract the application properties from
@@ -118,7 +124,5 @@ public interface Constant {
                 LOG.log(Level.INFO, "Found properties file in directory : {0}", new Object[]{propertiesFile});
             }
         }
-
     }
-
 }

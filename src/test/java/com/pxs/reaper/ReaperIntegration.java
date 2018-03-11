@@ -1,7 +1,10 @@
 package com.pxs.reaper;
 
+import com.pxs.reaper.toolkit.THREAD;
+import com.pxs.reaper.transport.Transport;
 import mockit.Deencapsulation;
 import org.apache.commons.lang.StringUtils;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,12 +28,18 @@ public class ReaperIntegration {
     private Timer timer;
     @Spy
     private Reaper reaper;
+    @Mock
+    private Transport transport;
 
     @Before
     public void before() {
-        Constant.PROPERTIES_INJECTOR.injectProperties(Constant.TRANSPORT);
-        Constant.PROPERTIES_INJECTOR.injectProperties(Constant.TRANSPORT_REST);
-        Constant.PROPERTIES_INJECTOR.injectProperties(Constant.TRANSPORT_WEB_SOCKET);
+        Deencapsulation.setField(Constant.class, "SLEEP_TIME", 1000);
+        Deencapsulation.setField(Constant.class, "TRANSPORT", transport);
+    }
+
+    @After
+    public void after() {
+        Constant.PROPERTIES_INJECTOR.injectProperties(Constant.class);
     }
 
     @Test
@@ -58,20 +67,24 @@ public class ReaperIntegration {
     }
 
     @Test
-    public void attachToOperatingSystem() throws InterruptedException {
+    public void attachToOperatingSystem() {
         reaper.attachToOperatingSystem();
-        Thread.sleep(20000);
+        THREAD.sleep(3000);
+        Mockito.verify(transport, Mockito.atLeast(1)).postMetrics(Mockito.anyObject());
     }
 
     @Test
-    public void attachToJavaProcesses() throws InterruptedException {
+    public void attachToJavaProcesses() {
         reaper.attachToJavaProcesses();
-        Thread.sleep(20000);
+        THREAD.sleep(3000);
+        Mockito.verify(transport, Mockito.atLeast(1)).postMetrics(Mockito.anyObject());
     }
 
     @Test
     public void attachToJmxProcesses() {
         reaper.attachToJmxProcesses();
+        THREAD.sleep(3000);
+        Mockito.verify(transport, Mockito.atLeast(1)).postMetrics(Mockito.anyObject());
     }
 
 }
