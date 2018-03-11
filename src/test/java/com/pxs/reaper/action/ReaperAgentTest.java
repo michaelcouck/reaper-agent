@@ -56,9 +56,9 @@ public class ReaperAgentTest {
         ReaperAgent.premain(args, instrumentation);
         Transport transport = new RestTransport();
         String reaperJMetricsRestUri = Deencapsulation.getField(transport, "reaperJMetricsRestUri");
-        Assert.assertEquals("http://el5753:8090/j-metrics", reaperJMetricsRestUri);
+        Assert.assertEquals("http://ikube.be:8090/j-metrics", reaperJMetricsRestUri);
         String reaperOMetricsRestUri = Deencapsulation.getField(transport, "reaperOMetricsRestUri");
-        Assert.assertEquals("http://el5753:8090/o-metrics", reaperOMetricsRestUri);
+        Assert.assertEquals("http://ikube.be:8090/o-metrics", reaperOMetricsRestUri);
     }
 
     @Test

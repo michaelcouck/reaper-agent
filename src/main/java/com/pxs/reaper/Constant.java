@@ -2,6 +2,8 @@ package com.pxs.reaper;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.pxs.reaper.action.ReaperAgent;
+import com.pxs.reaper.toolkit.FILE;
 import com.pxs.reaper.transport.RestTransport;
 import com.pxs.reaper.transport.Transport;
 import com.pxs.reaper.transport.WebSocketTransport;
@@ -10,7 +12,11 @@ import lombok.Setter;
 import org.jeasy.props.annotations.Property;
 import org.jeasy.props.api.PropertiesInjector;
 
+import java.io.File;
+import java.io.InputStream;
 import java.util.Timer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static org.jeasy.props.PropertiesInjectorBuilder.aNewPropertiesInjector;
 
@@ -23,10 +29,13 @@ import static org.jeasy.props.PropertiesInjectorBuilder.aNewPropertiesInjector;
  */
 public interface Constant {
 
+    Logger LOG = Logger.getLogger(Constant.class.getSimpleName());
+
+    String REAPER_PROPERTIES_FILE = "application.properties";
     /**
      * Properties file for various parameterization. Used in conjunction with {@link Property} annotations is quite convenient
      */
-    String REAPER_PROPERTIES = "application.properties";
+    String REAPER_PROPERTIES = "file:./" + REAPER_PROPERTIES_FILE;
     /**
      * The $PATH variable in the Java process for linking the native libraries to
      */
@@ -53,7 +62,6 @@ public interface Constant {
      * the setter methods for the properties in the target objects. Like Spring, but simpler.
      */
     PropertiesInjector PROPERTIES_INJECTOR = aNewPropertiesInjector();
-
     /**
      * Required to populate these properties in a no static class rather than interfere with the {@link com.pxs.reaper.action.ReaperAgent}
      */
@@ -77,14 +85,40 @@ public interface Constant {
 
     @Getter
     @Setter
-    class ExternalConstants {
+    class ExternalConstants implements Constant {
 
         {
+            getProperties();
             PROPERTIES_INJECTOR.injectProperties(this);
         }
 
         @Property(source = Constant.REAPER_PROPERTIES, key = "sleep-time")
         private int sleepTime = 15000;
+
+        void getProperties() {
+            // If there is no properties file outside the jar, then extract the application properties from
+            // the jar and write it to the file system outside the jar for external modification and configuration
+            File propertiesFile = new File(Constant.REAPER_PROPERTIES_FILE);
+            if (!propertiesFile.exists()) {
+                LOG.log(Level.INFO, "Writing properties file in jar to directory : ");
+                InputStream propertiesInputStream = null;
+                try {
+                    propertiesInputStream = ReaperAgent.class.getClassLoader().getResourceAsStream(Constant.REAPER_PROPERTIES_FILE);
+                    String content = FILE.getContents(propertiesInputStream, Integer.MAX_VALUE).toString();
+                    propertiesFile = FILE.getOrCreateFile(new File(Constant.REAPER_PROPERTIES_FILE));
+                    FILE.setContents(propertiesFile, content.getBytes());
+                } finally {
+                    LOG.log(
+                            Level.INFO,
+                            "Wrote properties file in jar to directory, input stream : {0}, properties file : {1}",
+                            new Object[]{propertiesInputStream, propertiesFile});
+                    FILE.close(propertiesInputStream);
+                }
+            } else {
+                LOG.log(Level.INFO, "Found properties file in directory : {0}", new Object[]{propertiesFile});
+            }
+        }
+
     }
 
 }

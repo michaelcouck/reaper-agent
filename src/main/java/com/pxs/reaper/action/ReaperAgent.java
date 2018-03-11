@@ -8,6 +8,7 @@ import java.lang.instrument.Instrumentation;
 import java.security.ProtectionDomain;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -42,6 +43,7 @@ public class ReaperAgent {
     }
 
     private static void properties(final String args) {
+        // If the properties are set(i.e. only on Windows) then set these first
         if (StringUtils.isEmpty(args)) {
             return;
         }
@@ -58,7 +60,7 @@ public class ReaperAgent {
                 continue;
             }
             System.setProperty(argumentAndValue[0], argumentAndValue[1]);
-            log.info("Set system property from args : " + argumentAndValue[0] + "=" + argumentAndValue[1]);
+            log.log(Level.INFO, "Set system property from args : {0}", new Object[]{argumentAndValue[0] + "=" + argumentAndValue[1]});
         }
     }
 
@@ -76,7 +78,8 @@ public class ReaperAgent {
 
                 int sleepTime = Constant.EXTERNAL_CONSTANTS.getSleepTime();
                 ReaperActionJvmMetrics reaperActionJvmMetrics = new ReaperActionJvmMetrics();
-                Constant.TIMER.scheduleAtFixedRate(reaperActionJvmMetrics, sleepTime, sleepTime);
+                // Constant.TIMER.scheduleAtFixedRate(reaperActionJvmMetrics, sleepTime, sleepTime);
+                new Timer(true).scheduleAtFixedRate(reaperActionJvmMetrics, sleepTime, sleepTime);
                 Runtime.getRuntime().addShutdownHook(new Thread(reaperActionJvmMetrics::terminate));
                 log.warning("Started the reaper in the target jvm :");
             }

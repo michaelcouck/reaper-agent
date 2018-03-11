@@ -64,7 +64,7 @@ spec:
             - containerPort: 8501
               protocol: TCP
           resources: {}
-          terminationMessagePath: /dev/termination-log
+          terminationMessagePath: /dev/termination-LOG
           terminationMessagePolicy: File
       dnsPolicy: ClusterFirst
       restartPolicy: Always

@@ -146,9 +146,7 @@ public class ReaperActionJmxMetrics extends ReaperActionMetrics {
                 log.log(Level.SEVERE, "Exception disconnecting from JMX : ", e);
             }
         }
-        boolean terminated = cancel();
-        Constant.TIMER.purge();
-        return terminated;
+        return cancel();
     }
 
     private Set<ObjectName> getObjectNames() {

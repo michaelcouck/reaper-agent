@@ -32,7 +32,6 @@ public class ReaperActionJmxMetricsTest {
     }
 
     @Test
-    @SuppressWarnings("Duplicates")
     public void run() throws IOException {
         AtomicReference<Object> objectAtomicReference = new AtomicReference<>();
         Mockito.doAnswer(invocation -> {
@@ -44,7 +43,6 @@ public class ReaperActionJmxMetricsTest {
             }
             return null;
         }).when(transport).postMetrics(Mockito.any(Object.class));
-        // Constant.PROPERTIES_INJECTOR.injectProperties(reaperActionJmxMetrics);
         reaperActionJmxMetrics.run();
         Assert.assertNotNull(objectAtomicReference.get());
     }

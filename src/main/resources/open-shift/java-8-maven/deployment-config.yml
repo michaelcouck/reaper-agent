@@ -59,7 +59,7 @@ spec:
             - containerPort: 8080
               protocol: TCP
           resources: {}
-          terminationMessagePath: /dev/termination-log
+          terminationMessagePath: /dev/termination-LOG
           terminationMessagePolicy: File
           volumes:
             - name: volume-rbg7x

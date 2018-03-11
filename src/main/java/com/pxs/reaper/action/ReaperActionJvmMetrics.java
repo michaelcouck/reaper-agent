@@ -17,7 +17,7 @@ import java.lang.management.ManagementFactory;
  * @version 01.00
  * @since 09-10-2017
  */
-public class ReaperActionJvmMetrics extends ReaperActionMetrics {
+class ReaperActionJvmMetrics extends ReaperActionMetrics {
 
     /**
      * {@inheritDoc}
@@ -48,9 +48,7 @@ public class ReaperActionJvmMetrics extends ReaperActionMetrics {
      */
     @Override
     public boolean terminate() {
-        boolean terminated = cancel();
-        Constant.TIMER.purge();
-        return terminated;
+        return cancel();
     }
 
 }

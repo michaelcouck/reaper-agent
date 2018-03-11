@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.jeasy.props.annotations.Property;
 
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @Setter
@@ -35,7 +36,7 @@ public class RestTransport implements Transport {
             } else if (OSMetrics.class.isAssignableFrom(metrics.getClass())) {
                 Unirest.post(reaperOMetricsRestUri).body(json).asString();
             } else {
-                log.warning("No endpoint for object : " + metrics);
+                log.log(Level.WARNING, "No endpoint for object : ", new Object[]{metrics});
             }
         } catch (final UnirestException e) {
             throw new RuntimeException("Exception posting to the micro service : ", e);

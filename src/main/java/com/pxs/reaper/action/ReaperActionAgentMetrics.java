@@ -1,6 +1,5 @@
 package com.pxs.reaper.action;
 
-import com.pxs.reaper.Constant;
 import com.pxs.reaper.toolkit.FILE;
 import com.pxs.reaper.toolkit.OS;
 import com.sun.tools.attach.AgentInitializationException;
@@ -215,8 +214,6 @@ public class ReaperActionAgentMetrics extends TimerTask implements ReaperAction 
     @Override
     public boolean terminate() {
         detachFromJavaProcesses();
-        boolean terminated = cancel();
-        Constant.TIMER.purge();
-        return terminated;
+        return cancel();
     }
 }

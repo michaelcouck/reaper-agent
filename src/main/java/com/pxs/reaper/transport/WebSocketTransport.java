@@ -42,7 +42,7 @@ public class WebSocketTransport implements Transport {
     @Property(source = Constant.REAPER_PROPERTIES, key = "logging-interval")
     private long loggingInterval;
     /**
-     * Time stamp for the last time a log was posted
+     * Time stamp for the last time a LOG was posted
      */
     private long lastLoggingTimestamp;
     /**
@@ -80,7 +80,7 @@ public class WebSocketTransport implements Transport {
         openSession();
         String postage = Constant.GSON.toJson(metrics);
         try {
-            // Periodically log some data
+            // Periodically LOG some data
             if (System.currentTimeMillis() - lastLoggingTimestamp > loggingInterval) {
                 lastLoggingTimestamp = System.currentTimeMillis();
                 String ipAddress = ((Metrics) metrics).getIpAddress();
@@ -88,7 +88,7 @@ public class WebSocketTransport implements Transport {
                 log.info("Sent metrics : " + reaperWebSocketUri + ", address : " + ipAddress + " : " + codeBase + " : " + metrics.getClass().getSimpleName());
             }
 
-            // log.info(postage);
+            // LOG.info(postage);
             RemoteEndpoint.Async async = session.getAsyncRemote();
             Future<Void> future = async.sendText(postage);
             future.get(1000, TimeUnit.MILLISECONDS);
