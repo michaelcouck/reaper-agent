@@ -31,7 +31,7 @@ public interface Constant {
 
     Logger LOG = Logger.getLogger(Constant.class.getSimpleName());
 
-    String REAPER_PROPERTIES_FILE = "application.properties";
+    String REAPER_PROPERTIES_FILE = "reaper-application.properties";
     /**
      * Properties file for various parameterization. Used in conjunction with {@link Property} annotations is quite convenient
      */
