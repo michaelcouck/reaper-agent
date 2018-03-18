@@ -14,14 +14,25 @@ import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import javax.management.MBeanServerConnection;
+import javax.management.MalformedObjectNameException;
+import javax.management.ObjectName;
 import java.io.IOException;
+import java.lang.management.ManagementFactory;
+import java.util.Collections;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicReference;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ReaperActionJmxMetricsTest {
 
     @Mock
+    private JMetrics jMetrics;
+    @Mock
     private Transport transport;
+    @Mock
+    private MBeanServerConnection mbeanConn;
     @Spy
     @InjectMocks
     private ReaperActionJmxMetrics reaperActionJmxMetrics;
@@ -32,7 +43,9 @@ public class ReaperActionJmxMetricsTest {
     }
 
     @Test
-    public void run() throws IOException {
+    @SuppressWarnings("unchecked")
+    public void run() throws IOException, MalformedObjectNameException {
+        Mockito.when(mbeanConn.queryNames(null, null)).thenReturn(getObjectNames());
         AtomicReference<Object> objectAtomicReference = new AtomicReference<>();
         Mockito.doAnswer(invocation -> {
             Object[] metrics = invocation.getArguments();
@@ -48,10 +61,34 @@ public class ReaperActionJmxMetricsTest {
     }
 
     @Test
+    public void metricsCollectionsMethods() {
+        reaperActionJmxMetrics.misc(jMetrics, ManagementFactory.getRuntimeMXBean());
+        reaperActionJmxMetrics.threading(jMetrics, ManagementFactory.getThreadMXBean());
+        reaperActionJmxMetrics.memoryPool(jMetrics, ManagementFactory.getMemoryPoolMXBeans());
+        reaperActionJmxMetrics.memory(jMetrics, ManagementFactory.getMemoryMXBean());
+        reaperActionJmxMetrics.garbageCollection(jMetrics, ManagementFactory.getGarbageCollectorMXBeans());
+        reaperActionJmxMetrics.compilation(jMetrics, ManagementFactory.getCompilationMXBean());
+        reaperActionJmxMetrics.classloading(jMetrics, ManagementFactory.getClassLoadingMXBean());
+        reaperActionJmxMetrics.os(jMetrics, ManagementFactory.getOperatingSystemMXBean());
+
+        Mockito.verify(jMetrics, Mockito.times(1)).setOperatingSystem(Mockito.any());
+        Mockito.verify(jMetrics, Mockito.times(1)).setType(JMetrics.class.getName());
+        Mockito.verify(jMetrics, Mockito.times(1)).setThreading(Mockito.any());
+        Mockito.verify(jMetrics, Mockito.times(1)).setMemoryPools(Mockito.any());
+        Mockito.verify(jMetrics, Mockito.times(1)).setMemory(Mockito.any());
+        Mockito.verify(jMetrics, Mockito.times(1)).setCompilation(Mockito.any());
+        Mockito.verify(jMetrics, Mockito.times(1)).setClassLoading(Mockito.any());
+    }
+
+    @Test
     public void terminate() throws IOException {
         Constant.TIMER.scheduleAtFixedRate(reaperActionJmxMetrics, Short.MAX_VALUE, Short.MAX_VALUE);
         // The result of the task is dependant on the state and if it has been executed already, so we just run the code
         reaperActionJmxMetrics.terminate();
+    }
+
+    private Set<ObjectName> getObjectNames() throws MalformedObjectNameException {
+        return new TreeSet<>(Collections.emptyList());
     }
 
 }

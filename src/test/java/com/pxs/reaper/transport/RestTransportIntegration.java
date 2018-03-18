@@ -33,7 +33,7 @@ public class RestTransportIntegration {
     @Test
     public void annotationProperty() {
         AnnotationProperty annotationProperty = new AnnotationProperty();
-        Assert.assertEquals("http://ikube.be:8090/j-metrics", annotationProperty.getReaperJMetricsRestUri());
+        Assert.assertTrue(annotationProperty.getReaperJMetricsRestUri().contains("/j-metrics"));
     }
 
     @Test
