@@ -1,10 +1,9 @@
 package com.pxs.reaper.action;
 
-import com.pxs.reaper.transport.RestTransport;
-import com.pxs.reaper.transport.Transport;
-import mockit.Deencapsulation;
+import com.pxs.reaper.Constant;
+import lombok.Setter;
+import org.jeasy.props.annotations.Property;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,16 +19,21 @@ import java.util.Properties;
  * @version 01.00
  * @since 09-10-2017
  */
+@Setter
 @RunWith(MockitoJUnitRunner.class)
 public class ReaperAgentTest {
 
     private String args =
             "localhost-jmx-uri=service:jmx:rmi:///jndi/rmi://el5753:1099/jmxrmi|" +
-                    "reaper-rest-uri-j-metrics=http://el5753:8090/j-metrics|" +
-                    "reaper-rest-uri-o-metrics=http://el5753:8090/o-metrics|" +
-                    "reaper-web-socket-uri=ws://el5753:8090/reaper-websocket";
+                    "reaper-rest-uri-j-metrics=http://localhost:8090/j-metrics|" +
+                    "reaper-rest-uri-o-metrics=http://localhost:8090/o-metrics|" +
+                    "reaper-web-socket-uri=ws://localhost:8090/reaper-websocket";
 
     private Properties properties;
+
+    @SuppressWarnings("unused")
+    @Property(source = Constant.REAPER_PROPERTIES, key = "sleep-time")
+    private int sleepTime;
     @Spy
     private ReaperAgent reaperAgent;
     @Mock
@@ -38,6 +42,8 @@ public class ReaperAgentTest {
     @Before
     public void before() {
         properties = System.getProperties();
+        Constant.PROPERTIES_INJECTOR.injectProperties(this);
+        Constant.PROPERTIES_INJECTOR.injectProperties(Constant.EXTERNAL_CONSTANTS);
     }
 
     @After
@@ -48,17 +54,13 @@ public class ReaperAgentTest {
     @Test
     public void agentmain() throws Exception {
         ReaperAgent.agentmain(args, instrumentation);
-        // Thread.sleep(1000 * 60 * 60);
+        // Thread.sleep((long) (sleepTime * 1.5));
     }
 
     @Test
     public void premain() throws Exception {
         ReaperAgent.premain(args, instrumentation);
-        Transport transport = new RestTransport();
-        String reaperJMetricsRestUri = Deencapsulation.getField(transport, "reaperJMetricsRestUri");
-        Assert.assertTrue(reaperJMetricsRestUri.contains("/j-metrics"));
-        String reaperOMetricsRestUri = Deencapsulation.getField(transport, "reaperOMetricsRestUri");
-        Assert.assertTrue(reaperOMetricsRestUri.contains("/o-metrics"));
+        // Thread.sleep((long) (sleepTime * 1.5));
     }
 
     @Test

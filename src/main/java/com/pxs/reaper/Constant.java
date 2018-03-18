@@ -99,7 +99,7 @@ public interface Constant {
          * will be 1200 kb/second metrics posting.
          */
         @Property(source = Constant.REAPER_PROPERTIES, key = "sleep-time")
-        private int sleepTime;
+        private int sleepTime = 15000;
 
         void getProperties() {
             // If there is no properties file outside the jar, then extract the application properties from

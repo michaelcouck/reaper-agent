@@ -137,7 +137,6 @@ public class ReaperActionAgentMetrics extends TimerTask implements ReaperAction 
      *
      * @return the absolute, cleaned, normalized, canonical path to the jar containing 'this' Java agent
      */
-    @SuppressWarnings("ConstantConditions")
     String getPathToAgent() {
         Enumeration<URL> resources;
         try {
@@ -145,7 +144,7 @@ public class ReaperActionAgentMetrics extends TimerTask implements ReaperAction 
         } catch (final IOException e) {
             throw new RuntimeException("Exception reading the manifest files : ", e);
         }
-        String agentJarName = "reaper-agent-1.0-SNAPSHOT.jar";
+        String agentJarName = null;
         //noinspection ConstantConditions
         while (resources.hasMoreElements()) {
             try {
@@ -170,9 +169,13 @@ public class ReaperActionAgentMetrics extends TimerTask implements ReaperAction 
             }
         }
         File agentJar = FILE.findFileRecursively(new File("."), agentJarName);
+        if (agentJar == null || !agentJar.exists()) {
+            log.log(Level.SEVERE, "Couldn't find agent jar file, returning dot folder: ");
+            return "./";
+        }
         String canonicalPathToReaperAgentJar = FILE.cleanFilePath(agentJar.getAbsolutePath());
         log.log(Level.INFO, "Found agent jar file : " + canonicalPathToReaperAgentJar);
-        return (agentJar != null) ? canonicalPathToReaperAgentJar : null;
+        return canonicalPathToReaperAgentJar;
     }
 
     /**

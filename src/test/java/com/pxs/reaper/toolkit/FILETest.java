@@ -12,9 +12,8 @@ public class FILETest {
 
     @Test
     public void findFileRecursively() {
-        String fileName = "reaper-agent-";
+        String fileName = "libsigar-amd64-linux.so";
         File file = FILE.findFileRecursively(new File("."), fileName);
-        // File file = FILE.findFileRecursively(new File("."), "libsigar-amd64-freebsd-6.so");
         Assert.assertNotNull(file);
         Assert.assertTrue(file.getName().contains(fileName));
     }
