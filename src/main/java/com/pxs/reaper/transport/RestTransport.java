@@ -1,7 +1,6 @@
 package com.pxs.reaper.transport;
 
 import com.mashape.unirest.http.Unirest;
-import com.mashape.unirest.http.exceptions.UnirestException;
 import com.pxs.reaper.Constant;
 import com.pxs.reaper.model.JMetrics;
 import com.pxs.reaper.model.OSMetrics;
@@ -38,8 +37,8 @@ public class RestTransport implements Transport {
             } else {
                 log.log(Level.WARNING, "No endpoint for object : ", new Object[]{metrics});
             }
-        } catch (final UnirestException e) {
-            throw new RuntimeException("Exception posting to the micro service : ", e);
+        } catch (final Exception e) {
+            log.log(Level.SEVERE, "Error posting to micro service, is it running?", e);
         }
         return true;
     }

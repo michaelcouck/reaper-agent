@@ -6,7 +6,6 @@ import org.apache.commons.lang.StringUtils;
 import java.lang.instrument.IllegalClassFormatException;
 import java.lang.instrument.Instrumentation;
 import java.security.ProtectionDomain;
-import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -38,6 +37,8 @@ public class ReaperAgent {
      */
     @SuppressWarnings("WeakerAccess")
     public static void agentmain(final String args, final Instrumentation instrumentation) throws Exception {
+        // TODO: Check if there is already an agent present
+        // TODO: Dynamically reload the properties if they have changed
         properties(args);
         premain(args, instrumentation);
     }
@@ -78,13 +79,14 @@ public class ReaperAgent {
 
                 int sleepTime = Constant.EXTERNAL_CONSTANTS.getSleepTime();
                 ReaperActionJvmMetrics reaperActionJvmMetrics = new ReaperActionJvmMetrics();
-                // Constant.TIMER.scheduleAtFixedRate(reaperActionJvmMetrics, sleepTime, sleepTime);
-                new Timer(true).scheduleAtFixedRate(reaperActionJvmMetrics, sleepTime, sleepTime);
+                Constant.TIMER.scheduleAtFixedRate(reaperActionJvmMetrics, sleepTime, sleepTime);
+                // new Timer(true).scheduleAtFixedRate(reaperActionJvmMetrics, sleepTime, sleepTime);
                 Runtime.getRuntime().addShutdownHook(new Thread(reaperActionJvmMetrics::terminate));
                 log.warning("Started the reaper in the target jvm :");
             }
         };
-        new Timer(Boolean.TRUE).schedule(timerTask, 15000);
+        Constant.TIMER.schedule(timerTask, 15000);
+        // new Timer(Boolean.TRUE).schedule(timerTask, 15000);
     }
 
     /**

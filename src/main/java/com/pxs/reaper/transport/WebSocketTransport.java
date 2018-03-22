@@ -107,7 +107,6 @@ public class WebSocketTransport implements Transport {
      * Opens a session to the web socket of the centralized analyzer.
      */
     private void openSession() {
-        WebSocketTransport webSocketTransport = this;
         Function<Void, Session> function = aVoid -> {
             WebSocketContainer container = ContainerProvider.getWebSocketContainer();
             URI uri = URI.create(reaperWebSocketUri);
@@ -115,7 +114,7 @@ public class WebSocketTransport implements Transport {
                 log.log(Level.INFO, "Session null : " + session + ", session open : " + (session != null ? session.isOpen() : null));
                 if (session == null || !session.isOpen()) {
                     log.log(Level.INFO, "Opening(re) web socket session with uri : {}", reaperWebSocketUri);
-                    session = container.connectToServer(webSocketTransport, uri);
+                    session = container.connectToServer(WebSocketTransport.this, uri);
                     session.setMaxIdleTimeout(600000);
                 }
                 return session;
