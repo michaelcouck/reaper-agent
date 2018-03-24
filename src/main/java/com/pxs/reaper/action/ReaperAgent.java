@@ -89,7 +89,7 @@ public class ReaperAgent {
             Runtime.getRuntime().addShutdownHook(new Thread(reaperActionJvmMetrics::terminate));
             LOG.warning("Reaper agent successfully started in the target jvm : " + pid);
         };
-        THREAD.schedule(timerTask, Constant.SLEEP_TIME);
+        THREAD.schedule(timerTask, Constant.SLEEP_TIME * 4);
     }
 
     /**
