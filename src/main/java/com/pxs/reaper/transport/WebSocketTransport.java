@@ -1,14 +1,17 @@
 package com.pxs.reaper.transport;
 
 import com.pxs.reaper.Constant;
+import com.pxs.reaper.model.Message;
 import com.pxs.reaper.model.Metrics;
 import com.pxs.reaper.toolkit.Retry;
 import com.pxs.reaper.toolkit.RetryIncreasingDelay;
+import com.pxs.reaper.toolkit.THREAD;
 import lombok.Setter;
 import org.jeasy.props.annotations.Property;
 
 import javax.websocket.*;
 import java.io.IOException;
+import java.lang.management.ManagementFactory;
 import java.net.URI;
 import java.nio.ByteBuffer;
 import java.util.concurrent.Future;
@@ -149,7 +152,7 @@ public class WebSocketTransport implements Transport {
      */
     @OnOpen
     public void onOpen(final Session session) throws IOException {
-        log.log(Level.INFO, "Session opened : {}", session.getId());
+        log.log(Level.INFO, "Session opened : " + session);
     }
 
     /**
@@ -158,7 +161,16 @@ public class WebSocketTransport implements Transport {
     @OnMessage
     @SuppressWarnings("UnusedParameters")
     public void onMessage(final String message, final Session session) throws IOException {
-        log.log(Level.INFO, "Got message : {}", message);
+        Message m = Constant.GSON.fromJson(message, Message.class);
+        if (m.isTerminate()) {
+            log.log(Level.INFO, "Cancelling agent in JVM : " + ManagementFactory.getRuntimeMXBean().getName());
+            // TODO: Change this to scheduled executor rather, and kill the individual tasks rather because
+            // TODO: we might want to start the tasks again. This also entails a manager of some sort for creating
+            // TODO: the tasks so we can create them again if necessary, with different parameters
+            THREAD.cancelScheduledFutures();
+        } else if (m.isStart()) {
+            THREAD.startScheduledFutures();
+        }
     }
 
     /**
@@ -166,7 +178,7 @@ public class WebSocketTransport implements Transport {
      */
     @OnClose
     public void onClose(final Session session) {
-        log.log(Level.FINE, "Session closed : {}", session.getId());
+        log.log(Level.FINE, "Session closed : " + session);
     }
 
     /**
@@ -174,7 +186,7 @@ public class WebSocketTransport implements Transport {
      */
     @OnError
     public void onError(final Session session, final Throwable throwable) {
-        log.log(Level.FINE, "Error in session : {}", throwable);
+        log.log(Level.FINE, "Error in session : " + session, throwable);
     }
 
 }

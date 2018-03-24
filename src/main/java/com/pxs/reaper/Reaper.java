@@ -5,11 +5,11 @@ import com.pxs.reaper.action.ReaperActionJmxMetrics;
 import com.pxs.reaper.action.ReaperActionOSMetrics;
 import com.pxs.reaper.toolkit.FILE;
 import com.pxs.reaper.toolkit.THREAD;
-import lombok.Setter;
 import org.apache.commons.lang.math.NumberUtils;
 
 import java.io.File;
 import java.lang.management.ManagementFactory;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -38,7 +38,6 @@ import java.util.logging.Logger;
  *     String pathToAgentJar = ClassLoader.class.getProtectionDomain().getCodeSource().getLocation().getPath();
  * </pre>
  */
-@Setter
 public class Reaper {
 
     static {
@@ -94,7 +93,7 @@ public class Reaper {
     private Reaper() {
         Constant.PROPERTIES_INJECTOR.injectProperties(this);
         String vmName = ManagementFactory.getRuntimeMXBean().getName();
-        log.info("Reaper virtual machine name : " + vmName);
+        log.log(Level.FINEST, "Reaper virtual machine name : " + vmName);
     }
 
     /**
@@ -105,7 +104,7 @@ public class Reaper {
         ReaperActionOSMetrics reaperActionOSMetrics = new ReaperActionOSMetrics();
         Constant.PROPERTIES_INJECTOR.injectProperties(reaperActionOSMetrics);
         Runtime.getRuntime().addShutdownHook(new Thread(reaperActionOSMetrics::terminate));
-        Constant.TIMER.scheduleAtFixedRate(reaperActionOSMetrics, Constant.SLEEP_TIME, Constant.SLEEP_TIME);
+        THREAD.scheduleAtFixedRate(reaperActionOSMetrics, Constant.SLEEP_TIME, Constant.SLEEP_TIME);
     }
 
     /**
@@ -116,7 +115,7 @@ public class Reaper {
         ReaperActionAgentMetrics reaperActionAgentMetrics = new ReaperActionAgentMetrics();
         Constant.PROPERTIES_INJECTOR.injectProperties(reaperActionAgentMetrics);
         Runtime.getRuntime().addShutdownHook(new Thread(reaperActionAgentMetrics::terminate));
-        Constant.TIMER.scheduleAtFixedRate(reaperActionAgentMetrics, Constant.SLEEP_TIME, Constant.SLEEP_TIME);
+        THREAD.scheduleAtFixedRate(reaperActionAgentMetrics, Constant.SLEEP_TIME, Constant.SLEEP_TIME);
     }
 
     /**
@@ -127,7 +126,7 @@ public class Reaper {
         ReaperActionJmxMetrics reaperActionJmxMetrics = new ReaperActionJmxMetrics();
         Constant.PROPERTIES_INJECTOR.injectProperties(reaperActionJmxMetrics);
         Runtime.getRuntime().addShutdownHook(new Thread(reaperActionJmxMetrics::terminate));
-        Constant.TIMER.scheduleAtFixedRate(reaperActionJmxMetrics, Constant.SLEEP_TIME, Constant.SLEEP_TIME);
+        THREAD.scheduleAtFixedRate(reaperActionJmxMetrics, Constant.SLEEP_TIME, Constant.SLEEP_TIME);
     }
 
 }

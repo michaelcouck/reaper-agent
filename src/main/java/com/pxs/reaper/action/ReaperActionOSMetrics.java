@@ -6,7 +6,6 @@ import com.pxs.reaper.toolkit.HOST;
 import com.pxs.reaper.toolkit.OS;
 import org.hyperic.sigar.*;
 
-import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -19,7 +18,7 @@ import java.util.logging.Logger;
  * @version 1.0
  * @since 20-10-2017
  */
-public class ReaperActionOSMetrics extends TimerTask implements ReaperAction {
+public class ReaperActionOSMetrics implements ReaperAction {
 
     private Logger log = Logger.getLogger(this.getClass().getSimpleName());
 
@@ -170,8 +169,9 @@ public class ReaperActionOSMetrics extends TimerTask implements ReaperAction {
             log.info("Closed sigar : " + sigar);
         } catch (final Exception e) {
             log.log(Level.SEVERE, "Exception closing the Sigar : ", e);
+            return Boolean.FALSE;
         }
-        return cancel();
+        return Boolean.TRUE;
     }
 
 }

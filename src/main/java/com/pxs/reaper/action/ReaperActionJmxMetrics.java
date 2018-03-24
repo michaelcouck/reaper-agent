@@ -144,9 +144,10 @@ public class ReaperActionJmxMetrics extends ReaperActionMetrics {
                 jmxConnector.close();
             } catch (final IOException e) {
                 log.log(Level.SEVERE, "Exception disconnecting from JMX : ", e);
+                return Boolean.FALSE;
             }
         }
-        return cancel();
+        return Boolean.TRUE;
     }
 
     private Set<ObjectName> getObjectNames() {

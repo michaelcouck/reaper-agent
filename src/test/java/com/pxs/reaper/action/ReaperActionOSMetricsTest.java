@@ -3,6 +3,7 @@ package com.pxs.reaper.action;
 import com.pxs.reaper.Constant;
 import com.pxs.reaper.Reaper;
 import com.pxs.reaper.model.OSMetrics;
+import com.pxs.reaper.toolkit.THREAD;
 import com.pxs.reaper.transport.Transport;
 import mockit.Deencapsulation;
 import org.junit.Assert;
@@ -54,7 +55,7 @@ public class ReaperActionOSMetricsTest {
 
     @Test
     public void terminate() {
-        Constant.TIMER.scheduleAtFixedRate(reaperActionOSMetrics, Short.MAX_VALUE, Short.MAX_VALUE);
+        THREAD.scheduleAtFixedRate(reaperActionOSMetrics, Short.MAX_VALUE, Short.MAX_VALUE);
         // The result of the task is dependant on the state and if it has been executed already, so we just run the code
         reaperActionOSMetrics.terminate();
     }

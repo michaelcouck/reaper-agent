@@ -5,7 +5,6 @@ import com.pxs.reaper.toolkit.HOST;
 import com.sun.tools.attach.VirtualMachine;
 import mockit.Deencapsulation;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -60,8 +59,8 @@ public class ReaperActionAgentMetricsIntegration {
     }
 
     @Test
-    @Ignore
     public void attachToJmxProcess() {
+        // TODO: This needs to be fleshed out, not needed at the moment...
         ReaperActionJmxMetrics reaperActionJmxMetrics = new ReaperActionJmxMetrics();
         Constant.PROPERTIES_INJECTOR.injectProperties(reaperActionJmxMetrics);
         reaperActionJmxMetrics.run();

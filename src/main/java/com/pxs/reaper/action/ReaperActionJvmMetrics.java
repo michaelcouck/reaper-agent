@@ -48,7 +48,7 @@ class ReaperActionJvmMetrics extends ReaperActionMetrics {
      */
     @Override
     public boolean terminate() {
-        return cancel();
+        return Boolean.TRUE;
     }
 
 }

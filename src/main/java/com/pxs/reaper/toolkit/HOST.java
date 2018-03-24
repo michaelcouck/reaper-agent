@@ -81,10 +81,10 @@ public class HOST {
             while (inetAddresses.hasMoreElements()) {
                 InetAddress inetAddress = inetAddresses.nextElement();
                 String ipAddress = inetAddress.getHostAddress();
-                log.info("Host name : " + inetAddress.getHostName());
                 ipAddresses.add(ipAddress);
             }
         }
+        log.info("Host names : " + ipAddresses);
         return ipAddresses;
     }
 

@@ -2,6 +2,7 @@ package com.pxs.reaper.action;
 
 import com.pxs.reaper.Constant;
 import com.pxs.reaper.model.JMetrics;
+import com.pxs.reaper.toolkit.THREAD;
 import com.pxs.reaper.transport.Transport;
 import mockit.Deencapsulation;
 import org.junit.Assert;
@@ -82,7 +83,7 @@ public class ReaperActionJmxMetricsTest {
 
     @Test
     public void terminate() throws IOException {
-        Constant.TIMER.scheduleAtFixedRate(reaperActionJmxMetrics, Short.MAX_VALUE, Short.MAX_VALUE);
+        THREAD.scheduleAtFixedRate(reaperActionJmxMetrics, Short.MAX_VALUE, Short.MAX_VALUE);
         // The result of the task is dependant on the state and if it has been executed already, so we just run the code
         reaperActionJmxMetrics.terminate();
     }

@@ -7,7 +7,7 @@ package com.pxs.reaper.action;
  * @version 1.0
  * @since 20-10-2017
  */
-interface ReaperAction {
+interface ReaperAction extends Action {
 
     /**
      * Releases any resources, operating system agents, Java agents etc.

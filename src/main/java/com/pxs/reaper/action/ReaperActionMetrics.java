@@ -8,7 +8,6 @@ import java.lang.management.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.TimerTask;
 
 /**
  * Base class for JMX operations on management MBeans for the JVM. Takes various MBeans from the JVM and populates
@@ -18,7 +17,7 @@ import java.util.TimerTask;
  * @version 01.00
  * @since 22-10-2017
  */
-abstract class ReaperActionMetrics extends TimerTask implements ReaperAction {
+abstract class ReaperActionMetrics implements ReaperAction {
 
     /**
      * Populates the operating system information, like the name and the version, also the load average. Although

@@ -14,7 +14,7 @@ import org.jeasy.props.api.PropertiesInjector;
 
 import java.io.File;
 import java.io.InputStream;
-import java.util.Timer;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -29,8 +29,13 @@ import static org.jeasy.props.PropertiesInjectorBuilder.aNewPropertiesInjector;
  */
 public interface Constant {
 
-    Logger LOG = Logger.getLogger(Constant.class.getSimpleName());
-
+    /**
+     * The flag for this agent running in the JVM, we do not want several agents running in the same JVM.
+     */
+    AtomicBoolean AGENT_RUNNING = new AtomicBoolean(Boolean.FALSE);
+    /**
+     * The name of the properties file, should be relatively unique to avoid name clashing.
+     */
     String REAPER_PROPERTIES_FILE = "reaper-application.properties";
     /**
      * Properties file for various parameterization. Used in conjunction with {@link Property} annotations is quite convenient
@@ -53,10 +58,6 @@ public interface Constant {
      */
     Gson GSON = new GsonBuilder().setDateFormat(DATE_FORMAT).create();
 
-    /**
-     * The timer for all the actions, {@link com.pxs.reaper.action.ReaperActionAgentMetrics}, {@link com.pxs.reaper.action.ReaperActionJmxMetrics} etc.
-     */
-    Timer TIMER = new Timer(true);
     /**
      * This class opens the {@link Constant#REAPER_PROPERTIES} file, looks through all the {@link Property} annotations, then calls
      * the setter methods for the properties in the target objects. Like Spring, but simpler.
@@ -86,10 +87,13 @@ public interface Constant {
     @Setter
     class ExternalConstants {
 
-        {
+        private Logger log = Logger.getLogger(Constant.class.getSimpleName());
+
+        ExternalConstants() {
+            // TODO: Reload properties periodically if they have changed
             getProperties();
             PROPERTIES_INJECTOR.injectProperties(this);
-            LOG.log(Level.INFO, "Sleep time set to : {0}", new Object[]{getSleepTime()});
+            log.log(Level.FINEST, "Sleep time set to : {0}", new Object[]{getSleepTime()});
         }
 
         /**
@@ -106,7 +110,7 @@ public interface Constant {
             // the jar and write it to the file system outside the jar for external modification and configuration
             File propertiesFile = new File(Constant.REAPER_PROPERTIES_FILE);
             if (!propertiesFile.exists()) {
-                LOG.log(Level.INFO, "Writing properties file in jar to directory : ");
+                log.log(Level.INFO, "Writing properties file in jar to directory : ");
                 InputStream propertiesInputStream = null;
                 try {
                     propertiesInputStream = ReaperAgent.class.getClassLoader().getResourceAsStream(Constant.REAPER_PROPERTIES_FILE);
@@ -114,14 +118,14 @@ public interface Constant {
                     propertiesFile = FILE.getOrCreateFile(new File(Constant.REAPER_PROPERTIES_FILE));
                     FILE.setContents(propertiesFile, content.getBytes());
                 } finally {
-                    LOG.log(
+                    log.log(
                             Level.INFO,
                             "Wrote properties file in jar to directory, input stream : {0}, properties file : {1}",
                             new Object[]{propertiesInputStream, propertiesFile});
                     FILE.close(propertiesInputStream);
                 }
             } else {
-                LOG.log(Level.INFO, "Found properties file in directory : {0}", new Object[]{propertiesFile});
+                log.log(Level.INFO, "Found properties file in directory : {0}", new Object[]{propertiesFile});
             }
         }
     }

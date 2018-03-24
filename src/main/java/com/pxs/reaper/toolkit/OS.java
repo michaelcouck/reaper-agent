@@ -24,9 +24,7 @@ public final class OS {
         String localOsName = System.getProperty("os.name");
         String localOsVersion = System.getProperty("os.version");
         String localOsArch = System.getProperty("os.arch");
-        log.info("Name of the OS: " + localOsName);
-        log.info("Version of the OS: " + localOsVersion);
-        log.info("Architecture of the OS: " + localOsArch);
+        log.info("OS : " + localOsName + ", OS version : " + localOsVersion + " OS architecture : " + localOsArch);
         return localOsName.concat(" ").concat(localOsVersion).concat(" ").concat(localOsArch);
     }
 

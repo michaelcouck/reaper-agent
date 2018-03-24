@@ -1,12 +1,13 @@
 package com.pxs.reaper.action;
 
 import com.pxs.reaper.Constant;
+import com.pxs.reaper.toolkit.THREAD;
 import org.apache.commons.lang.StringUtils;
 
 import java.lang.instrument.IllegalClassFormatException;
 import java.lang.instrument.Instrumentation;
+import java.lang.management.ManagementFactory;
 import java.security.ProtectionDomain;
-import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -21,10 +22,11 @@ import java.util.logging.Logger;
  */
 public class ReaperAgent {
 
-    private static Logger log = Logger.getLogger(ReaperAgent.class.getSimpleName());
+    private static Logger LOG = Logger.getLogger(ReaperAgent.class.getSimpleName());
 
     /**
-     * TODO: Log bug report for linux. Passing arguments does not work on linux, string concatenation logical error in the code.
+     * TODO: Log bug report for linux. Passing arguments does not
+     * TODO: work on linux, string concatenation logical error in the code.
      * <p>
      * JVM hook to dynamically load javaagent at runtime.
      * <p>
@@ -37,8 +39,6 @@ public class ReaperAgent {
      */
     @SuppressWarnings("WeakerAccess")
     public static void agentmain(final String args, final Instrumentation instrumentation) throws Exception {
-        // TODO: Check if there is already an agent present
-        // TODO: Dynamically reload the properties if they have changed
         properties(args);
         premain(args, instrumentation);
     }
@@ -61,7 +61,7 @@ public class ReaperAgent {
                 continue;
             }
             System.setProperty(argumentAndValue[0], argumentAndValue[1]);
-            log.log(Level.INFO, "Set system property from args : {0}", new Object[]{argumentAndValue[0] + "=" + argumentAndValue[1]});
+            LOG.log(Level.INFO, "Set system property from args : {0}", new Object[]{argumentAndValue[0] + "=" + argumentAndValue[1]});
         }
     }
 
@@ -72,21 +72,24 @@ public class ReaperAgent {
      * @param instrumentation the instrumentation implementation of the JVM
      */
     public static void premain(final String args, final Instrumentation instrumentation) {
-        TimerTask timerTask = new TimerTask() {
-            @Override
-            public void run() {
-                log.warning("Starting the reaper in the target jvm :");
-
-                int sleepTime = Constant.EXTERNAL_CONSTANTS.getSleepTime();
-                ReaperActionJvmMetrics reaperActionJvmMetrics = new ReaperActionJvmMetrics();
-                Constant.TIMER.scheduleAtFixedRate(reaperActionJvmMetrics, sleepTime, sleepTime);
-                // new Timer(true).scheduleAtFixedRate(reaperActionJvmMetrics, sleepTime, sleepTime);
-                Runtime.getRuntime().addShutdownHook(new Thread(reaperActionJvmMetrics::terminate));
-                log.warning("Started the reaper in the target jvm :");
-            }
+        final String pid = ManagementFactory.getRuntimeMXBean().getName();
+        // Check if there is already an agent present
+        if (Constant.AGENT_RUNNING.get()) {
+            LOG.log(Level.SEVERE, "Agent already running : " + pid);
+            // Do not start the actions running again in this JVM
+            return;
+        }
+        LOG.log(Level.SEVERE, "Agent not running, starting... : " + pid);
+        Constant.AGENT_RUNNING.set(Boolean.TRUE);
+        Action timerTask = () -> {
+            LOG.warning("Starting the reaper agent in the target jvm : " + pid);
+            int sleepTime = Constant.EXTERNAL_CONSTANTS.getSleepTime();
+            ReaperActionJvmMetrics reaperActionJvmMetrics = new ReaperActionJvmMetrics();
+            THREAD.scheduleAtFixedRate(reaperActionJvmMetrics, sleepTime, sleepTime);
+            Runtime.getRuntime().addShutdownHook(new Thread(reaperActionJvmMetrics::terminate));
+            LOG.warning("Reaper agent successfully started in the target jvm : " + pid);
         };
-        Constant.TIMER.schedule(timerTask, 15000);
-        // new Timer(Boolean.TRUE).schedule(timerTask, 15000);
+        THREAD.scheduleAtFixedRate(timerTask, Constant.SLEEP_TIME, Constant.SLEEP_TIME);
     }
 
     /**

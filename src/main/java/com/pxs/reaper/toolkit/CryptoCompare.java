@@ -7,7 +7,7 @@ import com.mashape.unirest.request.GetRequest;
 
 public class CryptoCompare {
 
-    public static void main(final String[] arbs) throws UnirestException {
+    public static void main(final String[] args) throws UnirestException {
         new CryptoCompare().matrix();
     }
 
