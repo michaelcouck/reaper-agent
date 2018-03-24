@@ -1,5 +1,6 @@
 package com.pxs.reaper.transport;
 
+import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
 import com.pxs.reaper.Constant;
 import com.pxs.reaper.model.JMetrics;
@@ -30,12 +31,16 @@ public class RestTransport implements Transport {
     public boolean postMetrics(final Object metrics) {
         try {
             String json = Constant.GSON.toJson(metrics);
+            HttpResponse httpResponse = null;
             if (JMetrics.class.isAssignableFrom(metrics.getClass())) {
-                Unirest.post(reaperJMetricsRestUri).body(json).asString();
+                httpResponse = Unirest.post(reaperJMetricsRestUri).body(json).asString();
             } else if (OSMetrics.class.isAssignableFrom(metrics.getClass())) {
-                Unirest.post(reaperOMetricsRestUri).body(json).asString();
+                httpResponse = Unirest.post(reaperOMetricsRestUri).body(json).asString();
             } else {
                 log.log(Level.WARNING, "No endpoint for object : ", new Object[]{metrics});
+            }
+            if (httpResponse != null && httpResponse.getStatus() != 200) {
+                log.log(Level.WARNING, "Posting metrics was not successful : " + httpResponse);
             }
         } catch (final Exception e) {
             log.log(Level.SEVERE, "Error posting to micro service, is it running?", e);

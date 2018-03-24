@@ -2,6 +2,7 @@ package com.pxs.reaper.transport;
 
 import com.pxs.reaper.Constant;
 import com.pxs.reaper.model.JMetrics;
+import com.pxs.reaper.model.OSMetrics;
 import lombok.Getter;
 import lombok.Setter;
 import org.jeasy.props.annotations.Property;
@@ -57,6 +58,9 @@ public class RestTransportIntegration {
         restTransport.setReaperOMetricsRestUri(reaperOMetricsRestUri);
         JMetrics jMetrics = new JMetrics();
         boolean success = restTransport.postMetrics(jMetrics);
+        Assert.assertTrue(success);
+        OSMetrics osMetrics = new OSMetrics();
+        success = restTransport.postMetrics(osMetrics);
         Assert.assertTrue(success);
     }
 
