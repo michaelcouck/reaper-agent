@@ -55,6 +55,10 @@ public class THREAD {
         Runtime.getRuntime().addShutdownHook(new ShutdownThread());
     }
 
+    public static void schedule(final Action action, final long initialDelay) {
+        EXECUTOR_SERVICE.schedule(action, initialDelay, TimeUnit.MILLISECONDS);
+    }
+
     /**
      * Starts a runnable on a scheduled execution time table.
      *
