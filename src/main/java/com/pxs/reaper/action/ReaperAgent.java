@@ -18,6 +18,7 @@ import java.security.ProtectionDomain;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.jar.Attributes;
+import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -36,6 +37,8 @@ public class ReaperAgent {
 
     private static Logger LOG = Logger.getLogger(ReaperAgent.class.getSimpleName());
 
+    private static boolean CLASS_PATH_ADDED_TO_SYSTEM_AND_BOOT = Boolean.FALSE;
+
     /**
      * TODO: Log bug report for linux. Passing arguments does not
      * TODO: work on linux, string concatenation logical error in the code.
@@ -51,6 +54,15 @@ public class ReaperAgent {
      */
     @SuppressWarnings("WeakerAccess")
     public static void agentmain(final String args, final Instrumentation instrumentation) throws Exception {
+        if (!CLASS_PATH_ADDED_TO_SYSTEM_AND_BOOT) {
+            Object[] jarPaths = getManifestClassPathUris();
+            for (final Object jarPath : jarPaths) {
+                JarFile jarFile = new JarFile(new File(jarPath.toString()));
+                instrumentation.appendToSystemClassLoaderSearch(jarFile);
+                instrumentation.appendToBootstrapClassLoaderSearch(jarFile);
+            }
+        }
+
         URLClassLoader urlClassLoader = new ChildFirstClassLoader(getClassPathUrls());
         Thread.currentThread().setContextClassLoader(urlClassLoader);
 
@@ -109,23 +121,8 @@ public class ReaperAgent {
 
     public static URL[] getClassPathUrls(final String... additionalClassPathUris) {
         List<URL> classPathUrls = new ArrayList<>();
-
-        // Manifest class path
-        Object[] manifestClassPathUris = {};
-        Manifest manifest = MANIFEST.getAgentManifest();
-        Attributes attributes = manifest.getMainAttributes();
-        for (final Object key : attributes.keySet()) {
-            String value = attributes.getValue(key.toString());
-            LOG.fine("Key : " + key + ", " + value);
-            if (key.equals("Class-Path")) {
-                manifestClassPathUris = StringUtils.split(value, File.pathSeparator);
-                break;
-            }
-        }
-
-        // System class path
-        String classPath = System.getProperty("java.class.path");
-        Object[] systemClassPathUris = classPath.split(File.pathSeparator);
+        Object[] manifestClassPathUris = getManifestClassPathUris();
+        Object[] systemClassPathUris = getSystemClassPathUris();
 
         Object[] allClassPathUris = ArrayUtils.addAll(
                 ArrayUtils.addAll(
@@ -142,6 +139,28 @@ public class ReaperAgent {
             }
         });
         return classPathUrls.toArray(new URL[classPathUrls.size()]);
+    }
+
+    public static Object[] getSystemClassPathUris() {
+        // System class path
+        String classPath = System.getProperty("java.class.path");
+        return classPath.split(File.pathSeparator);
+    }
+
+    public static Object[] getManifestClassPathUris() {
+        // Manifest class path
+        Object[] manifestClassPathUris = {};
+        Manifest manifest = MANIFEST.getAgentManifest();
+        Attributes attributes = manifest.getMainAttributes();
+        for (final Object key : attributes.keySet()) {
+            String value = attributes.getValue(key.toString());
+            LOG.fine("Key : " + key + ", " + value);
+            if (key.equals("Class-Path")) {
+                manifestClassPathUris = StringUtils.split(value, File.pathSeparator);
+                break;
+            }
+        }
+        return manifestClassPathUris;
     }
 
     /**
