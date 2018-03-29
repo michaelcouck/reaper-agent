@@ -1,11 +1,9 @@
 package com.pxs.reaper.model;
 
-// import com.couchbase.client.java.repository.annotation.Field;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-// import org.springframework.data.couchbase.core.mapping.Document;
 
 /**
  * Parent class for all Java process telemetry, the memory, the threads etc.
@@ -17,33 +15,26 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-// @Document
 @NoArgsConstructor
 public class JMetrics extends Metrics {
 
     /**
      * The PID/name of the JVM.
      */
-    // @Field
     private String pid;
-    // @Field
     private String userDir;
-    // @Field
+    private long upTime;
+    private long startTime;
+    private short availableProcessors;
+
     private double throughput;
 
-    // @Field
     private Memory memory;
-    // @Field
     private Threading threading;
-    // @Field
     private Compilation compilation;
-    // @Field
     private MemoryPool[] memoryPools;
-    // @Field
     private Classloading classLoading;
-    // @Field
     private GarbageCollection[] garbageCollection;
-    // @Field
     private OperatingSystem operatingSystem;
 
 }

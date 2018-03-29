@@ -53,6 +53,11 @@ abstract class ReaperActionMetrics implements ReaperAction {
         jMetrics.setCreated(System.currentTimeMillis());
         jMetrics.setIpAddress(HOST.hostname());
         jMetrics.setType(JMetrics.class.getName());
+
+        Runtime runtime = Runtime.getRuntime();
+        jMetrics.setUpTime(runtimeMXBean.getUptime());
+        jMetrics.setStartTime(runtimeMXBean.getStartTime());
+        jMetrics.setAvailableProcessors((short) runtime.availableProcessors());
     }
 
     /**
@@ -129,6 +134,12 @@ abstract class ReaperActionMetrics implements ReaperAction {
         memory.setNonHeapMemoryUsage(memoryMXBean.getHeapMemoryUsage());
         memory.setNonHeapMemoryUsage(memoryMXBean.getNonHeapMemoryUsage());
         memory.setObjectPendingFinalizationCount(memoryMXBean.getObjectPendingFinalizationCount());
+
+        Runtime runtime = Runtime.getRuntime();
+        memory.setMaxMemory(runtime.maxMemory());
+        memory.setFreeMemory(runtime.freeMemory());
+        memory.setTotalMemory(runtime.totalMemory());
+
         jMetrics.setMemory(memory);
     }
 

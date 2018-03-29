@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-// import org.springframework.data.couchbase.core.mapping.Document;
 
 import java.lang.management.MemoryUsage;
 
@@ -18,11 +17,14 @@ import java.lang.management.MemoryUsage;
 @Getter
 @Setter
 @ToString
-// @Document
 @NoArgsConstructor
 public class Memory {
 
+    private long maxMemory;
+    private long freeMemory;
+    private long totalMemory;
     private long objectPendingFinalizationCount;
+
     private MemoryUsage heapMemoryUsage;
     private MemoryUsage nonHeapMemoryUsage;
 

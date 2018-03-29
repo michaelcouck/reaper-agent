@@ -64,7 +64,7 @@ public class ReaperIntegration {
     @Test
     public void attachToJavaProcesses() {
         reaper.attachToJavaProcesses();
-        THREAD.sleep(3000);
+        THREAD.sleep(30000);
         Mockito.verify(transport, Mockito.atLeast(1)).postMetrics(Mockito.anyObject());
     }
 
