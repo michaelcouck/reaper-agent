@@ -55,6 +55,7 @@ public class ReaperAgent {
     @SuppressWarnings("WeakerAccess")
     public static void agentmain(final String args, final Instrumentation instrumentation) throws Exception {
         if (!CLASS_PATH_ADDED_TO_SYSTEM_AND_BOOT) {
+            CLASS_PATH_ADDED_TO_SYSTEM_AND_BOOT = Boolean.TRUE;
             Object[] jarPaths = getManifestClassPathUris();
             for (final Object jarPath : jarPaths) {
                 JarFile jarFile = new JarFile(new File(jarPath.toString()));
