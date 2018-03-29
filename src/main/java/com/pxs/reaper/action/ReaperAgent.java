@@ -1,7 +1,10 @@
 package com.pxs.reaper.action;
 
 import com.pxs.reaper.Constant;
+import com.pxs.reaper.toolkit.ChildFirstClassLoader;
+import com.pxs.reaper.toolkit.MANIFEST;
 import com.pxs.reaper.toolkit.THREAD;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 
 import java.io.File;
@@ -12,6 +15,10 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.security.ProtectionDomain;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.jar.Attributes;
+import java.util.jar.Manifest;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
@@ -44,67 +51,11 @@ public class ReaperAgent {
      */
     @SuppressWarnings("WeakerAccess")
     public static void agentmain(final String args, final Instrumentation instrumentation) throws Exception {
-        LOG.info("System classloader        : " + ClassLoader.getSystemClassLoader());
-        LOG.info("System parent classloader : " + ClassLoader.getSystemClassLoader().getParent());
-        LOG.info("Context classloader       : " + Thread.currentThread().getContextClassLoader());
-        LOG.info("Class classloader         : " + ReaperAgent.class.getClassLoader());
-
-        ClassLoader parentClassLoader = Thread.currentThread().getContextClassLoader();
-
-        class ChildFirstClassLoader extends URLClassLoader {
-
-            private ClassLoader parent;
-
-            public ChildFirstClassLoader(final URL[] urls, final ClassLoader parent) {
-                super(urls, null);
-                this.parent = parent;
-            }
-
-            @Override
-            protected Class<?> findClass(final String name) throws ClassNotFoundException {
-                try {
-                    // Try the URL class loader first
-                    LOG.info("Child : " + name);
-                    return super.findClass(name);
-                } catch (final ClassNotFoundException e) {
-                    // If not go to he parent
-                    LOG.info("Parent : " + name);
-                    return parent.loadClass(name);
-                }
-            }
-        }
-
-        URL[] classPathUrls = getClassPathUrls();
-        URLClassLoader urlClassLoader = new ChildFirstClassLoader(classPathUrls, parentClassLoader);
+        URLClassLoader urlClassLoader = new ChildFirstClassLoader(getClassPathUrls());
         Thread.currentThread().setContextClassLoader(urlClassLoader);
-
-        /*
-        System classloader        : sun.misc.Launcher$AppClassLoader@55f96302
-        System parent classloader : sun.misc.Launcher$ExtClassLoader@5d22bbb7
-        Context classloader       : sun.misc.Launcher$AppClassLoader@55f96302
-        Class classloader         : sun.misc.Launcher$AppClassLoader@55f96302
-        */
 
         properties(args);
         premain(args, instrumentation);
-    }
-
-    private static URL[] getClassPathUrls() {
-        // TODO: Load the jars from the manifest!!!
-        String classPath = System.getProperty("java.class.path");
-        String[] classPathUris = classPath.split(File.pathSeparator);
-        URL[] classPathUrls = new URL[classPathUris.length];
-        int index = 0;
-        Stream.of(classPathUris).forEach(s -> {
-            try {
-                File file = new File(s);
-                classPathUrls[index] = file.toURI().toURL();
-                LOG.info("Url : " + classPathUrls[index]);
-            } catch (final MalformedURLException e) {
-                e.printStackTrace();
-            }
-        });
-        return classPathUrls;
     }
 
     private static void properties(final String args) {
@@ -154,6 +105,43 @@ public class ReaperAgent {
             LOG.warning("Reaper agent successfully started in the target jvm : " + pid);
         };
         THREAD.schedule(timerTask, Constant.SLEEP_TIME);
+    }
+
+    public static URL[] getClassPathUrls(final String... additionalClassPathUris) {
+        List<URL> classPathUrls = new ArrayList<>();
+
+        // Manifest class path
+        Object[] manifestClassPathUris = {};
+        Manifest manifest = MANIFEST.getAgentManifest();
+        Attributes attributes = manifest.getMainAttributes();
+        for (final Object key : attributes.keySet()) {
+            String value = attributes.getValue(key.toString());
+            LOG.fine("Key : " + key + ", " + value);
+            if (key.equals("Class-Path")) {
+                manifestClassPathUris = StringUtils.split(value, File.pathSeparator);
+                break;
+            }
+        }
+
+        // System class path
+        String classPath = System.getProperty("java.class.path");
+        Object[] systemClassPathUris = classPath.split(File.pathSeparator);
+
+        Object[] allClassPathUris = ArrayUtils.addAll(
+                ArrayUtils.addAll(
+                        additionalClassPathUris,
+                        manifestClassPathUris),
+                systemClassPathUris);
+
+        Stream.of(allClassPathUris).forEach(s -> {
+            try {
+                File file = new File(s.toString());
+                classPathUrls.add(file.toURI().toURL());
+            } catch (final MalformedURLException e) {
+                LOG.warning("Class path not correctly formed : " + s);
+            }
+        });
+        return classPathUrls.toArray(new URL[classPathUrls.size()]);
     }
 
     /**

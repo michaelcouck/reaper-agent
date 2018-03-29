@@ -4,6 +4,7 @@ import com.pxs.reaper.Constant;
 import lombok.Setter;
 import org.jeasy.props.annotations.Property;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,6 +13,8 @@ import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.lang.instrument.Instrumentation;
+import java.net.URL;
+import java.util.Arrays;
 import java.util.Properties;
 
 /**
@@ -61,6 +64,13 @@ public class ReaperAgentTest {
     public void premain() throws Exception {
         ReaperAgent.premain(args, instrumentation);
         // Thread.sleep((long) (sleepTime * 1.5));
+    }
+
+    @Test
+    public void getClassPathUrls() {
+        URL[] urls = ReaperAgent.getClassPathUrls();
+        Assert.assertNotNull(urls);
+        Assert.assertTrue(Arrays.toString(urls).contains("reaper"));
     }
 
     @Test

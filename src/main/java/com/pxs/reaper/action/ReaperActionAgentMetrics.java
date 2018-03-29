@@ -1,23 +1,21 @@
 package com.pxs.reaper.action;
 
 import com.pxs.reaper.toolkit.FILE;
+import com.pxs.reaper.toolkit.MANIFEST;
 import com.pxs.reaper.toolkit.OS;
 import com.sun.tools.attach.AgentInitializationException;
 import com.sun.tools.attach.AgentLoadException;
 import com.sun.tools.attach.AttachNotSupportedException;
 import com.sun.tools.attach.VirtualMachine;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.builder.ToStringBuilder;
 import sun.jvmstat.monitor.MonitorException;
 import sun.jvmstat.monitor.MonitoredHost;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.*;
 import java.util.jar.Attributes;
-import java.util.jar.Manifest;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -39,15 +37,21 @@ public class ReaperActionAgentMetrics extends TimerTask implements ReaperAction 
     /**
      * The path to the agent jar, which is needed to attach to the Java processes
      */
-    private final String pathToAgent = getPathToAgent();
+    private final String pathToAgent;
     /**
      * The map of {@link VirtualMachine}s, keyed by the pid on the local machine
      */
-    private final Map<String, VirtualMachine> virtualMachines = new HashMap<>();
+    private final Map<String, VirtualMachine> virtualMachines;
     /**
      * List of pid(s) that we couldn't connect to, so we don't keep throwing exceptions
      */
-    private List<String> virtualMachineErrorPids = new LinkedList<>();
+    private List<String> virtualMachineErrorPids;
+
+    public ReaperActionAgentMetrics() {
+        pathToAgent = getPathToAgent();
+        virtualMachines = new HashMap<>();
+        virtualMachineErrorPids = new LinkedList<>();
+    }
 
     /**
      * {@inheritDoc}
@@ -138,36 +142,16 @@ public class ReaperActionAgentMetrics extends TimerTask implements ReaperAction 
      * @return the absolute, cleaned, normalized, canonical path to the jar containing 'this' Java agent
      */
     String getPathToAgent() {
-        Enumeration<URL> resources;
-        try {
-            resources = Thread.currentThread().getContextClassLoader().getResources("META-INF/MANIFEST.MF");
-        } catch (final IOException e) {
-            throw new RuntimeException("Exception reading the manifest files : ", e);
-        }
         String agentJarName = null;
-        //noinspection ConstantConditions
-        while (resources.hasMoreElements()) {
-            try {
-                URL url = resources.nextElement();
-                log.finest("Url to manifest : " + url);
-                Manifest manifest = new Manifest(url.openStream());
-                log.finest("Main attributes : " + ToStringBuilder.reflectionToString(manifest.getMainAttributes()));
-                // check that this is your manifest and do what you need or get the next one
-                Map<String, Attributes> attributeMap = manifest.getEntries();
-                log.finest("Attributes map : " + attributeMap);
-
-                Attributes attrs = manifest.getMainAttributes();
-                for (final Object key : attrs.keySet()) {
-                    String value = attrs.getValue(Attributes.Name.class.cast(key));
-                    log.finest("Key : " + key.toString() + ", value : " + value);
-                    if (key.toString().equals("Agent-Jar-Name") && value.contains("reaper-agent-")) {
-                        agentJarName = value;
-                    }
-                }
-            } catch (final IOException e) {
-                log.log(Level.SEVERE, "Exception reading the manifests : ", e);
+        Attributes attrs = MANIFEST.getAgentManifest().getMainAttributes();
+        for (final Object key : attrs.keySet()) {
+            String value = attrs.getValue(Attributes.Name.class.cast(key));
+            log.finest("Key : " + key.toString() + ", value : " + value);
+            if (key.toString().equals("Agent-Jar-Name") && value.contains("reaper-agent-")) {
+                agentJarName = value;
             }
         }
+
         File agentJar = FILE.findFileRecursively(new File("."), agentJarName);
         if (agentJar == null || !agentJar.exists()) {
             log.log(Level.SEVERE, "Couldn't find agent jar file, returning dot folder: ");
