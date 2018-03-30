@@ -1,6 +1,5 @@
 package com.pxs.reaper.action;
 
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Spy;
@@ -17,10 +16,8 @@ public class ReaperActionAgentMetricsTest {
     private ReaperActionAgentMetrics reaperActionAgentMetrics;
 
     @Test
-    public void getPathToAgent() {
-        String pathToAgent = reaperActionAgentMetrics.getPathToAgent();
-        log.severe("Path to agent : " + pathToAgent);
-        Assert.assertTrue(pathToAgent.contains("reaper-agent-"));
+    public void attachToJavaProcesses() {
+        reaperActionAgentMetrics.attachToJavaProcesses();
     }
 
 }

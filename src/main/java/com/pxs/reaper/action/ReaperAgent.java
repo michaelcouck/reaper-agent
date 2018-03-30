@@ -8,6 +8,7 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.instrument.IllegalClassFormatException;
 import java.lang.instrument.Instrumentation;
 import java.lang.management.ManagementFactory;
@@ -16,12 +17,10 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.security.ProtectionDomain;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.jar.Attributes;
-import java.util.jar.JarFile;
 import java.util.jar.Manifest;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Stream;
 
 /**
@@ -35,9 +34,7 @@ import java.util.stream.Stream;
  */
 public class ReaperAgent {
 
-    private static Logger LOG = Logger.getLogger(ReaperAgent.class.getSimpleName());
-
-    private static boolean CLASS_PATH_ADDED_TO_SYSTEM_AND_BOOT = Boolean.FALSE;
+    // private static boolean CLASS_PATH_ADDED_TO_SYSTEM_AND_BOOT = Boolean.FALSE;
 
     /**
      * TODO: Log bug report for linux. Passing arguments does not
@@ -54,7 +51,8 @@ public class ReaperAgent {
      */
     @SuppressWarnings("WeakerAccess")
     public static void agentmain(final String args, final Instrumentation instrumentation) throws Exception {
-        if (!CLASS_PATH_ADDED_TO_SYSTEM_AND_BOOT) {
+        /*if (!CLASS_PATH_ADDED_TO_SYSTEM_AND_BOOT) {
+            LOG.info("JsonReader loaded by : " + JsonReader.class.getClassLoader());
             CLASS_PATH_ADDED_TO_SYSTEM_AND_BOOT = Boolean.TRUE;
             Object[] jarPaths = getManifestClassPathUris();
             for (final Object jarPath : jarPaths) {
@@ -62,10 +60,15 @@ public class ReaperAgent {
                 instrumentation.appendToSystemClassLoaderSearch(jarFile);
                 instrumentation.appendToBootstrapClassLoaderSearch(jarFile);
             }
-        }
+        }*/
 
-        URLClassLoader urlClassLoader = new ChildFirstClassLoader(getClassPathUrls());
-        Thread.currentThread().setContextClassLoader(urlClassLoader);
+        String[] additionalClassPathUris = StringUtils.split(args, File.pathSeparator);
+        System.out.println("Additional class path : " + Arrays.toString(additionalClassPathUris));
+        URL[] urls = getClassPathUrls(additionalClassPathUris);
+        if (!Thread.currentThread().getContextClassLoader().getClass().isAssignableFrom(ChildFirstClassLoader.class)) {
+            URLClassLoader urlClassLoader = new ChildFirstClassLoader(urls);
+            Thread.currentThread().setContextClassLoader(urlClassLoader);
+        }
 
         properties(args);
         premain(args, instrumentation);
@@ -73,6 +76,7 @@ public class ReaperAgent {
 
     private static void properties(final String args) {
         // If the properties are set(i.e. only on Windows) then set these first
+        System.out.println("Arguments to agent : " + args);
         if (StringUtils.isEmpty(args)) {
             return;
         }
@@ -89,7 +93,7 @@ public class ReaperAgent {
                 continue;
             }
             System.setProperty(argumentAndValue[0], argumentAndValue[1]);
-            LOG.log(Level.INFO, "Set system property from args : {0}", new Object[]{argumentAndValue[0] + "=" + argumentAndValue[1]});
+            System.out.println("Set system property from args : " + Arrays.toString(new Object[]{argumentAndValue[0] + "=" + argumentAndValue[1]}));
         }
     }
 
@@ -103,19 +107,19 @@ public class ReaperAgent {
         final String pid = ManagementFactory.getRuntimeMXBean().getName();
         // Check if there is already an agent present
         if (Constant.AGENT_RUNNING.get()) {
-            LOG.log(Level.SEVERE, "Agent already running : " + pid);
+            System.out.println("Agent already running : " + pid);
             // Do not start the actions running again in this JVM
             return;
         }
-        LOG.log(Level.SEVERE, "Agent not running, starting... : " + pid);
+        System.out.println("Agent not running, starting... : " + pid);
         Constant.AGENT_RUNNING.set(Boolean.TRUE);
         Action timerTask = () -> {
-            LOG.warning("Starting the reaper agent in the target jvm : " + pid);
+            System.out.println("Starting the reaper agent in the target jvm : " + pid);
             int sleepTime = Constant.EXTERNAL_CONSTANTS.getSleepTime();
             ReaperActionJvmMetrics reaperActionJvmMetrics = new ReaperActionJvmMetrics();
             THREAD.scheduleAtFixedRate(reaperActionJvmMetrics, sleepTime, sleepTime);
             Runtime.getRuntime().addShutdownHook(new Thread(reaperActionJvmMetrics::terminate));
-            LOG.warning("Reaper agent successfully started in the target jvm : " + pid);
+            System.out.println("Reaper agent successfully started in the target jvm : " + pid);
         };
         THREAD.schedule(timerTask, Constant.SLEEP_TIME);
     }
@@ -125,39 +129,51 @@ public class ReaperAgent {
         Object[] manifestClassPathUris = getManifestClassPathUris();
         Object[] systemClassPathUris = getSystemClassPathUris();
 
-        Object[] allClassPathUris = ArrayUtils.addAll(
+        Object[] allClassPathUris =
                 ArrayUtils.addAll(
                         additionalClassPathUris,
-                        manifestClassPathUris),
-                systemClassPathUris);
+                        systemClassPathUris);
 
-        Stream.of(allClassPathUris).forEach(s -> {
+        Stream.of(additionalClassPathUris).forEach(s -> {
             try {
-                File file = new File(s.toString());
-                classPathUrls.add(file.toURI().toURL());
-            } catch (final MalformedURLException e) {
-                LOG.warning("Class path not correctly formed : " + s);
+                // s = StringUtils.stripStart(StringUtils.strip(s, "file:/"), "file:\\");
+                File file = new File(s);
+                System.out.println("Path : " + s);
+                URL url = new URL("file:" + File.separator + file.toString());
+                classPathUrls.add(url);
+                System.out.println("Added class path url : " + url + ", exists : " + file.exists());
+            } catch (final Exception e) {
+                System.out.println("Class path not correctly formed : " + s);
+                e.printStackTrace();
             }
         });
         return classPathUrls.toArray(new URL[classPathUrls.size()]);
     }
 
-    public static Object[] getSystemClassPathUris() {
+    private static Object[] getSystemClassPathUris() {
         // System class path
         String classPath = System.getProperty("java.class.path");
         return classPath.split(File.pathSeparator);
     }
 
-    public static Object[] getManifestClassPathUris() {
+    private static Object[] getManifestClassPathUris() {
         // Manifest class path
         Object[] manifestClassPathUris = {};
+        //noinspection ConstantConditions
+        String libPath = "C:\\Users\\id851622\\workspace\\reaper-agent\\target\\lib"; // FILE.findFileRecursively(new File("."), Constant.LINUX_LOAD_MODULE).getParentFile().getAbsolutePath();
+        System.out.println("Our library path : " + libPath);
         Manifest manifest = MANIFEST.getAgentManifest();
+        System.out.println("Manifest : " + manifest);
         Attributes attributes = manifest.getMainAttributes();
         for (final Object key : attributes.keySet()) {
             String value = attributes.getValue(key.toString());
-            LOG.fine("Key : " + key + ", " + value);
-            if (key.equals("Class-Path")) {
+            System.out.println("Key : " + key + ", " + value);
+            if (key.toString().contains("Class-Path")) {
                 manifestClassPathUris = StringUtils.split(value, File.pathSeparator);
+                for (int i = 0; i < manifestClassPathUris.length; i++) {
+                    manifestClassPathUris[i] = libPath + File.pathSeparator + manifestClassPathUris[i];
+                    System.out.println(manifestClassPathUris[i]);
+                }
                 break;
             }
         }
@@ -176,7 +192,7 @@ public class ReaperAgent {
             final byte[] classBytes)
             throws IllegalClassFormatException {
         // Return the original bytes for the class
-        LOG.info("Class loader for agent : " + loader);
+        System.out.println("Class loader for agent : " + loader);
         return classBytes;
     }
 

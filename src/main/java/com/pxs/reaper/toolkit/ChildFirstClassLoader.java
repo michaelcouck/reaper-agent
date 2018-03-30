@@ -2,7 +2,6 @@ package com.pxs.reaper.toolkit;
 
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.logging.Logger;
 
 /**
  * @author Michael Couck
@@ -11,17 +10,15 @@ import java.util.logging.Logger;
  */
 public class ChildFirstClassLoader extends URLClassLoader {
 
-    private Logger logger = Logger.getLogger(ChildFirstClassLoader.class.getSimpleName());
-
     private ClassLoader parent;
 
     public ChildFirstClassLoader(final URL[] urls) {
         super(urls, null);
         this.parent = Thread.currentThread().getContextClassLoader();
-        logger.info("System classloader        : " + ClassLoader.getSystemClassLoader());
-        logger.info("System parent classloader : " + ClassLoader.getSystemClassLoader().getParent());
-        logger.info("Context classloader       : " + Thread.currentThread().getContextClassLoader());
-        logger.info("Class classloader         : " + ChildFirstClassLoader.class.getClassLoader());
+        System.out.println("    System classloader        : " + ClassLoader.getSystemClassLoader());
+        System.out.println("    System parent classloader : " + ClassLoader.getSystemClassLoader().getParent());
+        System.out.println("    Context classloader       : " + Thread.currentThread().getContextClassLoader());
+        System.out.println("    Class classloader         : " + ChildFirstClassLoader.class.getClassLoader());
     }
 
     /**
@@ -32,12 +29,12 @@ public class ChildFirstClassLoader extends URLClassLoader {
         try {
             // Try the URL class loader first
             Class<?> aClass = super.findClass(name);
-            logger.info("Url loaded class : " + aClass);
+            System.out.println("    Child loaded : " + aClass + ", " + this.getClass().getClassLoader());
             return aClass;
         } catch (final ClassNotFoundException e) {
             // If not go to the parent
             Class<?> aClass = parent.loadClass(name);
-            logger.info("Url loaded class : " + aClass);
+            System.out.println("    Parent loaded : " + aClass + ", " + this.getClass().getClassLoader());
             return aClass;
         }
     }

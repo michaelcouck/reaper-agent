@@ -1,6 +1,5 @@
 package com.pxs.reaper.action;
 
-import com.pxs.reaper.toolkit.FILE;
 import com.pxs.reaper.toolkit.MANIFEST;
 import com.pxs.reaper.toolkit.OS;
 import com.sun.tools.attach.AgentInitializationException;
@@ -11,11 +10,9 @@ import org.apache.commons.lang.StringUtils;
 import sun.jvmstat.monitor.MonitorException;
 import sun.jvmstat.monitor.MonitoredHost;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.*;
-import java.util.jar.Attributes;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -48,7 +45,7 @@ public class ReaperActionAgentMetrics extends TimerTask implements ReaperAction 
     private List<String> virtualMachineErrorPids;
 
     public ReaperActionAgentMetrics() {
-        pathToAgent = getPathToAgent();
+        pathToAgent = MANIFEST.getPathToAgent();
         virtualMachines = new HashMap<>();
         virtualMachineErrorPids = new LinkedList<>();
     }
@@ -81,13 +78,15 @@ public class ReaperActionAgentMetrics extends TimerTask implements ReaperAction 
                 if (OS.isOs("Windows")) {
                     System.loadLibrary("attach");
                 }
+                String manifestClassPath = MANIFEST.getAgentClassPath();
+                log.info("Java class path passed to attached agent : " + manifestClassPath);
                 if (StringUtils.isNotEmpty(pathToAgent)) {
                     virtualMachine = VirtualMachine.attach(pid);
                     // This doesn't seem to work on linux????!!! OMG WTF?!
-                    // virtualMachine.loadAgent(pathToAgent, systemPropertiesStringBuilder.toString());
+                    virtualMachine.loadAgent(pathToAgent, manifestClassPath);
                     // virtualMachine.loadAgentLibrary(pathToAgent, systemPropertiesStringBuilder.toString());
                     // virtualMachine.loadAgentPath(pathToAgent, systemPropertiesStringBuilder.toString());
-                    virtualMachine.loadAgent(pathToAgent);
+                    // virtualMachine.loadAgent(pathToAgent);
                 } else {
                     log.warning("Agent jar not found : ");
                 }
@@ -134,32 +133,6 @@ public class ReaperActionAgentMetrics extends TimerTask implements ReaperAction 
             //noinspection unchecked
             return Collections.EMPTY_SET;
         }
-    }
-
-    /**
-     * Access to the jar that contains the {@link ReaperAgent}. The path is necessary to attach dynamically to Java processes.
-     *
-     * @return the absolute, cleaned, normalized, canonical path to the jar containing 'this' Java agent
-     */
-    String getPathToAgent() {
-        String agentJarName = null;
-        Attributes attrs = MANIFEST.getAgentManifest().getMainAttributes();
-        for (final Object key : attrs.keySet()) {
-            String value = attrs.getValue(Attributes.Name.class.cast(key));
-            log.finest("Key : " + key.toString() + ", value : " + value);
-            if (key.toString().equals("Agent-Jar-Name") && value.contains("reaper-agent-")) {
-                agentJarName = value;
-            }
-        }
-
-        File agentJar = FILE.findFileRecursively(new File("."), agentJarName);
-        if (agentJar == null || !agentJar.exists()) {
-            log.log(Level.SEVERE, "Couldn't find agent jar file, returning dot folder: ");
-            return "./";
-        }
-        String canonicalPathToReaperAgentJar = FILE.cleanFilePath(agentJar.getAbsolutePath());
-        log.log(Level.INFO, "Found agent jar file : " + canonicalPathToReaperAgentJar);
-        return canonicalPathToReaperAgentJar;
     }
 
     /**
