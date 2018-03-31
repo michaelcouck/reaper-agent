@@ -8,9 +8,9 @@ Specification-Version: 1.0-SNAPSHOT
 Implementation-Title: reaper-agent
 Implementation-Version: 1.0-SNAPSHOT
 Implementation-Vendor-Id: com.pxs
-Main-Class: com.pxs.reaper.Reaper
-Agent-Class: com.pxs.reaper.action.ReaperAgent
-Premain-Class: com.pxs.reaper.action.ReaperAgent
+Main-Class: com.pxs.reaper.agent.Reaper
+Agent-Class: com.pxs.reaper.agent.action.ReaperAgent
+Premain-Class: com.pxs.reaper.agent.action.ReaperAgent
 Agent-Jar-Name: reaper-agent-1.0-SNAPSHOT.jar
 Class-Path: lib/sigar-1.6.4.jar lib/slf4j-api-1.6.4.jar lib/slf4j-log4
  j12-1.6.4.jar lib/log4j-1.2.16.jar lib/gson-2.7.jar lib/lombok-1.16.1

@@ -36,28 +36,25 @@
         </snapshotRepository>
     </distributionManagement>
 
-    <!--    <scm>
-            <url>http://el2604.bc:8585/reaper/reaper-agent</url>
-            <connection>scm:git:ssh://el2604.bc/reaper/reaper-agent.git</connection>
-            <developerConnection>scm:git:ssh://el2604.bc/reaper/reaper-agent.git</developerConnection>
-            <tag>HEAD</tag>
-        </scm>
-
-        <distributionManagement>
-            <repository>
-                <id>releases</id>
-                <url>http://el1881.bc:8081/nexus/content/repositories/releases</url>
-            </repository>
-            <snapshotRepository>
-                <id>snapshots</id>
-                <url>http://el1881.bc:8081/nexus/content/repositories/snapshots</url>
-            </snapshotRepository>
-        </distributionManagement>-->
+    <!--<scm>
+        <url>http://el2604.bc:8585/reaper/reaper-agent</url>
+        <connection>scm:git:ssh://el2604.bc/reaper/reaper-agent.git</connection>
+        <developerConnection>scm:git:ssh://el2604.bc/reaper/reaper-agent.git</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
+    <distributionManagement>
+        <repository>
+            <id>releases</id>
+            <url>http://el1881.bc:8081/nexus/content/repositories/releases</url>
+        </repository>
+        <snapshotRepository>
+            <id>snapshots</id>
+            <url>http://el1881.bc:8081/nexus/content/repositories/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>-->
 
     <properties>
         <sigar-version>1.6.4</sigar-version>
-        <!--<slf4j-version>1.6.4</slf4j-version>-->
-        <!--<log4j-version>1.2.16</log4j-version>-->
         <gson-version>2.7</gson-version>
         <junit-version>4.12</junit-version>
         <mockito-version>1.10.19</mockito-version>
@@ -65,7 +62,8 @@
         <jackson-version>2.8.3</jackson-version>
         <commons-lang-version>2.6</commons-lang-version>
 
-        <main-class>com.pxs.reaper.Reaper</main-class>
+        <main-class>com.pxs.reaper.agent.Reaper</main-class>
+        <agent-class>com.pxs.reaper.agent.action.ReaperAgent</agent-class>
 
         <!-- Serenity parameters -->
         <write-classes>-Dwrite.classes=true</write-classes>
@@ -122,21 +120,21 @@
                         <!-- This is important, if specified then the Class-Path will be ignored. -->
                         <index>false</index>
                         <manifest>
-                            <addClasspath>true</addClasspath>
-                            <classpathPrefix>lib/</classpathPrefix>
+                            <addClasspath>false</addClasspath>
+                            <!--<classpathPrefix>./lib</classpathPrefix>-->
                             <mainClass>${main-class}</mainClass>
                             <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
                             <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
                         </manifest>
                         <manifestEntries>
-                            <Agent-Class>com.pxs.reaper.action.ReaperAgent</Agent-Class>
+                            <Agent-Class>${agent-class}</Agent-Class>
                             <!--
                                 In addition to the entries from the dependencies, the system scoped
                                 dependencies need to be added manually for some unknown reason. Perhaps
                                 register a feature request in the jar plugin Jira?
                             -->
-                            <Class-Path>lib/tools-1.8.jar</Class-Path>
-                            <Premain-Class>com.pxs.reaper.action.ReaperAgent</Premain-Class>
+                            <Class-Path>lib/ lib/tools-1.8.jar</Class-Path>
+                            <Premain-Class>${agent-class}</Premain-Class>
                             <Agent-Jar-Name>${project.name}-${project.version}.jar</Agent-Jar-Name>
                         </manifestEntries>
                     </archive>
@@ -157,10 +155,11 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.0.0</version>
                 <executions>
                     <execution>
                         <id>copy-dependencies</id>
-                        <phase>prepare-package</phase>
+                        <phase>deploy</phase>
                         <goals>
                             <goal>copy-dependencies</goal>
                         </goals>
@@ -180,7 +179,7 @@
                 <executions>
                     <execution>
                         <id>package-reaper-agent</id>
-                        <phase>install</phase>
+                        <phase>deploy</phase>
                         <goals>
                             <goal>single</goal>
                         </goals>
@@ -306,6 +305,43 @@
                     <file>${project.basedir}/target/reaper-agent-1.0-SNAPSHOT-linux.zip</file>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <!-- Don't do this, strange behaviour -->
+                            <minimizeJar>false</minimizeJar>
+                            <!-- But do to this... -->
+                            <shadedArtifactAttached>false</shadedArtifactAttached>
+                            <relocations>
+                                <relocation>
+                                    <pattern>com.google</pattern>
+                                    <shadedPattern>shaded.com.google</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>com.fasterxml</pattern>
+                                    <shadedPattern>shaded.com.fasterxml</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.apache</pattern>
+                                    <shadedPattern>shaded.org.apache</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.glassfish</pattern>
+                                    <shadedPattern>shaded.org.glassfish</shadedPattern>
+                                </relocation>
+                            </relocations>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
@@ -316,6 +352,11 @@
             <version>${sigar-version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.9.4</version>
+        </dependency>
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
@@ -358,11 +399,6 @@
             <groupId>org.glassfish.tyrus</groupId>
             <artifactId>tyrus-container-grizzly-client</artifactId>
             <version>1.12</version>
-        </dependency>
-        <dependency>
-            <groupId>org.glassfish.jersey.core</groupId>
-            <artifactId>jersey-common</artifactId>
-            <version>2.22.2</version>
         </dependency>
 
         <dependency>
