@@ -133,7 +133,7 @@
                                 dependencies need to be added manually for some unknown reason. Perhaps
                                 register a feature request in the jar plugin Jira?
                             -->
-                            <Class-Path>lib/ lib/tools-1.8.jar</Class-Path>
+                            <Class-Path>lib/ lib/tools.jar</Class-Path>
                             <Premain-Class>${agent-class}</Premain-Class>
                             <Agent-Jar-Name>${project.name}-${project.version}.jar</Agent-Jar-Name>
                         </manifestEntries>
