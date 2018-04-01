@@ -422,14 +422,6 @@
         </dependency>
 
         <dependency>
-            <groupId>sun.jdk</groupId>
-            <artifactId>jconsole</artifactId>
-            <version>1.8</version>
-            <scope>system</scope>
-            <systemPath>${java.home}/../lib/jconsole.jar</systemPath>
-        </dependency>
-
-        <dependency>
             <groupId>org.jmockit</groupId>
             <artifactId>jmockit</artifactId>
             <version>1.13</version>
