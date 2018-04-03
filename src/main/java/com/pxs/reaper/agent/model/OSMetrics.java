@@ -15,7 +15,6 @@ import org.hyperic.sigar.OperatingSystem;
  * <p>
  * Potentially interesting additions to the metrics.
  * <pre>
- *     {@link NetConnection}
  *     {@link NetInterfaceStat}
  *     {@link FileSystemUsage}
  *     {@link DiskUsage}
@@ -49,6 +48,7 @@ public class OSMetrics extends Metrics {
     private NetConnection[] netConnections;
     private ProcStat procStat;
     private ResourceLimit resourceLimit;
+    private NetInterfaceStat[] netInterfaceStats;
     private OperatingSystem operatingSystem;
 
 }

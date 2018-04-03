@@ -7,8 +7,11 @@ import com.pxs.reaper.agent.transport.RestTransport;
 import com.pxs.reaper.agent.transport.Transport;
 import org.hyperic.sigar.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
 
 /**
  * The action will inspect the local operating system for metrics and telemetry data, populate an {@link OSMetrics} object
@@ -79,6 +82,7 @@ public class ReaperActionOSMetrics implements ReaperAction {
         ProcStat procStat = procStat(sigarProxy);
         Tcp tcp = tcp(sigarProxy);
         ResourceLimit resourceLimit = resourceLimit(sigarProxy);
+        NetInterfaceStat[] netInterfaceStats = getNetInterfaceStat(sigarProxy);
         OperatingSystem operatingSystem = getOperatingSystem();
 
         osMetrics.setCpu(cpu);
@@ -96,6 +100,7 @@ public class ReaperActionOSMetrics implements ReaperAction {
         osMetrics.setSwap(swap);
         osMetrics.setProcStat(procStat);
         osMetrics.setResourceLimit(resourceLimit);
+        osMetrics.setNetInterfaceStats(netInterfaceStats);
 
         osMetrics.setOperatingSystem(operatingSystem);
 
@@ -159,6 +164,20 @@ public class ReaperActionOSMetrics implements ReaperAction {
 
     private ResourceLimit resourceLimit(final SigarProxy sigarProxy) throws SigarException {
         return sigarProxy.getResourceLimit();
+    }
+
+    private NetInterfaceStat[] getNetInterfaceStat(final SigarProxy sigarProxy) throws SigarException {
+        String[] networkInterfaces = sigarProxy.getNetInterfaceList();
+        List<NetInterfaceStat> netInterfaceStats = new ArrayList<>();
+        Stream.of(networkInterfaces).forEach(networkInterface -> {
+            try {
+                NetInterfaceStat netInterfaceStat = sigarProxy.getNetInterfaceStat(networkInterface);
+                netInterfaceStats.add(netInterfaceStat);
+            } catch (final SigarException e) {
+                log.log(Level.INFO, "Error getting interface statistics : ", e);
+            }
+        });
+        return netInterfaceStats.toArray(new NetInterfaceStat[netInterfaceStats.size()]);
     }
 
     private OperatingSystem getOperatingSystem() {
