@@ -29,7 +29,6 @@ public interface Constant {
      * Properties file for various parameterization. Used in conjunction with {@link Property} annotations is quite convenient
      */
     String REAPER_PROPERTIES = /* "file:./" +  */ REAPER_PROPERTIES_FILE;
-
     /**
      * The $PATH variable in the Java process for linking the native libraries to
      */
@@ -38,11 +37,16 @@ public interface Constant {
      * The linux sigar load module, to find where in the folder structure these link libraries are and add them to the $PATH
      */
     String LINUX_LOAD_MODULE = "libsigar-amd64-linux.so";
-    String WEB_SOCKET_URI = "reaper-web-socket-uri";
+    /**
+     * Properties for the transport, web socket, the rest endpoints etc.
+     */
     String LOCAL_JMX_URI = "localhost-jmx-uri";
+    String WEB_SOCKET_URI = "reaper-web-socket-uri";
     String REST_URI_J_METRICS = "reaper-rest-uri-j-metrics";
     String REST_URI_O_METRICS = "reaper-rest-uri-o-metrics";
-
+    /**
+     * Sleep time hard coded, no way to parameterize(make dynamic) this on all platforms.
+     */
     long SLEEP_TIME = 15000;
 
 }
