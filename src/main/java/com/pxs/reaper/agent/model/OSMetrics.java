@@ -44,10 +44,12 @@ public class OSMetrics extends Metrics {
     private Swap swap;
     private NetInfo netInfo;
     private NetStat netStat;
-    private NetRoute[] netRoutes;
-    private NetConnection[] netConnections;
     private ProcStat procStat;
     private ResourceLimit resourceLimit;
+
+    private NetRoute[] netRoutes;
+    private NetConnection[] netConnections;
+    private String[] networkInterfaces;
     private NetInterfaceStat[] netInterfaceStats;
     private OperatingSystem operatingSystem;
 

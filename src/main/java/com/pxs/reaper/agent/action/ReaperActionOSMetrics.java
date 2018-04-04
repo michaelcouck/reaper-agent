@@ -82,6 +82,7 @@ public class ReaperActionOSMetrics implements ReaperAction {
         ProcStat procStat = procStat(sigarProxy);
         Tcp tcp = tcp(sigarProxy);
         ResourceLimit resourceLimit = resourceLimit(sigarProxy);
+        String[] networkInterfaces = getNEtworkInterfaces(sigarProxy);
         NetInterfaceStat[] netInterfaceStats = getNetInterfaceStat(sigarProxy);
         OperatingSystem operatingSystem = getOperatingSystem();
 
@@ -100,8 +101,8 @@ public class ReaperActionOSMetrics implements ReaperAction {
         osMetrics.setSwap(swap);
         osMetrics.setProcStat(procStat);
         osMetrics.setResourceLimit(resourceLimit);
+        osMetrics.setNetworkInterfaces(networkInterfaces);
         osMetrics.setNetInterfaceStats(netInterfaceStats);
-
         osMetrics.setOperatingSystem(operatingSystem);
 
         osMetrics.setType(OSMetrics.class.getName());
@@ -166,9 +167,13 @@ public class ReaperActionOSMetrics implements ReaperAction {
         return sigarProxy.getResourceLimit();
     }
 
+    private String[] getNEtworkInterfaces(final SigarProxy sigarProxy) throws SigarException {
+        return sigarProxy.getNetInterfaceList();
+    }
+
     private NetInterfaceStat[] getNetInterfaceStat(final SigarProxy sigarProxy) throws SigarException {
-        String[] networkInterfaces = sigarProxy.getNetInterfaceList();
         List<NetInterfaceStat> netInterfaceStats = new ArrayList<>();
+        String[] networkInterfaces = getNEtworkInterfaces(sigarProxy);
         Stream.of(networkInterfaces).forEach(networkInterface -> {
             try {
                 NetInterfaceStat netInterfaceStat = sigarProxy.getNetInterfaceStat(networkInterface);
