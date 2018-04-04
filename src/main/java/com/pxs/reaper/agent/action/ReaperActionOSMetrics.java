@@ -84,6 +84,8 @@ public class ReaperActionOSMetrics implements ReaperAction {
         ResourceLimit resourceLimit = resourceLimit(sigarProxy);
         String[] networkInterfaces = getNEtworkInterfaces(sigarProxy);
         NetInterfaceStat[] netInterfaceStats = getNetInterfaceStat(sigarProxy);
+        DiskUsage[] diskUsages = getDiskUsage(sigarProxy);
+        FileSystemUsage[] fileSystemUsages = getFileSystemUsage(sigarProxy);
         OperatingSystem operatingSystem = getOperatingSystem();
 
         osMetrics.setCpu(cpu);
@@ -103,6 +105,8 @@ public class ReaperActionOSMetrics implements ReaperAction {
         osMetrics.setResourceLimit(resourceLimit);
         osMetrics.setNetworkInterfaces(networkInterfaces);
         osMetrics.setNetInterfaceStats(netInterfaceStats);
+        osMetrics.setDiskUsages(diskUsages);
+        osMetrics.setFileSystemUsages(fileSystemUsages);
         osMetrics.setOperatingSystem(operatingSystem);
 
         osMetrics.setType(OSMetrics.class.getName());
@@ -183,6 +187,26 @@ public class ReaperActionOSMetrics implements ReaperAction {
             }
         });
         return netInterfaceStats.toArray(new NetInterfaceStat[netInterfaceStats.size()]);
+    }
+
+    private DiskUsage[] getDiskUsage(final SigarProxy sigarProxy) throws SigarException {
+        List<DiskUsage> diskUsages = new ArrayList<>();
+        FileSystem[] fileSystems = sigarProxy.getFileSystemList();
+        for (final FileSystem fileSystem : fileSystems) {
+            DiskUsage diskUsage = sigarProxy.getDiskUsage(fileSystem.getDirName());
+            diskUsages.add(diskUsage);
+        }
+        return diskUsages.toArray(new DiskUsage[diskUsages.size()]);
+    }
+
+    private FileSystemUsage[] getFileSystemUsage(final SigarProxy sigarProxy) throws SigarException {
+        List<FileSystemUsage> fileSystemUsages = new ArrayList<>();
+        FileSystem[] fileSystems = sigarProxy.getFileSystemList();
+        for (final FileSystem fileSystem : fileSystems) {
+            FileSystemUsage fileSystemUsage = sigarProxy.getFileSystemUsage(fileSystem.getDirName());
+            fileSystemUsages.add(fileSystemUsage);
+        }
+        return fileSystemUsages.toArray(new FileSystemUsage[fileSystemUsages.size()]);
     }
 
     private OperatingSystem getOperatingSystem() {

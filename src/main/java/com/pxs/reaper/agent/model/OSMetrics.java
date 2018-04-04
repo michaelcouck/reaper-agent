@@ -15,7 +15,6 @@ import org.hyperic.sigar.OperatingSystem;
  * <p>
  * Potentially interesting additions to the metrics.
  * <pre>
- *     {@link NetInterfaceStat}
  *     {@link FileSystemUsage}
  *     {@link DiskUsage}
  * </pre>
@@ -31,26 +30,41 @@ import org.hyperic.sigar.OperatingSystem;
 public class OSMetrics extends Metrics {
 
     /**
-     * Model objects from Sigar that can be used directly, i.e. transported over the wire
+     * Cpu information
      */
-    private double[] loadAverage;
-
     private Cpu[] cpu;
     private CpuPerc[] cpuPerc;
     private CpuInfo[] cpuInfo;
+    private ProcStat procStat;
+    private double[] loadAverage;
 
+    /**
+     * Network and traffic information
+     */
     private Tcp tcp;
-    private Mem mem;
-    private Swap swap;
     private NetInfo netInfo;
     private NetStat netStat;
-    private ProcStat procStat;
-    private ResourceLimit resourceLimit;
-
     private NetRoute[] netRoutes;
-    private NetConnection[] netConnections;
     private String[] networkInterfaces;
+    private NetConnection[] netConnections;
     private NetInterfaceStat[] netInterfaceStats;
+
+    /**
+     * Memory information
+     */
+    private Mem mem;
+    private Swap swap;
+
+    /**
+     * Disk information
+     */
+    private DiskUsage[] diskUsages;
+    private FileSystemUsage[] fileSystemUsages;
+
+    /**
+     * Operating system information, including system limits
+     */
+    private ResourceLimit resourceLimit;
     private OperatingSystem operatingSystem;
 
 }
