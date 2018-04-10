@@ -1,11 +1,9 @@
 package com.pxs.reaper.agent.action;
 
-import com.pxs.reaper.agent.Constant;
 import com.pxs.reaper.agent.Reaper;
 import com.pxs.reaper.agent.model.JMetrics;
 import com.pxs.reaper.agent.toolkit.THREAD;
 import com.pxs.reaper.agent.transport.Transport;
-import mockit.Deencapsulation;
 import org.apache.commons.io.FilenameUtils;
 import org.junit.Assert;
 import org.junit.Before;
@@ -13,6 +11,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.internal.util.reflection.Whitebox;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.io.File;
@@ -33,7 +32,7 @@ public class ReaperActionJvmMetricsTest {
     public void before() {
         Reaper.addNativeLibrariesToPath();
         reaperActionJvmMetrics = new ReaperActionJvmMetrics();
-        Deencapsulation.setField(reaperActionJvmMetrics, "transport", transport);
+        Whitebox.setInternalState(reaperActionJvmMetrics, "transport", transport);
     }
 
     @Test

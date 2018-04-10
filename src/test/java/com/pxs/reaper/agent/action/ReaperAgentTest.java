@@ -67,7 +67,7 @@ public class ReaperAgentTest {
     @Test
     public void premain() throws Exception {
         ReaperAgent.premain(args, instrumentation);
-        // Thread.sleep((long) (sleepTime * 1.5));
+        // Thread.sleep((long) (sleepTime * 30));
     }
 
     @Test

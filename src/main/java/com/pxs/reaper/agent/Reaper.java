@@ -58,7 +58,6 @@ public class Reaper {
         reaper.attachToOperatingSystem();
         reaper.attachToJavaProcesses();
         reaper.attachToJmxProcesses();
-
         // Either sleep for the period specified in the arguments list, or infinitely, almost...
         long waitTime = Long.MAX_VALUE;
         if (args != null && args.length >= 1 && NumberUtils.isNumber(args[0])) {

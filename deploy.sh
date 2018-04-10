@@ -2,12 +2,12 @@
 
 # cd reaper-agent
 # git pull
-# mvn install -DskipTests=true -DskipITs=true
+# ./go.sh
 # cp target/reaper-agent-1.0-SNAPSHOT.jar reaper
 
 # cd ../reaper-microservice
 # git pull
-# mvn install -DskipTests=true -DskipITs=true
+# ./go.sh
 
 for var in "$@"
 do

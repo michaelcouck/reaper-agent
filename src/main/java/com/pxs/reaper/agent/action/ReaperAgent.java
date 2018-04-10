@@ -2,16 +2,27 @@ package com.pxs.reaper.agent.action;
 
 import com.pxs.reaper.agent.Constant;
 import com.pxs.reaper.agent.Reaper;
+import com.pxs.reaper.agent.action.instrumentation.SocketClassFileTransformer;
 import com.pxs.reaper.agent.toolkit.ChildFirstClassLoader;
 import com.pxs.reaper.agent.toolkit.MANIFEST;
-import com.pxs.reaper.agent.toolkit.THREAD;
+import org.apache.commons.io.IOUtils;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.instrument.ClassDefinition;
 import java.lang.instrument.IllegalClassFormatException;
 import java.lang.instrument.Instrumentation;
+import java.lang.instrument.UnmodifiableClassException;
 import java.lang.management.ManagementFactory;
+import java.lang.reflect.Field;
+import java.net.Socket;
+import java.net.SocketImpl;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.security.ProtectionDomain;
+import java.util.Arrays;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.jar.JarFile;
 
 /**
  * This class is attached to the running Java processes on the local operating system by the {@link Reaper}. It
@@ -23,6 +34,8 @@ import java.security.ProtectionDomain;
  * @since 09-10-2017
  */
 public class ReaperAgent {
+
+    private static final AtomicBoolean LOADED = new AtomicBoolean(Boolean.FALSE);
 
     /**
      * Note to self, don't use anything in here other than java base classes.
@@ -41,6 +54,7 @@ public class ReaperAgent {
      */
     @SuppressWarnings("WeakerAccess")
     public static void agentmain(final String args, final Instrumentation instrumentation) throws Exception {
+        System.out.println("        Agent main : ");
         premain(args, instrumentation);
     }
 
@@ -51,35 +65,89 @@ public class ReaperAgent {
      * @param instrumentation the instrumentation implementation of the JVM
      */
     public static void premain(final String args, final Instrumentation instrumentation) {
-        final String pid = ManagementFactory.getRuntimeMXBean().getName();
-        // Check if there is already an agent present
-        if (Constant.AGENT_RUNNING.get()) {
-            System.out.println("Agent already running : " + pid);
-            // Do not start the actions running again in this JVM
-            return;
+        synchronized (LOADED) {
+            if (LOADED.get()) {
+                System.out.println("        Pre-main already called : ");
+                return;
+            }
+            LOADED.set(Boolean.TRUE);
         }
+        System.out.println("        Pre main : ");
 
-        System.out.println("Agent not running, starting... : " + pid);
-        Constant.AGENT_RUNNING.set(Boolean.TRUE);
+        try {
+            // instrumentation.appendToSystemClassLoaderSearch(new JarFile(MANIFEST.getPathToAgent()));
+            // This causes a linkage error in a target jvm but works in the unit test
+            // instrumentation.appendToBootstrapClassLoaderSearch(new JarFile(MANIFEST.getPathToAgent()));
+        } catch (final Exception e) {
+            e.printStackTrace();
+        }
+        // Do any transformation that we need
+        /*instrumentation.addTransformer(new SocketClassFileTransformer(), true);
+        try {
+            Class clazz = Socket.class;
+            String className = clazz.getName();
+            String classAsPath = className.replace('.', '/') + ".class";
+            InputStream stream = ClassLoader.getSystemClassLoader().getResourceAsStream(classAsPath);
+            byte[] classFileBytes = IOUtils.toByteArray(stream);
 
-        Action timerTask = () -> {
+            instrumentation.retransformClasses(Socket.class, SocketImpl.class);
+            instrumentation.redefineClasses(new ClassDefinition(clazz, classFileBytes));
+        } catch (final UnmodifiableClassException | ClassNotFoundException | IOException e) {
+            e.printStackTrace();
+        }*/
+
+        final String pid = ManagementFactory.getRuntimeMXBean().getName();
+        new Thread(() -> {
+            System.out.println("        Starting the reaper agent in the target jvm : " + pid);
+            URL[] urls = MANIFEST.getClassPathUrls();
+            System.out.println("        URLs for class loader : " + Arrays.toString(urls));
+            URLClassLoader urlClassLoader = new ChildFirstClassLoader(urls);
+
+            /*Field scl = null; // Get system class loader
+            try {
+                scl = ClassLoader.class.getDeclaredField("scl");
+                scl.setAccessible(true); // Set accessible
+                scl.set(null, urlClassLoader); // Update it to your class loader
+            } catch (final NoSuchFieldException | IllegalAccessException e) {
+                e.printStackTrace();
+            }*/
+
+            Thread.currentThread().setContextClassLoader(urlClassLoader);
+            ReaperActionJvmMetrics reaperActionJvmMetrics = new ReaperActionJvmMetrics();
+            Runtime.getRuntime().addShutdownHook(new Thread(reaperActionJvmMetrics::terminate));
+            System.out.println("        Started the reaper agent in the target jvm : " + pid);
+            //noinspection InfiniteLoopStatement
+            while (true) {
+                try {
+                    Thread.sleep(Constant.SLEEP_TIME);
+                } catch (final InterruptedException e) {
+                    e.printStackTrace();
+                }
+                reaperActionJvmMetrics.run();
+            }
+        }).start();
+
+        /*Action startupAction = () -> {
             URL[] urls = MANIFEST.getClassPathUrls();
             if (!Thread.currentThread().getContextClassLoader().getClass().isAssignableFrom(ChildFirstClassLoader.class)) {
                 URLClassLoader urlClassLoader = new ChildFirstClassLoader(urls);
                 Thread.currentThread().setContextClassLoader(urlClassLoader);
             }
-            System.out.println("Starting the reaper agent in the target jvm : " + pid);
+            System.out.println("        Starting the reaper agent in the target jvm : " + pid);
             int sleepTime = (int) Constant.SLEEP_TIME;
             ReaperActionJvmMetrics reaperActionJvmMetrics = new ReaperActionJvmMetrics();
-            THREAD.scheduleAtFixedRate(reaperActionJvmMetrics, sleepTime, sleepTime);
-            Runtime.getRuntime().addShutdownHook(new Thread(reaperActionJvmMetrics::terminate));
-            System.out.println("Reaper agent successfully started in the target jvm : " + pid);
+            new Thread(() -> THREAD.scheduleAtFixedRate(reaperActionJvmMetrics, sleepTime, sleepTime)).start();
+            // Runtime.getRuntime().addShutdownHook(new Thread(reaperActionJvmMetrics::terminate));
+            System.out.println("        Started the reaper agent in the target jvm : " + pid);
+            new NetworkSocketInvoker().writeAndReadFromSocket();
         };
-        THREAD.schedule(timerTask, Constant.SLEEP_TIME);
+        THREAD.schedule(startupAction, Constant.SLEEP_TIME);*/
     }
 
     /**
-     * All kinds of opportunity here.
+     * All kinds of opportunity here. This method only gets called if the agent is started as a parameter on the
+     * start command. It does not re-define classes that are already loaded, or that are loaded out side of the classloader
+     * of the agent, which is the system class loader.
      */
     @SuppressWarnings({"WeakerAccess", "UnusedParameters"})
     public byte[] transform(
@@ -89,8 +157,8 @@ public class ReaperAgent {
             final ProtectionDomain protectionDomain,
             final byte[] classBytes)
             throws IllegalClassFormatException {
+        System.out.println("        Transform : " + loader + ":" + className);
         // Return the original bytes for the class
-        System.out.println("Class loader for agent : " + loader);
         return classBytes;
     }
 

@@ -53,6 +53,7 @@ abstract class ReaperActionMetrics implements ReaperAction {
         jMetrics.setCreated(System.currentTimeMillis());
         jMetrics.setIpAddress(HOST.hostname());
         jMetrics.setType(JMetrics.class.getName());
+        jMetrics.setCreated(System.currentTimeMillis());
 
         Runtime runtime = Runtime.getRuntime();
         jMetrics.setUpTime(runtimeMXBean.getUptime());
