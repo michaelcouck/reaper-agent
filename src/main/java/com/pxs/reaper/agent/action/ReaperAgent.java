@@ -5,6 +5,7 @@ import com.pxs.reaper.agent.Reaper;
 import com.pxs.reaper.agent.action.instrumentation.SocketClassFileTransformer;
 import com.pxs.reaper.agent.toolkit.ChildFirstClassLoader;
 import com.pxs.reaper.agent.toolkit.MANIFEST;
+import com.pxs.reaper.agent.toolkit.THREAD;
 import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
@@ -14,7 +15,6 @@ import java.lang.instrument.IllegalClassFormatException;
 import java.lang.instrument.Instrumentation;
 import java.lang.instrument.UnmodifiableClassException;
 import java.lang.management.ManagementFactory;
-import java.lang.reflect.Field;
 import java.net.Socket;
 import java.net.SocketImpl;
 import java.net.URL;
@@ -42,6 +42,7 @@ public class ReaperAgent {
      * <p>
      * TODO: Log bug report for linux. Passing arguments does not
      * TODO: work on linux, string concatenation logical error in the code.
+     * TODO: But works on windows... Sad...
      * <p>
      * JVM hook to dynamically load javaagent at runtime.
      * <p>
@@ -65,58 +66,81 @@ public class ReaperAgent {
      * @param instrumentation the instrumentation implementation of the JVM
      */
     public static void premain(final String args, final Instrumentation instrumentation) {
+        if (!shouldAttach()) {
+            return;
+        }
+        if (!shouldAttachToProcess()) {
+            return;
+        }
+
+        System.out.println("        Pre main : ");
+        retransformClasses(instrumentation);
+        startHeartbeatThread(ManagementFactory.getRuntimeMXBean().getName());
+    }
+
+    /**
+     * Checks to see if the agent is already attached and running, if it is then
+     * we should not attach again.
+     *
+     * @return whether we should attach or not
+     */
+    private static boolean shouldAttach() {
         synchronized (LOADED) {
             if (LOADED.get()) {
                 System.out.println("        Pre-main already called : ");
-                return;
+                return !LOADED.get();
             }
             LOADED.set(Boolean.TRUE);
+            return LOADED.get();
         }
-        System.out.println("        Pre main : ");
+    }
 
-        try {
-            // instrumentation.appendToSystemClassLoaderSearch(new JarFile(MANIFEST.getPathToAgent()));
-            // This causes a linkage error in a target jvm but works in the unit test
-            // instrumentation.appendToBootstrapClassLoaderSearch(new JarFile(MANIFEST.getPathToAgent()));
-        } catch (final Exception e) {
-            e.printStackTrace();
+    /**
+     * Avoids attaching to Intellij and potentially other processes that we don't want to attach to.
+     *
+     * @return whether we should attach to this process or not
+     */
+    private static boolean shouldAttachToProcess() {
+        String classPath = ManagementFactory.getRuntimeMXBean().getClassPath();
+        String bootClassPath = ManagementFactory.getRuntimeMXBean().getBootClassPath();
+        /*System.out.println("        Class path : " + classPath);
+        System.out.println("        Boot class path : " + bootClassPath);*/
+        String ideaUi = "idea-IU";
+        if (classPath.contains(ideaUi) || bootClassPath.contains(ideaUi)) {
+            return Boolean.FALSE;
         }
-        // Do any transformation that we need
-        /*instrumentation.addTransformer(new SocketClassFileTransformer(), true);
-        try {
-            Class clazz = Socket.class;
-            String className = clazz.getName();
-            String classAsPath = className.replace('.', '/') + ".class";
-            InputStream stream = ClassLoader.getSystemClassLoader().getResourceAsStream(classAsPath);
-            byte[] classFileBytes = IOUtils.toByteArray(stream);
+        return Boolean.TRUE;
+    }
 
+    private static void retransformClasses(final Instrumentation instrumentation) {
+        try {
+            // Add our own classes to the boot class loader
+            instrumentation.appendToSystemClassLoaderSearch(new JarFile(MANIFEST.getPathToAgent()));
+            instrumentation.appendToBootstrapClassLoaderSearch(new JarFile(MANIFEST.getPathToAgent()));
+            // Do any transformation that we need
+            instrumentation.addTransformer(new SocketClassFileTransformer(), true);
             instrumentation.retransformClasses(Socket.class, SocketImpl.class);
-            instrumentation.redefineClasses(new ClassDefinition(clazz, classFileBytes));
-        } catch (final UnmodifiableClassException | ClassNotFoundException | IOException e) {
-            e.printStackTrace();
-        }*/
+        } catch (final Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-        final String pid = ManagementFactory.getRuntimeMXBean().getName();
+    /**
+     * Starts the thread that will periodically post metrics to the service for analysis.
+     *
+     * @param pid the pid of this process for logging
+     */
+    @SuppressWarnings("InfiniteLoopStatement")
+    private static void startHeartbeatThread(final String pid) {
         new Thread(() -> {
             System.out.println("        Starting the reaper agent in the target jvm : " + pid);
             URL[] urls = MANIFEST.getClassPathUrls();
-            System.out.println("        URLs for class loader : " + Arrays.toString(urls));
-            URLClassLoader urlClassLoader = new ChildFirstClassLoader(urls);
-
-            /*Field scl = null; // Get system class loader
-            try {
-                scl = ClassLoader.class.getDeclaredField("scl");
-                scl.setAccessible(true); // Set accessible
-                scl.set(null, urlClassLoader); // Update it to your class loader
-            } catch (final NoSuchFieldException | IllegalAccessException e) {
-                e.printStackTrace();
-            }*/
-
-            Thread.currentThread().setContextClassLoader(urlClassLoader);
+            System.out.println("        URLs for class loader : " + urls.length);
+            ChildFirstClassLoader childFirstClassLoader = new ChildFirstClassLoader(urls);
+            Thread.currentThread().setContextClassLoader(childFirstClassLoader);
             ReaperActionJvmMetrics reaperActionJvmMetrics = new ReaperActionJvmMetrics();
             Runtime.getRuntime().addShutdownHook(new Thread(reaperActionJvmMetrics::terminate));
             System.out.println("        Started the reaper agent in the target jvm : " + pid);
-            //noinspection InfiniteLoopStatement
             while (true) {
                 try {
                     Thread.sleep(Constant.SLEEP_TIME);
@@ -126,22 +150,50 @@ public class ReaperAgent {
                 reaperActionJvmMetrics.run();
             }
         }).start();
+    }
 
-        /*Action startupAction = () -> {
+    /**
+     * Note to self: Class loading protection domain and linkage errors for some strange reason.
+     *
+     * @param pid the pid of the process, just for logging
+     */
+    @SuppressWarnings("unused")
+    private static void startExecutorThread(final String pid) {
+        Action startupAction = () -> {
             URL[] urls = MANIFEST.getClassPathUrls();
-            if (!Thread.currentThread().getContextClassLoader().getClass().isAssignableFrom(ChildFirstClassLoader.class)) {
-                URLClassLoader urlClassLoader = new ChildFirstClassLoader(urls);
-                Thread.currentThread().setContextClassLoader(urlClassLoader);
-            }
+            URLClassLoader urlClassLoader = new ChildFirstClassLoader(urls);
+            Thread.currentThread().setContextClassLoader(urlClassLoader);
             System.out.println("        Starting the reaper agent in the target jvm : " + pid);
-            int sleepTime = (int) Constant.SLEEP_TIME;
             ReaperActionJvmMetrics reaperActionJvmMetrics = new ReaperActionJvmMetrics();
-            new Thread(() -> THREAD.scheduleAtFixedRate(reaperActionJvmMetrics, sleepTime, sleepTime)).start();
-            // Runtime.getRuntime().addShutdownHook(new Thread(reaperActionJvmMetrics::terminate));
+            THREAD.scheduleAtFixedRate(reaperActionJvmMetrics, Constant.SLEEP_TIME, Constant.SLEEP_TIME);
+            Runtime.getRuntime().addShutdownHook(new Thread(reaperActionJvmMetrics::terminate));
             System.out.println("        Started the reaper agent in the target jvm : " + pid);
-            new NetworkSocketInvoker().writeAndReadFromSocket();
         };
-        THREAD.schedule(startupAction, Constant.SLEEP_TIME);*/
+        THREAD.schedule(startupAction, Constant.SLEEP_TIME);
+    }
+
+    /**
+     * Alternative entry point for re-definition in stead of {@link Instrumentation#retransformClasses(Class[])}.
+     *
+     * @param instrumentation the JVM entry point for redefining classes
+     * @throws IOException                bla.
+     * @throws UnmodifiableClassException bla.
+     * @throws ClassNotFoundException     bla.
+     */
+    @SuppressWarnings("unused")
+    private static void redefineClasses(final Instrumentation instrumentation) throws IOException, UnmodifiableClassException, ClassNotFoundException {
+        Class[] classesToRedefine = new Class[]{Socket.class, SocketImpl.class};
+        for (final Class<?> clazz : classesToRedefine) {
+            instrumentation.redefineClasses(getClassDefinition(clazz));
+        }
+    }
+
+    private static ClassDefinition getClassDefinition(final Class<?> clazz) throws IOException {
+        String className = clazz.getName();
+        String classAsPath = className.replace('.', '/') + ".class";
+        InputStream stream = ClassLoader.getSystemClassLoader().getResourceAsStream(classAsPath);
+        byte[] classFileBytes = IOUtils.toByteArray(stream);
+        return new ClassDefinition(clazz, classFileBytes);
     }
 
     /**
@@ -158,7 +210,7 @@ public class ReaperAgent {
             final byte[] classBytes)
             throws IllegalClassFormatException {
         System.out.println("        Transform : " + loader + ":" + className);
-        // Return the original bytes for the class
+        // Return the original bytes for the class for now... We dynamically attach, so this method is not called.
         return classBytes;
     }
 

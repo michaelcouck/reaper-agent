@@ -49,6 +49,8 @@ public class ReaperActionJvmMetrics extends ReaperActionMetrics {
         classloading(jMetrics, ManagementFactory.getClassLoadingMXBean());
         os(jMetrics, ManagementFactory.getOperatingSystemMXBean());
 
+        networkThroughput(jMetrics);
+
         return jMetrics;
     }
 

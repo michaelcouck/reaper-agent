@@ -86,7 +86,7 @@ public class ReaperActionOSMetrics implements ReaperAction {
         NetInterfaceStat[] netInterfaceStats = getNetInterfaceStat(sigarProxy);
         DiskUsage[] diskUsages = getDiskUsage(sigarProxy);
         FileSystemUsage[] fileSystemUsages = getFileSystemUsage(sigarProxy);
-        OperatingSystem operatingSystem = getOperatingSystem();
+        // OperatingSystem operatingSystem = getOperatingSystem();
 
         osMetrics.setCpu(cpu);
         osMetrics.setCpuPerc(cpuPerc);
@@ -107,7 +107,7 @@ public class ReaperActionOSMetrics implements ReaperAction {
         osMetrics.setNetInterfaceStats(netInterfaceStats);
         osMetrics.setDiskUsages(diskUsages);
         osMetrics.setFileSystemUsages(fileSystemUsages);
-        osMetrics.setOperatingSystem(operatingSystem);
+        // osMetrics.setOperatingSystem(operatingSystem);
 
         osMetrics.setType(OSMetrics.class.getName());
         osMetrics.setCreated(System.currentTimeMillis());
@@ -193,6 +193,10 @@ public class ReaperActionOSMetrics implements ReaperAction {
         List<DiskUsage> diskUsages = new ArrayList<>();
         FileSystem[] fileSystems = sigarProxy.getFileSystemList();
         for (final FileSystem fileSystem : fileSystems) {
+            if (fileSystem.getType() == 1) {
+                continue;
+            }
+            // System.out.println("Name : " + fileSystem.getDirName() + ":" + fileSystem.getType());
             DiskUsage diskUsage = sigarProxy.getDiskUsage(fileSystem.getDirName());
             diskUsages.add(diskUsage);
         }
@@ -209,6 +213,7 @@ public class ReaperActionOSMetrics implements ReaperAction {
         return fileSystemUsages.toArray(new FileSystemUsage[fileSystemUsages.size()]);
     }
 
+    @SuppressWarnings("unused")
     private OperatingSystem getOperatingSystem() {
         return OperatingSystem.getInstance();
     }

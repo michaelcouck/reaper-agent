@@ -1,12 +1,10 @@
 package com.pxs.reaper.agent;
 
+import com.pxs.reaper.agent.model.Compilation;
 import com.pxs.reaper.agent.toolkit.NetworkSocketInvoker;
 import com.pxs.reaper.agent.toolkit.THREAD;
 import com.pxs.reaper.agent.transport.Transport;
 import org.apache.commons.lang.StringUtils;
-import org.jeasy.props.PropertiesInjectorBuilder;
-import org.jeasy.props.api.PropertiesInjector;
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -26,12 +24,6 @@ public class ReaperIntegration {
     private Reaper reaper;
     @Mock
     private Transport transport;
-
-    @After
-    public void after() {
-        PropertiesInjector propertiesInjector = PropertiesInjectorBuilder.aNewPropertiesInjector();
-        propertiesInjector.injectProperties(Constant.class);
-    }
 
     @Test
     @Ignore
@@ -64,6 +56,7 @@ public class ReaperIntegration {
     public void attachToJavaProcesses() throws IOException, InterruptedException {
         reaper.attachToJavaProcesses();
         THREAD.sleep(Constant.SLEEP_TIME * 4);
+        // new Compilation().getOutputStream();
         new NetworkSocketInvoker().writeAndReadFromSocket();
         THREAD.sleep(Constant.SLEEP_TIME);
         // Mockito.verify(transport, Mockito.atLeast(1)).postMetrics(Mockito.anyObject());

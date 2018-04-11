@@ -1,7 +1,5 @@
 package com.pxs.reaper.agent;
 
-import org.jeasy.props.annotations.Property;
-
 /**
  * Note to self, don't put anything in here that is not {@link java}, i.e. nothing
  * that is not from rt.jar/tools.jar, and certainly nothing functional, only scalar
@@ -19,7 +17,7 @@ public interface Constant {
      */
     String REAPER_PROPERTIES_FILE = "reaper-application.properties";
     /**
-     * Properties file for various parameterization. Used in conjunction with {@link Property} annotations is quite convenient
+     * Properties file for various parameterization. Used in conjunction with Property annotations is quite convenient
      */
     String REAPER_PROPERTIES = /* "file:./" + */ REAPER_PROPERTIES_FILE;
     /**
@@ -40,6 +38,6 @@ public interface Constant {
     /**
      * Sleep time hard coded, no way to parameterize(make dynamic) this on all platforms.
      */
-    long SLEEP_TIME = 3000;
+    long SLEEP_TIME = 15000;
 
 }

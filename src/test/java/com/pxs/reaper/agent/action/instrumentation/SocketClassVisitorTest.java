@@ -2,13 +2,13 @@ package com.pxs.reaper.agent.action.instrumentation;
 
 import com.pxs.reaper.agent.toolkit.FILE;
 import org.apache.commons.io.IOUtils;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.objectweb.asm.*;
+import org.objectweb.asm.util.ASMifier;
+import org.objectweb.asm.util.TraceClassVisitor;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.Socket;
 import java.util.logging.Logger;
 
@@ -63,17 +63,49 @@ public class SocketClassVisitorTest {
 
         @Override
         public void visitInsn(int opcode) {
-            System.out.println("Method instruction : " + opcode);
             super.visitInsn(opcode);
         }
     }
 
     @Test
     public void redefineClass() {
-        System.out.println(Type.getInternalName(NetworkTrafficCollector.class));
+        // System.out.println(Type.getInternalName(NetworkTrafficCollector.class));
         // Attach to the local jvm
         // Open a socket to some where
         // Check that the network traffic collector is called
     }
 
+    @Test
+    @Ignore
+    public void inspectByteCode() throws Exception {
+        File file = FILE.findFileRecursively(new File("."), SocketOutputStream.class.getSimpleName() + ".class");
+        assert file != null;
+        ASMifier.main(new String[]{FILE.cleanFilePath(file.getAbsolutePath())});
+
+        String className = "java.net.SocketOutputStream";
+        String classAsPath = className.replace('.', '/') + ".class";
+        InputStream stream = ClassLoader.getSystemClassLoader().getResourceAsStream(classAsPath);
+        byte[] classFileBytes = IOUtils.toByteArray(stream);
+
+        ClassReader reader = new ClassReader(classFileBytes);
+        ClassWriter writer = new ClassWriter(reader, ClassWriter.COMPUTE_MAXS);
+        ClassVisitor visitor = new ClassVisitor(Opcodes.ASM5, writer) {
+        };
+        TraceClassVisitor traceClassVisitor = new TraceClassVisitor(visitor, new PrintWriter(System.out));
+        reader.accept(traceClassVisitor, ClassReader.EXPAND_FRAMES);
+    }
+
+}
+
+class SocketOutputStream extends ByteArrayOutputStream {
+
+    private Socket socket;
+
+    SocketOutputStream() throws IOException {
+        socket = new Socket("ikube.be", 80);
+    }
+
+    public void socketWrite(final byte[] b, final int off, final int len) {
+        NetworkTrafficCollector.collectOutputTraffic(socket, len);
+    }
 }

@@ -1,5 +1,6 @@
 package com.pxs.reaper.agent.action;
 
+import com.pxs.reaper.agent.action.instrumentation.NetworkTrafficCollector;
 import com.pxs.reaper.agent.model.*;
 import com.pxs.reaper.agent.toolkit.HOST;
 import org.apache.commons.io.FilenameUtils;
@@ -190,6 +191,19 @@ abstract class ReaperActionMetrics implements ReaperAction {
         classloading.setTotalLoadedClassCount(classLoadingMXBean.getTotalLoadedClassCount());
         classloading.setTotalLoadedClassCount(classLoadingMXBean.getUnloadedClassCount());
         jMetrics.setClassLoading(classloading);
+    }
+
+    /**
+     * Gets the network through put from the {@link NetworkTrafficCollector}, adds the nodes
+     * to the metrics object, and clears the network through put map of nodes for the next iteration.
+     *
+     * @param jMetrics the metrics to post to the analysis service
+     */
+    void networkThroughput(final JMetrics jMetrics) {
+        synchronized (NetworkTrafficCollector.NETWORK_ROUTES) {
+            jMetrics.setNetworkNodes(NetworkTrafficCollector.NETWORK_ROUTES.values());
+            NetworkTrafficCollector.NETWORK_ROUTES.clear();
+        }
     }
 
 }

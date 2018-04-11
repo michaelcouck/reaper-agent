@@ -61,7 +61,7 @@ public class ReaperActionAgentMetricsIntegration {
 
     @SuppressWarnings("unchecked")
     private <T> T getFieldValue(final Object object, final String fieldName) throws IllegalAccessException {
-        for (final Field field : object.getClass().getFields()) {
+        for (final Field field : object.getClass().getDeclaredFields()) {
             if (field.getName().equals(fieldName)) {
                 field.setAccessible(Boolean.TRUE);
                 return (T) field.get(object);

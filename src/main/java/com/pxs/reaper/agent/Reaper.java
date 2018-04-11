@@ -6,14 +6,13 @@ import com.pxs.reaper.agent.action.ReaperActionOSMetrics;
 import com.pxs.reaper.agent.toolkit.FILE;
 import com.pxs.reaper.agent.toolkit.THREAD;
 import org.apache.commons.lang.math.NumberUtils;
+import org.jeasy.props.PropertiesInjectorBuilder;
 import org.jeasy.props.api.PropertiesInjector;
 
 import java.io.File;
 import java.lang.management.ManagementFactory;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import static org.jeasy.props.PropertiesInjectorBuilder.aNewPropertiesInjector;
 
 /**
  * This class sets up the agents running on the local operating system and in the JVMs potentially. Functions that it
@@ -95,8 +94,7 @@ public class Reaper {
     private PropertiesInjector propertiesInjector;
 
     private Reaper() {
-        propertiesInjector = aNewPropertiesInjector();
-        propertiesInjector.injectProperties(this);
+        propertiesInjector = PropertiesInjectorBuilder.aNewPropertiesInjector();
         String vmName = ManagementFactory.getRuntimeMXBean().getName();
         log.log(Level.FINEST, "Reaper virtual machine name : " + vmName);
     }
