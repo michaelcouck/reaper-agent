@@ -20,7 +20,6 @@ import java.net.SocketImpl;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.security.ProtectionDomain;
-import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.jar.JarFile;
 
@@ -105,8 +104,10 @@ public class ReaperAgent {
         String bootClassPath = ManagementFactory.getRuntimeMXBean().getBootClassPath();
         /*System.out.println("        Class path : " + classPath);
         System.out.println("        Boot class path : " + bootClassPath);*/
+        String reaperAgentName = "reaper-agent";
         String ideaUi = "idea-IU";
-        if (classPath.contains(ideaUi) || bootClassPath.contains(ideaUi)) {
+        if (classPath.contains(ideaUi) || bootClassPath.contains(ideaUi) ||
+                classPath.contains(reaperAgentName) || bootClassPath.contains(reaperAgentName)) {
             return Boolean.FALSE;
         }
         return Boolean.TRUE;
