@@ -9,7 +9,6 @@ import java.util.Collection;
 @Getter
 @Setter
 @ToString
-@SuppressWarnings("WeakerAccess")
 public abstract class Metrics {
 
     protected String id;

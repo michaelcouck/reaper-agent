@@ -29,8 +29,8 @@ public class NetworkTrafficCollector {
             networkNode.setLocalPort(localAddress.getPort());
             networkNode.setLocalAddress(localAddress.getHostName());
 
-            networkNode.setRemotePort(socket.getPort());
-            networkNode.setRemoteAddress(remoteAddress.getHostName());
+            networkNode.getRemotePorts().add(socket.getPort());
+            networkNode.getRemoteAddresses().add(remoteAddress.getHostName());
             NETWORK_ROUTES.put(route, networkNode);
         }
         networkNode.setOutput(networkNode.getOutput() + len);

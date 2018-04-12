@@ -1,5 +1,9 @@
 package com.pxs.reaper.agent.action.instrumentation;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.junit.Before;
 import org.junit.Test;
 import org.openjdk.jmh.annotations.OutputTimeUnit;
@@ -32,6 +36,14 @@ public class NetworkTrafficCollectorTest {
         double iterationsPerSecond = iterations / duration;
         System.out.println("Iterations per second : " + iterationsPerSecond);
         NetworkTrafficCollector.log = Boolean.TRUE;
+    }
+
+    @Test
+    public void network() throws IOException {
+        HttpClient httpClient = HttpClientBuilder.create().build();
+        HttpGet getMethod = new HttpGet("https://google.com");
+        HttpResponse response = httpClient.execute(getMethod);
+        System.out.println("HTTP Status of response: " + response.getStatusLine().getStatusCode());
     }
 
 }

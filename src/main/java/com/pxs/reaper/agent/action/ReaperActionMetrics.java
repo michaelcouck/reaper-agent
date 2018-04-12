@@ -6,6 +6,7 @@ import com.pxs.reaper.agent.toolkit.HOST;
 import org.apache.commons.io.FilenameUtils;
 
 import java.lang.management.*;
+import java.security.CodeSource;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -60,6 +61,15 @@ abstract class ReaperActionMetrics implements ReaperAction {
         jMetrics.setUpTime(runtimeMXBean.getUptime());
         jMetrics.setStartTime(runtimeMXBean.getStartTime());
         jMetrics.setAvailableProcessors((short) runtime.availableProcessors());
+
+        try {
+            CodeSource codeSource = this.getClass().getProtectionDomain().getCodeSource();
+            if (codeSource != null) {
+                jMetrics.setCodeBase(FilenameUtils.getName(codeSource.getLocation().getPath()));
+            }
+        } catch (final Exception e) {
+            System.err.println(e.getMessage());
+        }
     }
 
     /**
