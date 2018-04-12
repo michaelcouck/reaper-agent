@@ -5,7 +5,7 @@ import com.pxs.reaper.agent.action.ReaperActionJmxMetrics;
 import com.pxs.reaper.agent.action.ReaperActionOSMetrics;
 import com.pxs.reaper.agent.toolkit.FILE;
 import com.pxs.reaper.agent.toolkit.THREAD;
-import org.apache.commons.lang.math.NumberUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.jeasy.props.PropertiesInjectorBuilder;
 import org.jeasy.props.api.PropertiesInjector;
 
@@ -59,6 +59,7 @@ public class Reaper {
         reaper.attachToJmxProcesses();
         // Either sleep for the period specified in the arguments list, or infinitely, almost...
         long waitTime = Long.MAX_VALUE;
+        //noinspection deprecation
         if (args != null && args.length >= 1 && NumberUtils.isNumber(args[0])) {
             waitTime = Long.parseLong(args[0]);
         }

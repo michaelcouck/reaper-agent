@@ -1,10 +1,9 @@
 package com.pxs.reaper.agent;
 
-import com.pxs.reaper.agent.model.Compilation;
 import com.pxs.reaper.agent.toolkit.NetworkSocketInvoker;
 import com.pxs.reaper.agent.toolkit.THREAD;
 import com.pxs.reaper.agent.transport.Transport;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;

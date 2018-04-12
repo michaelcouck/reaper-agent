@@ -26,15 +26,15 @@ public class NetworkTrafficCollectorTest {
     @Test
     public void collectOutputTraffic() throws IOException {
         NetworkTrafficCollector.log = Boolean.FALSE;
-        double iterations = 1000000;
+        double iterations = 1000;
         double start = System.currentTimeMillis();
         for (int i = 0; i < iterations; i++) {
             NetworkTrafficCollector.collectOutputTraffic(socket, 1024);
         }
         double end = System.currentTimeMillis();
         double duration = end - start;
-        double iterationsPerSecond = iterations / duration;
-        System.out.println("Iterations per second : " + iterationsPerSecond);
+        double iterationsPerSecond = iterations / duration * 1000;
+        System.out.println("Iterations : " + iterations + ", duration : " + duration + "Iterations per second : " + iterationsPerSecond);
         NetworkTrafficCollector.log = Boolean.TRUE;
     }
 

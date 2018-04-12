@@ -1,6 +1,6 @@
 package com.pxs.reaper.agent.toolkit;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import sun.net.util.IPAddressUtil;
 
 import java.net.InetAddress;

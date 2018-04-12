@@ -210,9 +210,9 @@ abstract class ReaperActionMetrics implements ReaperAction {
      * @param jMetrics the metrics to post to the analysis service
      */
     void networkThroughput(final JMetrics jMetrics) {
-        synchronized (NetworkTrafficCollector.NETWORK_ROUTES) {
-            jMetrics.setNetworkNodes(new ArrayList<>(NetworkTrafficCollector.NETWORK_ROUTES.values()));
-            NetworkTrafficCollector.NETWORK_ROUTES.clear();
+        synchronized (NetworkTrafficCollector.NETWORK_NODE) {
+            jMetrics.setNetworkNode(NetworkTrafficCollector.NETWORK_NODE);
+            NetworkTrafficCollector.NETWORK_NODE.getAddressPortThroughPut().clear();
         }
     }
 
