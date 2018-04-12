@@ -14,25 +14,24 @@ public class NetworkTrafficCollector {
     public static final Map<String, NetworkNode> NETWORK_ROUTES = new HashMap<>();
 
     public static void collectOutputTraffic(final Socket socket, final int len) {
-        InetSocketAddress remoteAddress = (InetSocketAddress) socket.getRemoteSocketAddress();
-        String route = remoteAddress.getHostName() + ":" + remoteAddress.getPort();
+        InetSocketAddress localAddress = (InetSocketAddress) socket.getLocalSocketAddress();
+        String route = localAddress.getHostName() + ":" + localAddress.getPort();
         if (log) {
             System.out.println("Socket output : " + socket + ", length : " + len + ", route : " + route);
         }
 
         NetworkNode networkNode = NETWORK_ROUTES.get(route);
         if (networkNode == null) {
-            InetSocketAddress localAddress = (InetSocketAddress) socket.getLocalSocketAddress();
-
             networkNode = new NetworkNode();
-
             networkNode.setLocalPort(localAddress.getPort());
             networkNode.setLocalAddress(localAddress.getHostName());
-
-            networkNode.getRemotePorts().add(socket.getPort());
-            networkNode.getRemoteAddresses().add(remoteAddress.getHostName());
             NETWORK_ROUTES.put(route, networkNode);
         }
+
+        InetSocketAddress remoteAddress = (InetSocketAddress) socket.getRemoteSocketAddress();
+        networkNode.getRemotePorts().add(remoteAddress.getPort());
+        networkNode.getRemoteAddresses().add(remoteAddress.getHostName());
+
         networkNode.setOutput(networkNode.getOutput() + len);
     }
 
