@@ -10,6 +10,7 @@ import java.security.CodeSource;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.TreeSet;
 
 /**
  * Base class for JMX operations on management MBeans for the JVM. Takes various MBeans from the JVM and populates
@@ -211,7 +212,12 @@ abstract class ReaperActionMetrics implements ReaperAction {
      */
     void networkThroughput(final JMetrics jMetrics) {
         synchronized (NetworkTrafficCollector.NETWORK_NODE) {
-            jMetrics.setNetworkNode(NetworkTrafficCollector.NETWORK_NODE);
+            NetworkNode networkNode = new NetworkNode();
+            networkNode.setLocalAddress(NetworkTrafficCollector.NETWORK_NODE.getLocalAddress());
+            networkNode.setAddressPortThroughPut(new TreeSet<>(NetworkTrafficCollector.NETWORK_NODE.getAddressPortThroughPut()));
+
+            jMetrics.setNetworkNode(networkNode);
+
             NetworkTrafficCollector.NETWORK_NODE.getAddressPortThroughPut().clear();
         }
     }

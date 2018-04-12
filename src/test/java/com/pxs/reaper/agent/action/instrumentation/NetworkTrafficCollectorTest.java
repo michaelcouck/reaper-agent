@@ -20,13 +20,13 @@ public class NetworkTrafficCollectorTest {
 
     @Before
     public void before() throws IOException, RunnerException {
-        socket = new Socket("ikube.be", 80);
+        socket = new Socket("localhost", 8080);
     }
 
     @Test
     public void collectOutputTraffic() throws IOException {
         NetworkTrafficCollector.log = Boolean.FALSE;
-        double iterations = 1000;
+        double iterations = 1000000;
         double start = System.currentTimeMillis();
         for (int i = 0; i < iterations; i++) {
             NetworkTrafficCollector.collectOutputTraffic(socket, 1024);

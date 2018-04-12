@@ -7,12 +7,17 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.WeakHashMap;
 
 @SuppressWarnings("WeakerAccess")
 public class NetworkTrafficCollector {
 
     public static boolean log = Boolean.TRUE;
+
     public static final NetworkNode NETWORK_NODE = new NetworkNode();
+
+    public static final WeakHashMap<Integer, Integer> SOCKET_PORT = new WeakHashMap<>();
+    public static final WeakHashMap<Integer, String> SOCKET_ADDRESS = new WeakHashMap<>();
 
     static {
         try {
@@ -23,14 +28,29 @@ public class NetworkTrafficCollector {
     }
 
     public static void collectOutputTraffic(final Socket socket, final int len) {
-        InetSocketAddress localAddress = (InetSocketAddress) socket.getLocalSocketAddress();
-        String route = localAddress.getHostName() + ":" + localAddress.getPort();
         if (log) {
-            System.out.println("Socket output : " + socket + ", length : " + len + ", route : " + route);
+            System.out.println("Socket output : " + socket + ", length : " + len);
         }
-        InetSocketAddress remoteAddress = (InetSocketAddress) socket.getRemoteSocketAddress();
-        String remoteHostName = remoteAddress.getHostName();
-        Integer remotePort = remoteAddress.getPort();
+
+        Integer remotePort;
+        String remoteHostName;
+
+        int socketHash = socket.hashCode();
+
+        if (!SOCKET_ADDRESS.containsKey(socketHash)) {
+            InetSocketAddress remoteAddress = (InetSocketAddress) socket.getRemoteSocketAddress();
+            SOCKET_PORT.put(socketHash, remoteAddress.getPort());
+            SOCKET_ADDRESS.put(socketHash, remoteAddress.getHostName());
+
+            /*System.out.println(remoteAddress.getAddress().getHostName()); // ikube.be - localhost
+            System.out.println(remoteAddress.getAddress().getHostAddress()); // 81.82.213.177 - 127.0.0.1
+            System.out.println(remoteAddress.getAddress().getCanonicalHostName()); // d5152d5b1.static.telenet.be - localhost
+            System.out.println(new String(remoteAddress.getAddress().getAddress())); // ... - ...
+            System.out.println(remoteAddress.getHostName()); // ikube.be - localhost
+            System.out.println(remoteAddress.getHostString()); // ikube.be - localhost*/
+        }
+        remotePort = SOCKET_PORT.get(socketHash);
+        remoteHostName = SOCKET_ADDRESS.get(socketHash);
 
         for (final MutableTriple<String, Integer, Long> mutableTriple : NETWORK_NODE.getAddressPortThroughPut()) {
             if (remoteHostName.equals(mutableTriple.getLeft()) && remotePort.equals(mutableTriple.getMiddle())) {
