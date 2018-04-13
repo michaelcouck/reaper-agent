@@ -55,7 +55,7 @@ public class ReaperActionOSMetrics implements ReaperAction {
         try {
             // Gather all the operating system metrics, pop them in a OSMetrics object and post them
             OSMetrics osMetrics = getMetrics();
-            // LOG.info("Posting OS metrics : {}", osMetrics);
+            // log.info("Posting OS metrics : " + osMetrics);
             transport.postMetrics(osMetrics);
         } catch (final SigarException e) {
             // TODO: Re-initialize sigar here, and test it

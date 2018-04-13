@@ -105,9 +105,9 @@ public class ReaperAgent {
         /*System.out.println("        Class path : " + classPath);
         System.out.println("        Boot class path : " + bootClassPath);*/
         String ideaUi = "idea-IU";
-        // String reaperAgentName = "reaper-agent";
-        // classPath.contains(reaperAgentName) || bootClassPath.contains(reaperAgentName)
-        if (classPath.contains(ideaUi) || bootClassPath.contains(ideaUi)) {
+        String reaperAgentName = "reaper-agent";
+        if (classPath.contains(ideaUi) || bootClassPath.contains(ideaUi)
+                || classPath.contains(reaperAgentName) || bootClassPath.contains(reaperAgentName)) {
             return Boolean.FALSE;
         }
         return Boolean.TRUE;
