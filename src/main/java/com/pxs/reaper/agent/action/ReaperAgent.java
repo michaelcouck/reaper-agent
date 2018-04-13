@@ -104,10 +104,10 @@ public class ReaperAgent {
         String bootClassPath = ManagementFactory.getRuntimeMXBean().getBootClassPath();
         /*System.out.println("        Class path : " + classPath);
         System.out.println("        Boot class path : " + bootClassPath);*/
-        String reaperAgentName = "reaper-agent";
         String ideaUi = "idea-IU";
-        if (classPath.contains(ideaUi) || bootClassPath.contains(ideaUi) ||
-                classPath.contains(reaperAgentName) || bootClassPath.contains(reaperAgentName)) {
+        // String reaperAgentName = "reaper-agent";
+        // classPath.contains(reaperAgentName) || bootClassPath.contains(reaperAgentName)
+        if (classPath.contains(ideaUi) || bootClassPath.contains(ideaUi)) {
             return Boolean.FALSE;
         }
         return Boolean.TRUE;

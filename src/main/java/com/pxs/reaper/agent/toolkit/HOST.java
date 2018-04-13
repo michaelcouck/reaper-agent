@@ -74,7 +74,8 @@ public class HOST {
             boolean docker = networkInterface.getDisplayName().startsWith("doc");
             boolean vmware = networkInterface.getDisplayName().startsWith("vmn");
             boolean virtual = networkInterface.getDisplayName().startsWith("virbr");
-            if (docker || vmware || virtual) {
+            boolean panoptic = networkInterface.getDisplayName().startsWith("pan");
+            if (docker || vmware || virtual || panoptic) {
                 continue;
             }
             Enumeration<InetAddress> inetAddresses = networkInterface.getInetAddresses();

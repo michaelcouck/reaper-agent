@@ -1,12 +1,11 @@
 package com.pxs.reaper.agent.action.instrumentation;
 
 import com.pxs.reaper.agent.model.NetworkNode;
+import com.pxs.reaper.agent.toolkit.HOST;
 import org.apache.commons.lang3.tuple.MutableTriple;
 
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.WeakHashMap;
 
 @SuppressWarnings("WeakerAccess")
@@ -21,15 +20,15 @@ public class NetworkTrafficCollector {
 
     static {
         try {
-            NETWORK_NODE.setLocalAddress(InetAddress.getLocalHost().getHostName());
-        } catch (final UnknownHostException e) {
+            NETWORK_NODE.setLocalAddress(HOST.hostname());
+        } catch (final Exception e) {
             e.printStackTrace();
         }
     }
 
     public static void collectOutputTraffic(final Socket socket, final int len) {
         if (log) {
-            System.out.println("Socket output : " + socket + ", length : " + len);
+            System.out.println("Reaper : Socket output - " + socket + ", length : " + len);
         }
 
         Integer remotePort;
@@ -40,14 +39,7 @@ public class NetworkTrafficCollector {
         if (!SOCKET_ADDRESS.containsKey(socketHash)) {
             InetSocketAddress remoteAddress = (InetSocketAddress) socket.getRemoteSocketAddress();
             SOCKET_PORT.put(socketHash, remoteAddress.getPort());
-            SOCKET_ADDRESS.put(socketHash, remoteAddress.getHostName());
-
-            /*System.out.println(remoteAddress.getAddress().getHostName()); // ikube.be - localhost
-            System.out.println(remoteAddress.getAddress().getHostAddress()); // 81.82.213.177 - 127.0.0.1
-            System.out.println(remoteAddress.getAddress().getCanonicalHostName()); // d5152d5b1.static.telenet.be - localhost
-            System.out.println(new String(remoteAddress.getAddress().getAddress())); // ... - ...
-            System.out.println(remoteAddress.getHostName()); // ikube.be - localhost
-            System.out.println(remoteAddress.getHostString()); // ikube.be - localhost*/
+            SOCKET_ADDRESS.put(socketHash, remoteAddress.getAddress().getHostAddress());
         }
         remotePort = SOCKET_PORT.get(socketHash);
         remoteHostName = SOCKET_ADDRESS.get(socketHash);
@@ -64,7 +56,7 @@ public class NetworkTrafficCollector {
 
     @SuppressWarnings("unused")
     public static void collectInputTraffic(final Socket socket, final byte[] bytes, final int off, final int len) {
-        System.out.println("Socket input : " + socket + ", length : " + len + ", offset : " + off/* + ":" + Arrays.toString(bytes)*/);
+        System.out.println("Reaper : Socket input - " + socket + ", length : " + len + ", offset : " + off/* + ":" + Arrays.toString(bytes)*/);
     }
 
 }
