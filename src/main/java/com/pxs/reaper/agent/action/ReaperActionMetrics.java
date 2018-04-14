@@ -1,6 +1,5 @@
 package com.pxs.reaper.agent.action;
 
-import com.pxs.reaper.agent.action.instrumentation.NetworkTrafficCollector;
 import com.pxs.reaper.agent.model.*;
 import com.pxs.reaper.agent.toolkit.HOST;
 import org.apache.commons.io.FilenameUtils;
@@ -10,7 +9,6 @@ import java.security.CodeSource;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.TreeSet;
 
 /**
  * Base class for JMX operations on management MBeans for the JVM. Takes various MBeans from the JVM and populates
@@ -20,7 +18,7 @@ import java.util.TreeSet;
  * @version 01.00
  * @since 22-10-2017
  */
-abstract class ReaperActionMetrics implements ReaperAction {
+abstract class ReaperActionMetrics extends AReaperActionMetrics {
 
     /**
      * Populates the operating system information, like the name and the version, also the load average. Although
@@ -202,24 +200,6 @@ abstract class ReaperActionMetrics implements ReaperAction {
         classloading.setTotalLoadedClassCount(classLoadingMXBean.getTotalLoadedClassCount());
         classloading.setTotalLoadedClassCount(classLoadingMXBean.getUnloadedClassCount());
         jMetrics.setClassLoading(classloading);
-    }
-
-    /**
-     * Gets the network through put from the {@link NetworkTrafficCollector}, adds the nodes
-     * to the metrics object, and clears the network through put map of nodes for the next iteration.
-     *
-     * @param jMetrics the metrics to post to the analysis service
-     */
-    void networkThroughput(final JMetrics jMetrics) {
-        synchronized (NetworkTrafficCollector.NETWORK_NODE) {
-            NetworkNode networkNode = new NetworkNode();
-            networkNode.setLocalAddress(NetworkTrafficCollector.NETWORK_NODE.getLocalAddress());
-            networkNode.setAddressPortThroughPut(new TreeSet<>(NetworkTrafficCollector.NETWORK_NODE.getAddressPortThroughPut()));
-
-            jMetrics.setNetworkNode(networkNode);
-
-            NetworkTrafficCollector.NETWORK_NODE.getAddressPortThroughPut().clear();
-        }
     }
 
 }

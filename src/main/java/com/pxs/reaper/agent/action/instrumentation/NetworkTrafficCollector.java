@@ -34,30 +34,42 @@ public class NetworkTrafficCollector {
 
         Integer localPort;
         Integer remotePort;
-        String remoteHostName;
+        String remoteAddress;
 
         int socketHash = socket.hashCode();
 
         if (!SOCKET_ADDRESS.containsKey(socketHash)) {
-            InetSocketAddress localAddress = (InetSocketAddress) socket.getLocalSocketAddress();
-            InetSocketAddress remoteAddress = (InetSocketAddress) socket.getRemoteSocketAddress();
+            InetSocketAddress localInetSocketAddress = (InetSocketAddress) socket.getLocalSocketAddress();
+            InetSocketAddress remoteInetSocketAddress = (InetSocketAddress) socket.getRemoteSocketAddress();
 
-            LOCAL_SOCKET_PORT.put(socketHash, localAddress.getPort());
-            REMOTE_SOCKET_PORT.put(socketHash, remoteAddress.getPort());
-            SOCKET_ADDRESS.put(socketHash, remoteAddress.getAddress().getHostAddress());
+            localPort = localInetSocketAddress.getPort();
+            remotePort = remoteInetSocketAddress.getPort();
+            remoteAddress = remoteInetSocketAddress.getAddress().getHostAddress();
+
+            collectOutputTraffic(socketHash, localPort, remotePort, remoteAddress, len);
         }
 
         localPort = LOCAL_SOCKET_PORT.get(socketHash);
         remotePort = REMOTE_SOCKET_PORT.get(socketHash);
-        remoteHostName = SOCKET_ADDRESS.get(socketHash);
+        remoteAddress = SOCKET_ADDRESS.get(socketHash);
+
+        collectOutputTraffic(socketHash, localPort, remotePort, remoteAddress, len);
+    }
+
+    public static void collectOutputTraffic(final int socketHash, final int localPort, final int remotePort, final String remoteAddress, final long len) {
+        if (!SOCKET_ADDRESS.containsKey(socketHash)) {
+            LOCAL_SOCKET_PORT.put(socketHash, localPort);
+            REMOTE_SOCKET_PORT.put(socketHash, remotePort);
+            SOCKET_ADDRESS.put(socketHash, remoteAddress);
+        }
 
         for (final Quadruple<Integer, String, Integer, Long> mutableTriple : NETWORK_NODE.getAddressPortThroughPut()) {
-            if (remoteHostName.equals(mutableTriple.getLeftCentre()) && remotePort.equals(mutableTriple.getRightCentre())) {
+            if (remoteAddress.equals(mutableTriple.getLeftCentre()) && Integer.valueOf(remotePort).equals(mutableTriple.getRightCentre())) {
                 mutableTriple.setRight(mutableTriple.getRight() + len);
                 return;
             }
         }
-        Quadruple<Integer, String, Integer, Long> addressPortThroughPut = new Quadruple<>(localPort, remoteHostName, remotePort, (long) len);
+        Quadruple<Integer, String, Integer, Long> addressPortThroughPut = new Quadruple<>(localPort, remoteAddress, remotePort, (long) len);
         NETWORK_NODE.getAddressPortThroughPut().add(addressPortThroughPut);
     }
 

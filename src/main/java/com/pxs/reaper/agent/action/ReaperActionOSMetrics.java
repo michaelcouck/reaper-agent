@@ -22,7 +22,7 @@ import java.util.stream.Stream;
  * @version 1.0
  * @since 20-10-2017
  */
-public class ReaperActionOSMetrics implements ReaperAction {
+public class ReaperActionOSMetrics extends AReaperActionMetrics {
 
     private Logger log = Logger.getLogger(this.getClass().getSimpleName());
 
@@ -69,6 +69,8 @@ public class ReaperActionOSMetrics implements ReaperAction {
         OSMetrics osMetrics = new OSMetrics();
         osMetrics.setIpAddress(HOST.hostname());
 
+        networkThroughput(osMetrics);
+
         Cpu[] cpu = cpu(sigarProxy);
         CpuInfo[] cpuInfo = cpuInfo(sigarProxy);
         CpuPerc[] cpuPerc = cpuPerc(sigarProxy);
@@ -82,7 +84,7 @@ public class ReaperActionOSMetrics implements ReaperAction {
         ProcStat procStat = procStat(sigarProxy);
         Tcp tcp = tcp(sigarProxy);
         ResourceLimit resourceLimit = resourceLimit(sigarProxy);
-        String[] networkInterfaces = getNEtworkInterfaces(sigarProxy);
+        String[] networkInterfaces = getNetworkInterfaces(sigarProxy);
         NetInterfaceStat[] netInterfaceStats = getNetInterfaceStat(sigarProxy);
         DiskUsage[] diskUsages = getDiskUsage(sigarProxy);
         FileSystemUsage[] fileSystemUsages = getFileSystemUsage(sigarProxy);
@@ -171,13 +173,13 @@ public class ReaperActionOSMetrics implements ReaperAction {
         return sigarProxy.getResourceLimit();
     }
 
-    private String[] getNEtworkInterfaces(final SigarProxy sigarProxy) throws SigarException {
+    private String[] getNetworkInterfaces(final SigarProxy sigarProxy) throws SigarException {
         return sigarProxy.getNetInterfaceList();
     }
 
     private NetInterfaceStat[] getNetInterfaceStat(final SigarProxy sigarProxy) throws SigarException {
         List<NetInterfaceStat> netInterfaceStats = new ArrayList<>();
-        String[] networkInterfaces = getNEtworkInterfaces(sigarProxy);
+        String[] networkInterfaces = getNetworkInterfaces(sigarProxy);
         Stream.of(networkInterfaces).forEach(networkInterface -> {
             try {
                 NetInterfaceStat netInterfaceStat = sigarProxy.getNetInterfaceStat(networkInterface);
