@@ -1,8 +1,8 @@
 package com.pxs.reaper.agent.action.instrumentation;
 
 import com.pxs.reaper.agent.model.NetworkNode;
+import com.pxs.reaper.agent.model.Quadruple;
 import com.pxs.reaper.agent.toolkit.HOST;
-import org.apache.commons.lang3.tuple.MutableTriple;
 
 import java.net.InetSocketAddress;
 import java.net.Socket;
@@ -15,7 +15,8 @@ public class NetworkTrafficCollector {
 
     public static final NetworkNode NETWORK_NODE = new NetworkNode();
 
-    public static final WeakHashMap<Integer, Integer> SOCKET_PORT = new WeakHashMap<>();
+    public static final WeakHashMap<Integer, Integer> LOCAL_SOCKET_PORT = new WeakHashMap<>();
+    public static final WeakHashMap<Integer, Integer> REMOTE_SOCKET_PORT = new WeakHashMap<>();
     public static final WeakHashMap<Integer, String> SOCKET_ADDRESS = new WeakHashMap<>();
 
     static {
@@ -31,26 +32,32 @@ public class NetworkTrafficCollector {
             System.out.println("Reaper : Socket output - " + socket + ", length : " + len);
         }
 
+        Integer localPort;
         Integer remotePort;
         String remoteHostName;
 
         int socketHash = socket.hashCode();
 
         if (!SOCKET_ADDRESS.containsKey(socketHash)) {
+            InetSocketAddress localAddress = (InetSocketAddress) socket.getLocalSocketAddress();
             InetSocketAddress remoteAddress = (InetSocketAddress) socket.getRemoteSocketAddress();
-            SOCKET_PORT.put(socketHash, remoteAddress.getPort());
+
+            LOCAL_SOCKET_PORT.put(socketHash, localAddress.getPort());
+            REMOTE_SOCKET_PORT.put(socketHash, remoteAddress.getPort());
             SOCKET_ADDRESS.put(socketHash, remoteAddress.getAddress().getHostAddress());
         }
-        remotePort = SOCKET_PORT.get(socketHash);
+
+        localPort = LOCAL_SOCKET_PORT.get(socketHash);
+        remotePort = REMOTE_SOCKET_PORT.get(socketHash);
         remoteHostName = SOCKET_ADDRESS.get(socketHash);
 
-        for (final MutableTriple<String, Integer, Long> mutableTriple : NETWORK_NODE.getAddressPortThroughPut()) {
-            if (remoteHostName.equals(mutableTriple.getLeft()) && remotePort.equals(mutableTriple.getMiddle())) {
+        for (final Quadruple<Integer, String, Integer, Long> mutableTriple : NETWORK_NODE.getAddressPortThroughPut()) {
+            if (remoteHostName.equals(mutableTriple.getLeftCentre()) && remotePort.equals(mutableTriple.getRightCentre())) {
                 mutableTriple.setRight(mutableTriple.getRight() + len);
                 return;
             }
         }
-        MutableTriple<String, Integer, Long> addressPortThroughPut = new MutableTriple<>(remoteHostName, remotePort, (long) len);
+        Quadruple<Integer, String, Integer, Long> addressPortThroughPut = new Quadruple<>(localPort, remoteHostName, remotePort, (long) len);
         NETWORK_NODE.getAddressPortThroughPut().add(addressPortThroughPut);
     }
 

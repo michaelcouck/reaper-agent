@@ -20,7 +20,7 @@ public class NetworkTrafficCollectorTest {
 
     @Before
     public void before() throws IOException, RunnerException {
-        socket = new Socket("192.168.1.21", 8080);
+        socket = new Socket("localhost", 8100);
     }
 
     @Test

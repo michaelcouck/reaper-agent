@@ -2,7 +2,6 @@ package com.pxs.reaper.agent.model;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.apache.commons.lang3.tuple.MutableTriple;
 
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -13,6 +12,6 @@ public class NetworkNode {
 
     private String localAddress;
 
-    private SortedSet<MutableTriple<String, Integer, Long>> addressPortThroughPut = new TreeSet<>();
+    private SortedSet<Quadruple<Integer, String, Integer, Long>> addressPortThroughPut = new TreeSet<>();
 
 }

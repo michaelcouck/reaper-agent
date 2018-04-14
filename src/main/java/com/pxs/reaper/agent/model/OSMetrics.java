@@ -1,14 +1,11 @@
 package com.pxs.reaper.agent.model;
 
-// import com.couchbase.client.java.repository.annotation.Field;
-
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.hyperic.sigar.*;
 import org.hyperic.sigar.OperatingSystem;
-// import org.springframework.data.couchbase.core.mapping.Document;
 
 /**
  * Contains operating system metrics, low level.
