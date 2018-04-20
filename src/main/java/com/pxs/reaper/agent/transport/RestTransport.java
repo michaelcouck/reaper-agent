@@ -69,7 +69,8 @@ public class RestTransport implements Transport {
                 log.log(Level.WARNING, "Posting metrics was not successful : " + httpResponse);
             }
         } catch (final Exception e) {
-            log.log(Level.SEVERE, "Error posting to micro service, is it running?", e);
+            log.log(Level.SEVERE, "Error posting to micro service, is it running... : ");
+            log.log(Level.FINE,   "                   stack trace for network error : ");
         }
         return true;
     }
