@@ -65,6 +65,9 @@ abstract class ReaperActionMetrics extends AReaperActionMetrics {
             CodeSource codeSource = this.getClass().getProtectionDomain().getCodeSource();
             if (codeSource != null) {
                 jMetrics.setCodeBase(FilenameUtils.getName(codeSource.getLocation().getPath()));
+            } else {
+                String userDir = System.getProperty("user.dir");
+                jMetrics.setCodeBase(FilenameUtils.getName(userDir));
             }
         } catch (final Exception e) {
             System.err.println(e.getMessage());
