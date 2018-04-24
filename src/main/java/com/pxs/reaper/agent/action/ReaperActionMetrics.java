@@ -131,7 +131,7 @@ abstract class ReaperActionMetrics implements ReaperAction {
     void memory(final JMetrics jMetrics, final MemoryMXBean memoryMXBean) {
         Memory memory = new Memory();
 
-        memory.setNonHeapMemoryUsage(memoryMXBean.getHeapMemoryUsage());
+        memory.setHeapMemoryUsage(memoryMXBean.getHeapMemoryUsage());
         memory.setNonHeapMemoryUsage(memoryMXBean.getNonHeapMemoryUsage());
         memory.setObjectPendingFinalizationCount(memoryMXBean.getObjectPendingFinalizationCount());
 
