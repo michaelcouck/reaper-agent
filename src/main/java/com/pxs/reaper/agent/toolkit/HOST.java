@@ -1,6 +1,6 @@
 package com.pxs.reaper.agent.toolkit;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import sun.net.util.IPAddressUtil;
 
 import java.net.InetAddress;
@@ -49,7 +49,7 @@ public class HOST {
             throw new RuntimeException("Couldn't access the interfaces of this machine : ");
         }
         Collection<String> ipAddresses = ipAddressesForLocalHost(networkInterfaces);
-        ipAddressForLocalHost(ipAddresses);
+        HOSTNAME = ipAddressForLocalHost(ipAddresses);
         if (StringUtils.isEmpty(HOSTNAME)) {
             // Try the OpenShift host name environment variable
             HOSTNAME = System.getProperty("HOSTNAME", null);
@@ -74,7 +74,8 @@ public class HOST {
             boolean docker = networkInterface.getDisplayName().startsWith("doc");
             boolean vmware = networkInterface.getDisplayName().startsWith("vmn");
             boolean virtual = networkInterface.getDisplayName().startsWith("virbr");
-            if (docker || vmware || virtual) {
+            boolean panoptic = networkInterface.getDisplayName().startsWith("pan");
+            if (docker || vmware || virtual || panoptic) {
                 continue;
             }
             Enumeration<InetAddress> inetAddresses = networkInterface.getInetAddresses();
@@ -88,7 +89,7 @@ public class HOST {
         return ipAddresses;
     }
 
-    private static void ipAddressForLocalHost(final Collection<String> ipAddresses) {
+    public static String ipAddressForLocalHost(final Collection<String> ipAddresses) {
         for (final String ipAddress : ipAddresses) {
             // Exclude 127... localhost and loopback
             if (ipAddress.startsWith("127")) {
@@ -98,9 +99,9 @@ public class HOST {
                 continue;
             }
             // Select the first address that is IPV4
-            HOSTNAME = ipAddress;
-            return;
+            return ipAddress;
         }
+        return HOSTNAME;
     }
 
 }

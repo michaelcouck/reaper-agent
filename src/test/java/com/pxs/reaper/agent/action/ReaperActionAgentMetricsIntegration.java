@@ -2,7 +2,6 @@ package com.pxs.reaper.agent.action;
 
 import com.pxs.reaper.agent.toolkit.HOST;
 import com.sun.tools.attach.VirtualMachine;
-import mockit.Deencapsulation;
 import org.jeasy.props.PropertiesInjectorBuilder;
 import org.jeasy.props.api.PropertiesInjector;
 import org.junit.Assert;
@@ -14,6 +13,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import sun.jvmstat.monitor.MonitorException;
 import sun.jvmstat.monitor.MonitoredHost;
 
+import java.lang.reflect.Field;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.net.URISyntaxException;
@@ -47,16 +47,27 @@ public class ReaperActionAgentMetricsIntegration {
         try {
             reaperActionAgentMetrics.attachToJavaProcesses();
 
-            Map<String, VirtualMachine> virtualMachines = Deencapsulation.getField(reaperActionAgentMetrics, "virtualMachines");
+            Map<String, VirtualMachine> virtualMachines = getFieldValue(reaperActionAgentMetrics, "virtualMachines");
             int virtualMachinesSize = virtualMachines.size();
             Assert.assertTrue(virtualMachinesSize > 0);
 
             reaperActionAgentMetrics.attachToJavaProcesses();
-            virtualMachines = Deencapsulation.getField(reaperActionAgentMetrics, "virtualMachines");
+            virtualMachines = getFieldValue(reaperActionAgentMetrics, "virtualMachines");
             Assert.assertEquals(virtualMachinesSize, virtualMachines.size());
         } finally {
             reaperActionAgentMetrics.detachFromJavaProcesses();
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T> T getFieldValue(final Object object, final String fieldName) throws IllegalAccessException {
+        for (final Field field : object.getClass().getDeclaredFields()) {
+            if (field.getName().equals(fieldName)) {
+                field.setAccessible(Boolean.TRUE);
+                return (T) field.get(object);
+            }
+        }
+        throw new RuntimeException("Field does not exist : ");
     }
 
     @Test

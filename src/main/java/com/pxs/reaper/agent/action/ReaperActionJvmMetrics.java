@@ -17,7 +17,7 @@ import java.lang.management.ManagementFactory;
  * @version 01.00
  * @since 09-10-2017
  */
-class ReaperActionJvmMetrics extends ReaperActionMetrics {
+public class ReaperActionJvmMetrics extends ReaperActionMetrics {
 
     /**
      * Transport of the data over the wire.
@@ -48,6 +48,8 @@ class ReaperActionJvmMetrics extends ReaperActionMetrics {
         compilation(jMetrics, ManagementFactory.getCompilationMXBean());
         classloading(jMetrics, ManagementFactory.getClassLoadingMXBean());
         os(jMetrics, ManagementFactory.getOperatingSystemMXBean());
+
+        networkThroughput(jMetrics);
 
         return jMetrics;
     }

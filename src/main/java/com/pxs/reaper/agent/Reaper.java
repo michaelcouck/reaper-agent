@@ -5,15 +5,14 @@ import com.pxs.reaper.agent.action.ReaperActionJmxMetrics;
 import com.pxs.reaper.agent.action.ReaperActionOSMetrics;
 import com.pxs.reaper.agent.toolkit.FILE;
 import com.pxs.reaper.agent.toolkit.THREAD;
-import org.apache.commons.lang.math.NumberUtils;
+import org.apache.commons.lang3.math.NumberUtils;
+import org.jeasy.props.PropertiesInjectorBuilder;
 import org.jeasy.props.api.PropertiesInjector;
 
 import java.io.File;
 import java.lang.management.ManagementFactory;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import static org.jeasy.props.PropertiesInjectorBuilder.aNewPropertiesInjector;
 
 /**
  * This class sets up the agents running on the local operating system and in the JVMs potentially. Functions that it
@@ -58,9 +57,9 @@ public class Reaper {
         reaper.attachToOperatingSystem();
         reaper.attachToJavaProcesses();
         reaper.attachToJmxProcesses();
-
         // Either sleep for the period specified in the arguments list, or infinitely, almost...
         long waitTime = Long.MAX_VALUE;
+        //noinspection deprecation
         if (args != null && args.length >= 1 && NumberUtils.isNumber(args[0])) {
             waitTime = Long.parseLong(args[0]);
         }
@@ -96,8 +95,7 @@ public class Reaper {
     private PropertiesInjector propertiesInjector;
 
     private Reaper() {
-        propertiesInjector = aNewPropertiesInjector();
-        propertiesInjector.injectProperties(this);
+        propertiesInjector = PropertiesInjectorBuilder.aNewPropertiesInjector();
         String vmName = ManagementFactory.getRuntimeMXBean().getName();
         log.log(Level.FINEST, "Reaper virtual machine name : " + vmName);
     }

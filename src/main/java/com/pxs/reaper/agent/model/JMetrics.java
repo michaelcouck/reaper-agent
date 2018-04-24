@@ -27,8 +27,6 @@ public class JMetrics extends Metrics {
     private long startTime;
     private short availableProcessors;
 
-    private double throughput;
-
     private Memory memory;
     private Threading threading;
     private Compilation compilation;

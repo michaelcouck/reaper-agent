@@ -134,8 +134,11 @@
                                 register a feature request in the jar plugin Jira?
                             -->
                             <Class-Path>lib/ lib/tools.jar</Class-Path>
+                            <!--<Boot-Class-Path>lib/ lib/tools.jar lib/reaper-agent-1.0-SNAPSHOT.jar</Boot-Class-Path>-->
                             <Premain-Class>${agent-class}</Premain-Class>
                             <Agent-Jar-Name>${project.name}-${project.version}.jar</Agent-Jar-Name>
+                            <Can-Redefine-Classes>true</Can-Redefine-Classes>
+                            <Can-Retransform-Classes>true</Can-Retransform-Classes>
                         </manifestEntries>
                     </archive>
                 </configuration>
@@ -172,6 +175,92 @@
                     </execution>
                 </executions>
             </plugin>
+            <!--
+                This plugin is necessary to copy the dependencies to the lib directory
+                in the deployments directory for OpenShift because seemingly it is impossible
+                to actually have these artifacts copied by OpenShift it's self.
+            -->
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.6</version>
+                <configuration>
+                    <tasks>
+                        <copy todir="target/lib" overwrite="false" failonerror="false">
+                            <fileset dir="${project.basedir}/src/main/resources/lib">
+                                <include name="*.*"/>
+                            </fileset>
+                        </copy>
+                        <!-- On linux and in a pod on OpenShift this path must be /deployments/lib, and nothing else. -->
+                        <copy todir="/deployments/lib" overwrite="false" failonerror="false">
+                            <fileset dir="${project.basedir}/target/lib">
+                                <include name="*.*"/>
+                            </fileset>
+                        </copy>
+                    </tasks>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <!-- Don't do this, strange behaviour -->
+                            <minimizeJar>false</minimizeJar>
+                            <!-- But do do this... -->
+                            <shadedArtifactAttached>false</shadedArtifactAttached>
+                            <relocations>
+                                <relocation>
+                                    <pattern>com.google</pattern>
+                                    <shadedPattern>shaded.com.google</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>com.mashape</pattern>
+                                    <shadedPattern>shaded.com.mashape</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>com.zwitserloot</pattern>
+                                    <shadedPattern>shaded.com.zwitserloot</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.apache</pattern>
+                                    <shadedPattern>shaded.org.apache</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.glassfish</pattern>
+                                    <shadedPattern>shaded.org.glassfish</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.jeasy</pattern>
+                                    <shadedPattern>shaded.org.jeasy</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.json</pattern>
+                                    <shadedPattern>shaded.org.json</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.objectweb</pattern>
+                                    <shadedPattern>shaded.org.objectweb</shadedPattern>
+                                </relocation>
+                            </relocations>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
@@ -202,16 +291,16 @@
                     <includes>
                         <include>**/*Test.java</include>
                     </includes>
-                    <!--<argLine>${jmx-parameters}</argLine>-->
+                    <argLine>${jmx-parameters}</argLine>
                     <!--suppress MavenModelInspection -->
-                    <argLine>-javaagent:${project.basedir}/serenity/serenity.jar ${all-parameters}</argLine>
+                    <!--<argLine>-javaagent:${project.basedir}/serenity/serenity.jar ${all-parameters}</argLine>-->
                 </configuration>
             </plugin>
             <plugin>
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <version>2.18.1</version>
                 <configuration>
-                    <forkMode>once</forkMode>
+                    <forkMode>pertest</forkMode>
                     <!--suppress MavenModelInspection -->
                     <argLine>${headless-parameters} ${memory-parameters}</argLine>
                     <testFailureIgnore>true</testFailureIgnore>
@@ -229,56 +318,7 @@
                             <includes>
                                 <include>**/*Integration*.java</include>
                             </includes>
-                            <excludes>
-                                <exclude>**/*SystemIntegration*</exclude>
-                            </excludes>
                         </configuration>
-                    </execution>
-                    <execution>
-                        <id>system-tests</id>
-                        <phase>deploy</phase>
-                        <goals>
-                            <goal>integration-test</goal>
-                            <goal>verify</goal>
-                        </goals>
-                        <configuration>
-                            <includes>
-                                <include>**/*Integration*.java</include>
-                                <include>**/*SystemIntegration*.java</include>
-                            </includes>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <!--
-                This plugin is necessary to copy the dependencies to the lib directory
-                in the deployments directory for OpenShift because seemingly it is impossible
-                to actually have these artifacts copied by OpenShift it's self.
-            -->
-            <plugin>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <version>1.6</version>
-                <configuration>
-                    <tasks>
-                        <copy todir="target/lib" overwrite="false" failonerror="false">
-                            <fileset dir="${project.basedir}/src/main/resources/lib">
-                                <include name="*.*"/>
-                            </fileset>
-                        </copy>
-                        <!-- On linux and in a pod on OpenShift this path must be /deployments/lib, and nothing else. -->
-                        <copy todir="/deployments/lib" overwrite="false" failonerror="false">
-                            <fileset dir="${project.basedir}/target/lib">
-                                <include name="*.*"/>
-                            </fileset>
-                        </copy>
-                    </tasks>
-                </configuration>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
                     </execution>
                 </executions>
             </plugin>
@@ -311,7 +351,7 @@
                 <executions>
                     <execution>
                         <id>auto-clean</id>
-                        <phase>post-integration-test</phase>
+                        <phase>install</phase>
                         <goals>
                             <goal>clean</goal>
                         </goals>
@@ -330,43 +370,6 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>3.1.0</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                        <configuration>
-                            <!-- Don't do this, strange behaviour -->
-                            <minimizeJar>false</minimizeJar>
-                            <!-- But do to this... -->
-                            <shadedArtifactAttached>false</shadedArtifactAttached>
-                            <relocations>
-                                <relocation>
-                                    <pattern>com.google</pattern>
-                                    <shadedPattern>shaded.com.google</shadedPattern>
-                                </relocation>
-                                <relocation>
-                                    <pattern>com.fasterxml</pattern>
-                                    <shadedPattern>shaded.com.fasterxml</shadedPattern>
-                                </relocation>
-                                <relocation>
-                                    <pattern>org.apache</pattern>
-                                    <shadedPattern>shaded.org.apache</shadedPattern>
-                                </relocation>
-                                <relocation>
-                                    <pattern>org.glassfish</pattern>
-                                    <shadedPattern>shaded.org.glassfish</shadedPattern>
-                                </relocation>
-                            </relocations>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
         </plugins>
     </build>
 
@@ -376,6 +379,32 @@
             <artifactId>sigar</artifactId>
             <version>${sigar-version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm</artifactId>
+            <version>5.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm-util</artifactId>
+            <version>5.0.4</version>
+        </dependency>
+        <dependency>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm-tree</artifactId>
+            <version>5.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm-analysis</artifactId>
+            <version>5.0.4</version>
+        </dependency>
+        <dependency>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm-commons</artifactId>
+            <version>5.1</version>
+        </dependency>
+
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
@@ -387,9 +416,9 @@
             <version>${lombok-version}</version>
         </dependency>
         <dependency>
-            <groupId>commons-lang</groupId>
-            <artifactId>commons-lang</artifactId>
-            <version>${commons-lang-version}</version>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.5</version>
         </dependency>
         <dependency>
             <groupId>commons-collections</groupId>
@@ -408,8 +437,8 @@
         </dependency>
         <dependency>
             <groupId>org.jeasy</groupId>
-            <artifactId>easy-props</artifactId>
-            <version>2.0.0</version>
+            <artifactId>easy-props-ext</artifactId>
+            <version>2.1.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.mashape.unirest</groupId>
@@ -424,12 +453,6 @@
             <systemPath>${java.home}/../lib/tools.jar</systemPath>
         </dependency>
         <dependency>
-            <groupId>org.jmockit</groupId>
-            <artifactId>jmockit</artifactId>
-            <version>1.13</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
             <version>${mockito-version}</version>
@@ -439,6 +462,12 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>${junit-version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.openjdk.jmh</groupId>
+            <artifactId>jmh-generator-annprocess</artifactId>
+            <version>1.20</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

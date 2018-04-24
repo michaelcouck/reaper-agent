@@ -7,6 +7,7 @@ import com.pxs.reaper.agent.toolkit.Retry;
 import com.pxs.reaper.agent.toolkit.RetryIncreasingDelay;
 import com.pxs.reaper.agent.toolkit.THREAD;
 import lombok.Setter;
+import org.jeasy.props.PropertiesInjectorBuilder;
 import org.jeasy.props.annotations.Property;
 import org.jeasy.props.api.PropertiesInjector;
 
@@ -20,8 +21,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import static org.jeasy.props.PropertiesInjectorBuilder.aNewPropertiesInjector;
 
 /**
  * Transport for the web socket implementation. This implementation connects to the web socket
@@ -76,7 +75,7 @@ public class WebSocketTransport implements Transport {
         lastLoggingTimestamp = System.currentTimeMillis();
         retryWithIncreasingDelay = new RetryIncreasingDelay();
 
-        PropertiesInjector propertiesInjector = aNewPropertiesInjector();
+        PropertiesInjector propertiesInjector = PropertiesInjectorBuilder.aNewPropertiesInjector();
         propertiesInjector.injectProperties(this);
     }
 

@@ -22,7 +22,7 @@ import java.util.stream.Stream;
  * @version 1.0
  * @since 20-10-2017
  */
-public class ReaperActionOSMetrics implements ReaperAction {
+public class ReaperActionOSMetrics extends AReaperActionMetrics {
 
     private Logger log = Logger.getLogger(this.getClass().getSimpleName());
 
@@ -55,7 +55,7 @@ public class ReaperActionOSMetrics implements ReaperAction {
         try {
             // Gather all the operating system metrics, pop them in a OSMetrics object and post them
             OSMetrics osMetrics = getMetrics();
-            // LOG.info("Posting OS metrics : {}", osMetrics);
+            // log.info("Posting OS metrics : " + osMetrics);
             transport.postMetrics(osMetrics);
         } catch (final SigarException e) {
             // TODO: Re-initialize sigar here, and test it
@@ -68,6 +68,8 @@ public class ReaperActionOSMetrics implements ReaperAction {
     public OSMetrics getMetrics() throws SigarException {
         OSMetrics osMetrics = new OSMetrics();
         osMetrics.setIpAddress(HOST.hostname());
+
+        networkThroughput(osMetrics);
 
         Cpu[] cpu = cpu(sigarProxy);
         CpuInfo[] cpuInfo = cpuInfo(sigarProxy);
@@ -82,11 +84,11 @@ public class ReaperActionOSMetrics implements ReaperAction {
         ProcStat procStat = procStat(sigarProxy);
         Tcp tcp = tcp(sigarProxy);
         ResourceLimit resourceLimit = resourceLimit(sigarProxy);
-        String[] networkInterfaces = getNEtworkInterfaces(sigarProxy);
+        String[] networkInterfaces = getNetworkInterfaces(sigarProxy);
         NetInterfaceStat[] netInterfaceStats = getNetInterfaceStat(sigarProxy);
         DiskUsage[] diskUsages = getDiskUsage(sigarProxy);
         FileSystemUsage[] fileSystemUsages = getFileSystemUsage(sigarProxy);
-        OperatingSystem operatingSystem = getOperatingSystem();
+        // OperatingSystem operatingSystem = getOperatingSystem();
 
         osMetrics.setCpu(cpu);
         osMetrics.setCpuPerc(cpuPerc);
@@ -107,7 +109,7 @@ public class ReaperActionOSMetrics implements ReaperAction {
         osMetrics.setNetInterfaceStats(netInterfaceStats);
         osMetrics.setDiskUsages(diskUsages);
         osMetrics.setFileSystemUsages(fileSystemUsages);
-        osMetrics.setOperatingSystem(operatingSystem);
+        // osMetrics.setOperatingSystem(operatingSystem);
 
         osMetrics.setType(OSMetrics.class.getName());
         osMetrics.setCreated(System.currentTimeMillis());
@@ -171,13 +173,13 @@ public class ReaperActionOSMetrics implements ReaperAction {
         return sigarProxy.getResourceLimit();
     }
 
-    private String[] getNEtworkInterfaces(final SigarProxy sigarProxy) throws SigarException {
+    private String[] getNetworkInterfaces(final SigarProxy sigarProxy) throws SigarException {
         return sigarProxy.getNetInterfaceList();
     }
 
     private NetInterfaceStat[] getNetInterfaceStat(final SigarProxy sigarProxy) throws SigarException {
         List<NetInterfaceStat> netInterfaceStats = new ArrayList<>();
-        String[] networkInterfaces = getNEtworkInterfaces(sigarProxy);
+        String[] networkInterfaces = getNetworkInterfaces(sigarProxy);
         Stream.of(networkInterfaces).forEach(networkInterface -> {
             try {
                 NetInterfaceStat netInterfaceStat = sigarProxy.getNetInterfaceStat(networkInterface);
@@ -193,6 +195,10 @@ public class ReaperActionOSMetrics implements ReaperAction {
         List<DiskUsage> diskUsages = new ArrayList<>();
         FileSystem[] fileSystems = sigarProxy.getFileSystemList();
         for (final FileSystem fileSystem : fileSystems) {
+            if (fileSystem.getType() == 1) {
+                continue;
+            }
+            // System.out.println("Name : " + fileSystem.getDirName() + ":" + fileSystem.getType());
             DiskUsage diskUsage = sigarProxy.getDiskUsage(fileSystem.getDirName());
             diskUsages.add(diskUsage);
         }
@@ -209,6 +215,7 @@ public class ReaperActionOSMetrics implements ReaperAction {
         return fileSystemUsages.toArray(new FileSystemUsage[fileSystemUsages.size()]);
     }
 
+    @SuppressWarnings("unused")
     private OperatingSystem getOperatingSystem() {
         return OperatingSystem.getInstance();
     }

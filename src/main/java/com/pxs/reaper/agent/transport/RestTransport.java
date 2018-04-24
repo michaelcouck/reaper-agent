@@ -39,8 +39,15 @@ public class RestTransport implements Transport {
     private String reaperOMetricsRestUri;
 
     public RestTransport() {
+        /*System.out.println("Socket class loader: " + Socket.class.getClassLoader());
+        System.out.println("System class loader: " + ClassLoader.getSystemClassLoader());
+        System.out.println("Context class loader: " + Thread.currentThread().getContextClassLoader());
+        System.out.println("This class loader: " + this.getClass().getClassLoader());
+        System.out.println("Transport class loader: " + RestTransport.class.getClassLoader());
+        System.out.println("Properties injector class loader : " + PropertiesInjectorBuilder.class.getClassLoader());
+        System.out.println("Gson class loader : " + Gson.class.getClassLoader());*/
         PropertiesInjectorBuilder.aNewPropertiesInjector().injectProperties(this);
-        gson = new GsonBuilder().setDateFormat(dateFormat).create();
+        gson = new GsonBuilder().serializeSpecialFloatingPointValues().setDateFormat(dateFormat).create();
     }
 
     /**
@@ -62,7 +69,8 @@ public class RestTransport implements Transport {
                 log.log(Level.WARNING, "Posting metrics was not successful : " + httpResponse);
             }
         } catch (final Exception e) {
-            log.log(Level.SEVERE, "Error posting to micro service, is it running?", e);
+            log.log(Level.SEVERE, "Error posting to micro service, is it running... : ");
+            log.log(Level.FINE,   "                   stack trace for network error : ");
         }
         return true;
     }

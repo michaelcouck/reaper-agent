@@ -5,6 +5,7 @@ import com.pxs.reaper.agent.toolkit.HOST;
 import org.apache.commons.io.FilenameUtils;
 
 import java.lang.management.*;
+import java.security.CodeSource;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -17,7 +18,7 @@ import java.util.List;
  * @version 01.00
  * @since 22-10-2017
  */
-abstract class ReaperActionMetrics implements ReaperAction {
+abstract class ReaperActionMetrics extends AReaperActionMetrics {
 
     /**
      * Populates the operating system information, like the name and the version, also the load average. Although
@@ -53,11 +54,24 @@ abstract class ReaperActionMetrics implements ReaperAction {
         jMetrics.setCreated(System.currentTimeMillis());
         jMetrics.setIpAddress(HOST.hostname());
         jMetrics.setType(JMetrics.class.getName());
+        jMetrics.setCreated(System.currentTimeMillis());
 
         Runtime runtime = Runtime.getRuntime();
         jMetrics.setUpTime(runtimeMXBean.getUptime());
         jMetrics.setStartTime(runtimeMXBean.getStartTime());
         jMetrics.setAvailableProcessors((short) runtime.availableProcessors());
+
+        try {
+            CodeSource codeSource = this.getClass().getProtectionDomain().getCodeSource();
+            if (codeSource != null) {
+                jMetrics.setCodeBase(FilenameUtils.getName(codeSource.getLocation().getPath()));
+            } else {
+                String userDir = System.getProperty("user.dir");
+                jMetrics.setCodeBase(FilenameUtils.getName(userDir));
+            }
+        } catch (final Exception e) {
+            System.err.println(e.getMessage());
+        }
     }
 
     /**

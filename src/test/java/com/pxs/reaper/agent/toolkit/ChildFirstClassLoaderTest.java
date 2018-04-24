@@ -1,6 +1,6 @@
 package com.pxs.reaper.agent.toolkit;
 
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,7 +24,7 @@ public class ChildFirstClassLoaderTest {
         File file = FILE.findFileRecursively(new File("."), "xpp3_min-1.1.4c.jar");
         String path = FILE.cleanFilePath(file.getAbsolutePath());
         URL[] urls = MANIFEST.getClassPathUrls(path);
-        urls = (URL[]) ArrayUtils.addAll(urls, new URL[]{file.toURI().toURL()});
+        urls = ArrayUtils.addAll(urls, file.toURI().toURL());
         childFirstClassLoader = new ChildFirstClassLoader(urls);
     }
 

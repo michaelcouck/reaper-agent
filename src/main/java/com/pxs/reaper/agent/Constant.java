@@ -1,9 +1,5 @@
 package com.pxs.reaper.agent;
 
-import org.jeasy.props.annotations.Property;
-
-import java.util.concurrent.atomic.AtomicBoolean;
-
 /**
  * Note to self, don't put anything in here that is not {@link java}, i.e. nothing
  * that is not from rt.jar/tools.jar, and certainly nothing functional, only scalar
@@ -16,19 +12,14 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @since 20-10-2017
  */
 public interface Constant {
-
-    /**
-     * The flag for this agent running in the JVM, we do not want several agents running in the same JVM.
-     */
-    AtomicBoolean AGENT_RUNNING = new AtomicBoolean(Boolean.FALSE);
     /**
      * The name of the properties file, should be relatively unique to avoid name clashing.
      */
     String REAPER_PROPERTIES_FILE = "reaper-application.properties";
     /**
-     * Properties file for various parameterization. Used in conjunction with {@link Property} annotations is quite convenient
+     * Properties file for various parameterization. Used in conjunction with Property annotations is quite convenient
      */
-    String REAPER_PROPERTIES = /* "file:./" +  */ REAPER_PROPERTIES_FILE;
+    String REAPER_PROPERTIES = /* "file:./" + */ REAPER_PROPERTIES_FILE;
     /**
      * The $PATH variable in the Java process for linking the native libraries to
      */

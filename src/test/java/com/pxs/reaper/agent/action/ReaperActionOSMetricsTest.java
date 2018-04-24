@@ -4,7 +4,6 @@ import com.pxs.reaper.agent.Reaper;
 import com.pxs.reaper.agent.model.OSMetrics;
 import com.pxs.reaper.agent.toolkit.THREAD;
 import com.pxs.reaper.agent.transport.Transport;
-import mockit.Deencapsulation;
 import org.hyperic.sigar.*;
 import org.junit.Assert;
 import org.junit.Before;
@@ -13,6 +12,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.internal.util.reflection.Whitebox;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.concurrent.atomic.AtomicReference;
@@ -37,7 +37,7 @@ public class ReaperActionOSMetricsTest {
     public void before() {
         Reaper.addNativeLibrariesToPath();
         reaperActionOSMetrics = new ReaperActionOSMetrics();
-        Deencapsulation.setField(reaperActionOSMetrics, "transport", transport);
+        Whitebox.setInternalState(reaperActionOSMetrics, "transport", transport);
     }
 
     @Test

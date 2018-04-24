@@ -1,7 +1,7 @@
 package com.pxs.reaper.agent.toolkit;
 
 import com.pxs.reaper.agent.action.ReaperAgent;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,6 +28,8 @@ public class MANIFEST {
 
     private static final Logger LOGGER = Logger.getLogger(MANIFEST.class.getName());
 
+    private static String PATH_TO_AGENT;
+
     @SuppressWarnings("WeakerAccess")
     public static URL[] getAgentClassPath() {
         Manifest manifest = getAgentManifest();
@@ -36,7 +38,7 @@ public class MANIFEST {
         List<URL> javaClassPath = new ArrayList<>();
         String pathToAgent = FILE.cleanFilePath(new File(getPathToAgent()).getParentFile().getAbsolutePath());
         try {
-            javaClassPath.add(new URL("file:/" + getPathToAgent()));
+            javaClassPath.add(new URL("file:" + getPathToAgent()));
         } catch (final MalformedURLException e) {
             LOGGER.log(Level.SEVERE, "Exception adding agent jar to class path : ", e);
         }
@@ -46,8 +48,7 @@ public class MANIFEST {
             String[] manifestClassPathEntries = StringUtils.split(manifestClassPath, "\r\n" + " " + File.pathSeparator);
             Stream.of(manifestClassPathEntries).forEach(s -> {
                 try {
-                    URL classPathUrl = new URL("file:/" + pathToAgent + File.separator + s);
-                    LOGGER.log(Level.FINE, "    class path url : " + classPathUrl);
+                    URL classPathUrl = new URL("file:" + pathToAgent + File.separator + s);
                     javaClassPath.add(classPathUrl);
                 } catch (final MalformedURLException e) {
                     LOGGER.log(Level.SEVERE, "Exception reading the manifest : ", e);
@@ -91,6 +92,11 @@ public class MANIFEST {
      * @return the absolute, cleaned, normalized, canonical path to the jar containing 'this' Java agent
      */
     public static String getPathToAgent() {
+        if (PATH_TO_AGENT != null) {
+            return PATH_TO_AGENT;
+        }
+
+        // First find the name of the agent jar
         String agentJarName = null;
         Attributes attrs = MANIFEST.getAgentManifest().getMainAttributes();
         for (final Object key : attrs.keySet()) {
@@ -101,19 +107,25 @@ public class MANIFEST {
             }
         }
 
+        // Try to find the agent from the user directory
         File agentJar = FILE.findFileRecursively(new File("."), agentJarName);
-        if (agentJar == null || !agentJar.exists()) {
-            try {
-                String agentJarPath = MANIFEST.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
-                LOGGER.log(Level.INFO, "Own jar path : " + agentJarPath);
-                return FILE.cleanFilePath(new File(agentJarPath).getAbsolutePath());
-            } catch (final Exception e) {
-                LOGGER.log(Level.SEVERE, "Exception looking up the path to the jar source : ", e);
-            }
-            return "./";
+        if (agentJar != null && agentJar.exists()) {
+            return PATH_TO_AGENT = FILE.cleanFilePath(agentJar.getAbsolutePath());
         }
 
-        return FILE.cleanFilePath(agentJar.getAbsolutePath());
+        try {
+            // If not finally try to get the path from the protection domain
+            if (MANIFEST.class.getProtectionDomain().getCodeSource() != null) {
+                String agentJarPath = MANIFEST.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
+                System.out.println("        Own jar path : " + agentJarPath);
+                return PATH_TO_AGENT = FILE.cleanFilePath(new File(agentJarPath).getAbsolutePath());
+            }
+        } catch (final Exception e) {
+            LOGGER.log(Level.SEVERE, "Exception looking up the path to the jar source : ", e);
+        }
+
+        // Finally we give up, more or less
+        return PATH_TO_AGENT = "./" + agentJarName;
     }
 
     @SuppressWarnings("UnusedParameters")
@@ -128,17 +140,17 @@ public class MANIFEST {
         Set<URL> urls = new TreeSet<>((o1, o2) -> o1.toString().compareTo(o2.toString()));
 
         ClassLoader classLoader = ClassLoader.getSystemClassLoader();
-        System.out.println("Class loader from target system : " + classLoader);
         urls.addAll(Arrays.asList(((URLClassLoader) classLoader).getURLs()));
 
         ClassLoader classLoaderParent = classLoader.getParent();
         if (classLoaderParent != null) {
-            System.out.println("Parent class loader from target system : " + classLoaderParent);
             urls.addAll(Arrays.asList(((URLClassLoader) classLoaderParent).getURLs()));
         }
 
-        String classPath = System.getProperty("java.class.path"); // Add this too? Redundant?
-        System.out.println("Class path from properties : " + classPath);
+        /*String classPath = System.getProperty("java.class.path"); // Add this too? Redundant?
+        System.out.println("        Class path from properties : " + classPath);
+        System.out.println("        Class loader from target system : " + classLoader);
+        System.out.println("        Parent class loader from target system : " + classLoaderParent);*/
 
         return urls.toArray(new URL[urls.size()]);
     }

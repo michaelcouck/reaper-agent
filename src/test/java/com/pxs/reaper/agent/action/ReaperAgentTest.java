@@ -6,10 +6,7 @@ import lombok.Setter;
 import org.jeasy.props.PropertiesInjectorBuilder;
 import org.jeasy.props.annotations.Property;
 import org.jeasy.props.api.PropertiesInjector;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Spy;
@@ -25,6 +22,7 @@ import java.util.Properties;
  * @version 01.00
  * @since 09-10-2017
  */
+@Ignore
 @Setter
 @RunWith(MockitoJUnitRunner.class)
 public class ReaperAgentTest {
@@ -50,7 +48,6 @@ public class ReaperAgentTest {
         properties = System.getProperties();
         PropertiesInjector propertiesInjector = PropertiesInjectorBuilder.aNewPropertiesInjector();
         propertiesInjector.injectProperties(this);
-        // PROPERTIES_INJECTOR.injectProperties(Constant.EXTERNAL_CONSTANTS);
     }
 
     @After
@@ -67,7 +64,7 @@ public class ReaperAgentTest {
     @Test
     public void premain() throws Exception {
         ReaperAgent.premain(args, instrumentation);
-        // Thread.sleep((long) (sleepTime * 1.5));
+        // Thread.sleep((long) (sleepTime * 30));
     }
 
     @Test

@@ -8,7 +8,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Logger;
 
 /**
  * This class just has a method that will wait for a list of threads to finish and
@@ -21,8 +20,6 @@ import java.util.logging.Logger;
  */
 @SuppressWarnings("WeakerAccess")
 public class THREAD {
-
-    private static final Logger LOGGER = Logger.getLogger(THREAD.class.getSimpleName());
 
     /**
      * Saves a pointer to all the runnables that they can be restarted if paused.
@@ -46,7 +43,7 @@ public class THREAD {
      */
     public static void initialize() {
         if (EXECUTOR_SERVICE != null && !EXECUTOR_SERVICE.isShutdown()) {
-            LOGGER.info("Executor service already initialized : ");
+            System.out.println("Executor service already initialized : ");
             return;
         }
 
@@ -92,7 +89,7 @@ public class THREAD {
      */
     public static void cancelScheduledFutures() {
         for (final ScheduledFuture scheduledFuture : SCHEDULED_FUTURES.values()) {
-            LOGGER.info("Terminating future : " + scheduledFuture);
+            System.out.println("Terminating future : " + scheduledFuture);
             scheduledFuture.cancel(Boolean.TRUE);
         }
     }

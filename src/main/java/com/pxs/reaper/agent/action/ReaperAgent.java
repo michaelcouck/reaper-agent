@@ -2,16 +2,26 @@ package com.pxs.reaper.agent.action;
 
 import com.pxs.reaper.agent.Constant;
 import com.pxs.reaper.agent.Reaper;
+import com.pxs.reaper.agent.action.instrumentation.SocketClassFileTransformer;
 import com.pxs.reaper.agent.toolkit.ChildFirstClassLoader;
 import com.pxs.reaper.agent.toolkit.MANIFEST;
 import com.pxs.reaper.agent.toolkit.THREAD;
+import org.apache.commons.io.IOUtils;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.instrument.ClassDefinition;
 import java.lang.instrument.IllegalClassFormatException;
 import java.lang.instrument.Instrumentation;
+import java.lang.instrument.UnmodifiableClassException;
 import java.lang.management.ManagementFactory;
+import java.net.Socket;
+import java.net.SocketImpl;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.security.ProtectionDomain;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.jar.JarFile;
 
 /**
  * This class is attached to the running Java processes on the local operating system by the {@link Reaper}. It
@@ -24,11 +34,14 @@ import java.security.ProtectionDomain;
  */
 public class ReaperAgent {
 
+    private static final AtomicBoolean LOADED = new AtomicBoolean(Boolean.FALSE);
+
     /**
      * Note to self, don't use anything in here other than java base classes.
      * <p>
      * TODO: Log bug report for linux. Passing arguments does not
      * TODO: work on linux, string concatenation logical error in the code.
+     * TODO: But works on windows... Sad...
      * <p>
      * JVM hook to dynamically load javaagent at runtime.
      * <p>
@@ -41,6 +54,7 @@ public class ReaperAgent {
      */
     @SuppressWarnings("WeakerAccess")
     public static void agentmain(final String args, final Instrumentation instrumentation) throws Exception {
+        System.out.println("        Agent main : ");
         premain(args, instrumentation);
     }
 
@@ -51,35 +65,142 @@ public class ReaperAgent {
      * @param instrumentation the instrumentation implementation of the JVM
      */
     public static void premain(final String args, final Instrumentation instrumentation) {
-        final String pid = ManagementFactory.getRuntimeMXBean().getName();
-        // Check if there is already an agent present
-        if (Constant.AGENT_RUNNING.get()) {
-            System.out.println("Agent already running : " + pid);
-            // Do not start the actions running again in this JVM
+        if (!shouldAttach()) {
+            return;
+        }
+        if (!shouldAttachToProcess()) {
             return;
         }
 
-        System.out.println("Agent not running, starting... : " + pid);
-        Constant.AGENT_RUNNING.set(Boolean.TRUE);
-
-        Action timerTask = () -> {
-            URL[] urls = MANIFEST.getClassPathUrls();
-            if (!Thread.currentThread().getContextClassLoader().getClass().isAssignableFrom(ChildFirstClassLoader.class)) {
-                URLClassLoader urlClassLoader = new ChildFirstClassLoader(urls);
-                Thread.currentThread().setContextClassLoader(urlClassLoader);
-            }
-            System.out.println("Starting the reaper agent in the target jvm : " + pid);
-            int sleepTime = (int) Constant.SLEEP_TIME;
-            ReaperActionJvmMetrics reaperActionJvmMetrics = new ReaperActionJvmMetrics();
-            THREAD.scheduleAtFixedRate(reaperActionJvmMetrics, sleepTime, sleepTime);
-            Runtime.getRuntime().addShutdownHook(new Thread(reaperActionJvmMetrics::terminate));
-            System.out.println("Reaper agent successfully started in the target jvm : " + pid);
-        };
-        THREAD.schedule(timerTask, Constant.SLEEP_TIME);
+        System.out.println("        Pre main : ");
+        retransformClasses(instrumentation);
+        startHeartbeatThread(ManagementFactory.getRuntimeMXBean().getName());
     }
 
     /**
-     * All kinds of opportunity here.
+     * Checks to see if the agent is already attached and running, if it is then
+     * we should not attach again.
+     *
+     * @return whether we should attach or not
+     */
+    private static boolean shouldAttach() {
+        synchronized (LOADED) {
+            if (LOADED.get()) {
+                System.out.println("        Pre-main already called : ");
+                return !LOADED.get();
+            }
+            LOADED.set(Boolean.TRUE);
+            return LOADED.get();
+        }
+    }
+
+    /**
+     * Avoids attaching to Intellij and potentially other processes that we don't want to attach to.
+     *
+     * @return whether we should attach to this process or not
+     */
+    private static boolean shouldAttachToProcess() {
+        String classPath = ManagementFactory.getRuntimeMXBean().getClassPath();
+        String bootClassPath = ManagementFactory.getRuntimeMXBean().getBootClassPath();
+        /*System.out.println("        Class path : " + classPath);
+        System.out.println("        Boot class path : " + bootClassPath);*/
+        String ideaUi = "idea-IU";
+        String reaperAgentName = "reaper-agent";
+        if (classPath.contains(ideaUi) || bootClassPath.contains(ideaUi)
+                || classPath.contains(reaperAgentName) || bootClassPath.contains(reaperAgentName)) {
+            return Boolean.FALSE;
+        }
+        return Boolean.TRUE;
+    }
+
+    private static void retransformClasses(final Instrumentation instrumentation) {
+        try {
+            // Add our own classes to the boot class loader
+            instrumentation.appendToSystemClassLoaderSearch(new JarFile(MANIFEST.getPathToAgent()));
+            instrumentation.appendToBootstrapClassLoaderSearch(new JarFile(MANIFEST.getPathToAgent()));
+            // Do any transformation that we need
+            instrumentation.addTransformer(new SocketClassFileTransformer(), true);
+            instrumentation.retransformClasses(Socket.class, SocketImpl.class);
+        } catch (final Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Starts the thread that will periodically post metrics to the service for analysis.
+     *
+     * @param pid the pid of this process for logging
+     */
+    @SuppressWarnings("InfiniteLoopStatement")
+    private static void startHeartbeatThread(final String pid) {
+        new Thread(() -> {
+            System.out.println("        Starting the reaper agent in the target jvm : " + pid);
+            URL[] urls = MANIFEST.getClassPathUrls();
+            System.out.println("        URLs for class loader : " + urls.length);
+            ChildFirstClassLoader childFirstClassLoader = new ChildFirstClassLoader(urls);
+            Thread.currentThread().setContextClassLoader(childFirstClassLoader);
+            ReaperActionJvmMetrics reaperActionJvmMetrics = new ReaperActionJvmMetrics();
+            Runtime.getRuntime().addShutdownHook(new Thread(reaperActionJvmMetrics::terminate));
+            System.out.println("        Started the reaper agent in the target jvm : " + pid);
+            while (true) {
+                try {
+                    Thread.sleep(Constant.SLEEP_TIME);
+                } catch (final InterruptedException e) {
+                    e.printStackTrace();
+                }
+                reaperActionJvmMetrics.run();
+            }
+        }).start();
+    }
+
+    /**
+     * Note to self: Class loading protection domain and linkage errors for some strange reason.
+     *
+     * @param pid the pid of the process, just for logging
+     */
+    @SuppressWarnings("unused")
+    private static void startExecutorThread(final String pid) {
+        Action startupAction = () -> {
+            URL[] urls = MANIFEST.getClassPathUrls();
+            URLClassLoader urlClassLoader = new ChildFirstClassLoader(urls);
+            Thread.currentThread().setContextClassLoader(urlClassLoader);
+            System.out.println("        Starting the reaper agent in the target jvm : " + pid);
+            ReaperActionJvmMetrics reaperActionJvmMetrics = new ReaperActionJvmMetrics();
+            THREAD.scheduleAtFixedRate(reaperActionJvmMetrics, Constant.SLEEP_TIME, Constant.SLEEP_TIME);
+            Runtime.getRuntime().addShutdownHook(new Thread(reaperActionJvmMetrics::terminate));
+            System.out.println("        Started the reaper agent in the target jvm : " + pid);
+        };
+        THREAD.schedule(startupAction, Constant.SLEEP_TIME);
+    }
+
+    /**
+     * Alternative entry point for re-definition in stead of {@link Instrumentation#retransformClasses(Class[])}.
+     *
+     * @param instrumentation the JVM entry point for redefining classes
+     * @throws IOException                bla.
+     * @throws UnmodifiableClassException bla.
+     * @throws ClassNotFoundException     bla.
+     */
+    @SuppressWarnings("unused")
+    private static void redefineClasses(final Instrumentation instrumentation) throws IOException, UnmodifiableClassException, ClassNotFoundException {
+        Class[] classesToRedefine = new Class[]{Socket.class, SocketImpl.class};
+        for (final Class<?> clazz : classesToRedefine) {
+            instrumentation.redefineClasses(getClassDefinition(clazz));
+        }
+    }
+
+    private static ClassDefinition getClassDefinition(final Class<?> clazz) throws IOException {
+        String className = clazz.getName();
+        String classAsPath = className.replace('.', '/') + ".class";
+        InputStream stream = ClassLoader.getSystemClassLoader().getResourceAsStream(classAsPath);
+        byte[] classFileBytes = IOUtils.toByteArray(stream);
+        return new ClassDefinition(clazz, classFileBytes);
+    }
+
+    /**
+     * All kinds of opportunity here. This method only gets called if the agent is started as a parameter on the
+     * start command. It does not re-define classes that are already loaded, or that are loaded out side of the classloader
+     * of the agent, which is the system class loader.
      */
     @SuppressWarnings({"WeakerAccess", "UnusedParameters"})
     public byte[] transform(
@@ -89,8 +210,8 @@ public class ReaperAgent {
             final ProtectionDomain protectionDomain,
             final byte[] classBytes)
             throws IllegalClassFormatException {
-        // Return the original bytes for the class
-        System.out.println("Class loader for agent : " + loader);
+        System.out.println("        Transform : " + loader + ":" + className);
+        // Return the original bytes for the class for now... We dynamically attach, so this method is not called.
         return classBytes;
     }
 
