@@ -50,7 +50,7 @@ abstract class ReaperActionMetrics extends AReaperActionMetrics {
         String vmName = runtimeMXBean.getName();
 
         jMetrics.setPid(vmName);
-        jMetrics.setUserDir(FilenameUtils.getName(System.getProperty("user.dir")));
+        jMetrics.setUserDir(System.getProperty("user.dir"));
         jMetrics.setCreated(System.currentTimeMillis());
         jMetrics.setIpAddress(HOST.hostname());
         jMetrics.setType(JMetrics.class.getName());
@@ -64,10 +64,10 @@ abstract class ReaperActionMetrics extends AReaperActionMetrics {
         try {
             CodeSource codeSource = this.getClass().getProtectionDomain().getCodeSource();
             if (codeSource != null) {
-                jMetrics.setCodeBase(FilenameUtils.getName(codeSource.getLocation().getPath()));
+                jMetrics.setCodeBase(codeSource.getLocation().getPath());
             } else {
                 String userDir = System.getProperty("user.dir");
-                jMetrics.setCodeBase(FilenameUtils.getName(userDir));
+                jMetrics.setCodeBase(userDir);
             }
         } catch (final Exception e) {
             System.err.println(e.getMessage());
