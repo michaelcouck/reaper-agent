@@ -2,7 +2,6 @@ package com.pxs.reaper.agent.action;
 
 import com.pxs.reaper.agent.model.*;
 import com.pxs.reaper.agent.toolkit.HOST;
-import org.apache.commons.io.FilenameUtils;
 
 import java.lang.management.*;
 import java.security.CodeSource;

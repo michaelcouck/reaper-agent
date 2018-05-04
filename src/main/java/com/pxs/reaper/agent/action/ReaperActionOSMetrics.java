@@ -216,8 +216,12 @@ public class ReaperActionOSMetrics extends AReaperActionMetrics {
         List<FileSystemUsage> fileSystemUsages = new ArrayList<>();
         FileSystem[] fileSystems = sigarProxy.getFileSystemList();
         for (final FileSystem fileSystem : fileSystems) {
-            FileSystemUsage fileSystemUsage = sigarProxy.getFileSystemUsage(fileSystem.getDirName());
-            fileSystemUsages.add(fileSystemUsage);
+            try {
+                FileSystemUsage fileSystemUsage = sigarProxy.getFileSystemUsage(fileSystem.getDirName());
+                fileSystemUsages.add(fileSystemUsage);
+            } catch (final Exception e) {
+                log.info("Exception accessing the file system : " + e.getMessage());
+            }
         }
         return fileSystemUsages.toArray(new FileSystemUsage[fileSystemUsages.size()]);
     }

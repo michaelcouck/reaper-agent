@@ -30,7 +30,9 @@ import java.util.logging.Logger;
  * @version 1.0
  * @since 20-10-2017
  */
+@SuppressWarnings("deprecation")
 @Setter
+@Deprecated
 @ClientEndpoint
 public class WebSocketTransport implements Transport {
 

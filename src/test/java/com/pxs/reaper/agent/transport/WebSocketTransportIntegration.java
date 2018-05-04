@@ -2,7 +2,6 @@ package com.pxs.reaper.agent.transport;
 
 import com.pxs.reaper.agent.Constant;
 import com.pxs.reaper.agent.model.OSMetrics;
-import com.pxs.reaper.agent.toolkit.FILE;
 import lombok.Getter;
 import lombok.Setter;
 import org.jeasy.props.PropertiesInjectorBuilder;
@@ -10,14 +9,15 @@ import org.jeasy.props.annotations.Property;
 import org.jeasy.props.api.PropertiesInjector;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.io.File;
-
 @Setter
 @Getter
+@Ignore
+@Deprecated
 @RunWith(MockitoJUnitRunner.class)
 public class WebSocketTransportIntegration {
 
@@ -41,10 +41,7 @@ public class WebSocketTransportIntegration {
     @Test
     public void postMetrics() {
         webSocketTransport.setReaperWebSocketUri(reaperWebSocketUri);
-
-        File file = FILE.findFileRecursively(new File("."), "o-metrics.json");
-        String json = FILE.getContent(file);
-        OSMetrics osMetrics = new OSMetrics(); // Constant.GSON.fromJson(json, OSMetrics.class);
+        OSMetrics osMetrics = new OSMetrics();
         boolean posted = webSocketTransport.postMetrics(osMetrics);
         Assert.assertTrue(posted);
     }

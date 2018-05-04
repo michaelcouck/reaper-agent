@@ -4,12 +4,14 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.openjdk.jmh.annotations.OutputTimeUnit;
 import org.openjdk.jmh.runner.RunnerException;
 
 import java.io.IOException;
+import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.TimeUnit;
 
@@ -17,10 +19,18 @@ import java.util.concurrent.TimeUnit;
 public class NetworkTrafficCollectorTest {
 
     private Socket socket;
+    private ServerSocket serverSocket;
 
     @Before
     public void before() throws IOException, RunnerException {
+        serverSocket = new ServerSocket(8100);
         socket = new Socket("localhost", 8100);
+    }
+
+    @After
+    public void after() throws IOException {
+        socket.close();
+        serverSocket.close();
     }
 
     @Test

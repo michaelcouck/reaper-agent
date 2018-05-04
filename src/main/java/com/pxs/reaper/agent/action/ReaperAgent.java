@@ -13,7 +13,6 @@ import java.net.Socket;
 import java.net.SocketImpl;
 import java.net.URL;
 import java.security.ProtectionDomain;
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.jar.JarFile;
 
@@ -65,7 +64,6 @@ public class ReaperAgent {
         if (!shouldAttachToProcess()) {
             return;
         }
-
         System.out.println("        Pre main : ");
         retransformClasses(instrumentation);
         startHeartbeatThread(ManagementFactory.getRuntimeMXBean().getName());
@@ -134,20 +132,12 @@ public class ReaperAgent {
             ChildFirstClassLoader childFirstClassLoader = new ChildFirstClassLoader(urls);
             Thread.currentThread().setContextClassLoader(childFirstClassLoader);
             ReaperActionJvmMetrics reaperActionJvmMetrics = new ReaperActionJvmMetrics();
+
+            Thread.UncaughtExceptionHandler uncaughtExceptionHandler = Thread.getDefaultUncaughtExceptionHandler();
+            Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler(uncaughtExceptionHandler, reaperActionJvmMetrics));
+
             Runtime.getRuntime().addShutdownHook(new Thread(reaperActionJvmMetrics::terminate));
             System.out.println("        Started the reaper agent in the target jvm : " + pid);
-            final Thread.UncaughtExceptionHandler uncaughtExceptionHandler = Thread.getDefaultUncaughtExceptionHandler();
-            Thread.setDefaultUncaughtExceptionHandler((t, e) -> {
-                Map<String, Integer> exceptions = reaperActionJvmMetrics.getExceptions();
-                String exceptionName = e.getClass().getName();
-                Integer count = exceptions.get(exceptionName);
-                if (count == null) {
-                    count = 0;
-                }
-                count++;
-                exceptions.put(exceptionName, count);
-                uncaughtExceptionHandler.uncaughtException(t, e);
-            });
             while (true) {
                 try {
                     Thread.sleep(Constant.SLEEP_TIME);
