@@ -5,21 +5,15 @@ import com.pxs.reaper.agent.Reaper;
 import com.pxs.reaper.agent.action.instrumentation.SocketClassFileTransformer;
 import com.pxs.reaper.agent.toolkit.ChildFirstClassLoader;
 import com.pxs.reaper.agent.toolkit.MANIFEST;
-import com.pxs.reaper.agent.toolkit.THREAD;
-import org.apache.commons.io.IOUtils;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.instrument.ClassDefinition;
 import java.lang.instrument.IllegalClassFormatException;
 import java.lang.instrument.Instrumentation;
-import java.lang.instrument.UnmodifiableClassException;
 import java.lang.management.ManagementFactory;
 import java.net.Socket;
 import java.net.SocketImpl;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.security.ProtectionDomain;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.jar.JarFile;
 
@@ -142,59 +136,31 @@ public class ReaperAgent {
             ReaperActionJvmMetrics reaperActionJvmMetrics = new ReaperActionJvmMetrics();
             Runtime.getRuntime().addShutdownHook(new Thread(reaperActionJvmMetrics::terminate));
             System.out.println("        Started the reaper agent in the target jvm : " + pid);
+            final Thread.UncaughtExceptionHandler uncaughtExceptionHandler = Thread.getDefaultUncaughtExceptionHandler();
+            Thread.setDefaultUncaughtExceptionHandler((t, e) -> {
+                Map<String, Integer> exceptions = reaperActionJvmMetrics.getExceptions();
+                String exceptionName = e.getClass().getName();
+                Integer count = exceptions.get(exceptionName);
+                if (count == null) {
+                    count = 0;
+                }
+                count++;
+                exceptions.put(exceptionName, count);
+                uncaughtExceptionHandler.uncaughtException(t, e);
+            });
             while (true) {
                 try {
                     Thread.sleep(Constant.SLEEP_TIME);
                 } catch (final InterruptedException e) {
                     e.printStackTrace();
                 }
-                reaperActionJvmMetrics.run();
+                try {
+                    reaperActionJvmMetrics.run();
+                } catch (final Exception e) {
+                    e.printStackTrace();
+                }
             }
         }).start();
-    }
-
-    /**
-     * Note to self: Class loading protection domain and linkage errors for some strange reason.
-     *
-     * @param pid the pid of the process, just for logging
-     */
-    @SuppressWarnings("unused")
-    private static void startExecutorThread(final String pid) {
-        Action startupAction = () -> {
-            URL[] urls = MANIFEST.getClassPathUrls();
-            URLClassLoader urlClassLoader = new ChildFirstClassLoader(urls);
-            Thread.currentThread().setContextClassLoader(urlClassLoader);
-            System.out.println("        Starting the reaper agent in the target jvm : " + pid);
-            ReaperActionJvmMetrics reaperActionJvmMetrics = new ReaperActionJvmMetrics();
-            THREAD.scheduleAtFixedRate(reaperActionJvmMetrics, Constant.SLEEP_TIME, Constant.SLEEP_TIME);
-            Runtime.getRuntime().addShutdownHook(new Thread(reaperActionJvmMetrics::terminate));
-            System.out.println("        Started the reaper agent in the target jvm : " + pid);
-        };
-        THREAD.schedule(startupAction, Constant.SLEEP_TIME);
-    }
-
-    /**
-     * Alternative entry point for re-definition in stead of {@link Instrumentation#retransformClasses(Class[])}.
-     *
-     * @param instrumentation the JVM entry point for redefining classes
-     * @throws IOException                bla.
-     * @throws UnmodifiableClassException bla.
-     * @throws ClassNotFoundException     bla.
-     */
-    @SuppressWarnings("unused")
-    private static void redefineClasses(final Instrumentation instrumentation) throws IOException, UnmodifiableClassException, ClassNotFoundException {
-        Class[] classesToRedefine = new Class[]{Socket.class, SocketImpl.class};
-        for (final Class<?> clazz : classesToRedefine) {
-            instrumentation.redefineClasses(getClassDefinition(clazz));
-        }
-    }
-
-    private static ClassDefinition getClassDefinition(final Class<?> clazz) throws IOException {
-        String className = clazz.getName();
-        String classAsPath = className.replace('.', '/') + ".class";
-        InputStream stream = ClassLoader.getSystemClassLoader().getResourceAsStream(classAsPath);
-        byte[] classFileBytes = IOUtils.toByteArray(stream);
-        return new ClassDefinition(clazz, classFileBytes);
     }
 
     /**

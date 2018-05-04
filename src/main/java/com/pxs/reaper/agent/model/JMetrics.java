@@ -5,6 +5,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.util.Map;
+
 /**
  * Parent class for all Java process telemetry, the memory, the threads etc.
  *
@@ -34,5 +36,7 @@ public class JMetrics extends Metrics {
     private Classloading classLoading;
     private GarbageCollection[] garbageCollection;
     private OperatingSystem operatingSystem;
+
+    private Map<String, Integer> exceptions;
 
 }

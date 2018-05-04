@@ -22,7 +22,7 @@ import java.util.concurrent.TimeUnit;
 public class THREAD {
 
     /**
-     * Saves a pointer to all the runnables that they can be restarted if paused.
+     * Saves a pointer to all the run   nables that they can be restarted if paused.
      */
     private static Map<Action, Long> SCHEDULED_RUNNABLES;
     /**
@@ -51,10 +51,6 @@ public class THREAD {
         SCHEDULED_RUNNABLES = new HashMap<>();
         SCHEDULED_FUTURES = new HashMap<>();
         Runtime.getRuntime().addShutdownHook(new ShutdownThread());
-    }
-
-    public static void schedule(final Action action, final long initialDelay) {
-        EXECUTOR_SERVICE.schedule(action, initialDelay, TimeUnit.MILLISECONDS);
     }
 
     /**

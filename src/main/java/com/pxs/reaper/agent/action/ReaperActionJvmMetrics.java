@@ -3,8 +3,11 @@ package com.pxs.reaper.agent.action;
 import com.pxs.reaper.agent.model.JMetrics;
 import com.pxs.reaper.agent.transport.RestTransport;
 import com.pxs.reaper.agent.transport.Transport;
+import lombok.Getter;
 
 import java.lang.management.ManagementFactory;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This class will collect all the telemetry data from the Java process, populate a {@link JMetrics} object
@@ -17,7 +20,10 @@ import java.lang.management.ManagementFactory;
  * @version 01.00
  * @since 09-10-2017
  */
+@Getter
 public class ReaperActionJvmMetrics extends ReaperActionMetrics {
+
+    private final Map<String, Integer> exceptions = new HashMap<>();
 
     /**
      * Transport of the data over the wire.
@@ -34,6 +40,12 @@ public class ReaperActionJvmMetrics extends ReaperActionMetrics {
     @Override
     public void run() {
         JMetrics jMetrics = getMetrics();
+        synchronized(exceptions) {
+            Map<String, Integer> exceptions = new HashMap<>();
+            exceptions.putAll(this.exceptions);
+            jMetrics.setExceptions(exceptions);
+            this.exceptions.clear();
+        }
         transport.postMetrics(jMetrics);
     }
 

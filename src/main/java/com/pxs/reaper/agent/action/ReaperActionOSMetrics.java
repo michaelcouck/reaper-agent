@@ -41,10 +41,14 @@ public class ReaperActionOSMetrics extends AReaperActionMetrics {
     private Transport transport;
 
     public ReaperActionOSMetrics() {
+        init();
+        log.info("Attached to operating system : " + HOST.hostname());
+    }
+
+    private void init() {
         sigar = new Sigar();
         sigarProxy = SigarProxyCache.newInstance(sigar, 1000);
         transport = new RestTransport();
-        log.info("Attached to operating system : " + HOST.hostname());
     }
 
     /**
@@ -58,8 +62,11 @@ public class ReaperActionOSMetrics extends AReaperActionMetrics {
             // log.info("Posting OS metrics : " + osMetrics);
             transport.postMetrics(osMetrics);
         } catch (final SigarException e) {
-            // TODO: Re-initialize sigar here, and test it
-            throw new RuntimeException(e);
+            log.log(Level.SEVERE, e.getMessage(), e);
+            terminate();
+            init();
+        } catch (final Exception e) {
+            log.log(Level.SEVERE, e.getMessage(), e);
         } finally {
             SigarProxyCache.clear(sigarProxy);
         }
