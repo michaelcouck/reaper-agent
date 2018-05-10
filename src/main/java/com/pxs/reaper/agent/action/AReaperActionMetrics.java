@@ -3,6 +3,7 @@ package com.pxs.reaper.agent.action;
 import com.pxs.reaper.agent.action.instrumentation.NetworkTrafficCollector;
 import com.pxs.reaper.agent.model.Metrics;
 import com.pxs.reaper.agent.model.NetworkNode;
+import com.pxs.reaper.agent.toolkit.HOST;
 
 import java.util.TreeSet;
 
@@ -13,7 +14,12 @@ import java.util.TreeSet;
  * @version 01.00
  * @since 14-04-2018
  */
-public abstract class AReaperActionMetrics implements ReaperAction {
+abstract class AReaperActionMetrics implements ReaperAction {
+
+    void common(final Metrics metrics) {
+        metrics.setIpAddress(HOST.hostname());
+        metrics.setUserDir(System.getProperty("user.dir"));
+    }
 
     /**
      * Gets the network through put from the {@link NetworkTrafficCollector}, adds the nodes

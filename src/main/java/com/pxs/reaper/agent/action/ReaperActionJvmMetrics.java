@@ -52,6 +52,7 @@ public class ReaperActionJvmMetrics extends ReaperActionMetrics {
     public JMetrics getMetrics() {
         JMetrics jMetrics = new JMetrics();
 
+        common(jMetrics);
         misc(jMetrics, ManagementFactory.getRuntimeMXBean());
         threading(jMetrics, ManagementFactory.getThreadMXBean());
         memoryPool(jMetrics, ManagementFactory.getMemoryPoolMXBeans());

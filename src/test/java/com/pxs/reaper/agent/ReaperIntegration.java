@@ -2,36 +2,72 @@ package com.pxs.reaper.agent;
 
 import com.pxs.reaper.agent.toolkit.NetworkSocketInvoker;
 import com.pxs.reaper.agent.toolkit.THREAD;
-import com.pxs.reaper.agent.transport.Transport;
+import com.pxs.reaper.agent.transport.RestTransport;
+import mockit.Mock;
+import mockit.MockUp;
+import mockit.integration.junit4.JMockit;
 import org.apache.commons.lang3.StringUtils;
-import org.junit.Assert;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.Spy;
-import org.mockito.runners.MockitoJUnitRunner;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(JMockit.class)
 public class ReaperIntegration {
 
-    @Spy
-    private Reaper reaper;
-    @Mock
-    private Transport transport;
+    private static final AtomicInteger TRANSPORT_INVOCATIONS = new AtomicInteger();
 
-    @Test
-    @Ignore
-    public void main() {
-        Reaper.main(new String[]{"250"});
+    public static final class TransportMock extends MockUp<RestTransport> {
+
+        @Mock
+        @SuppressWarnings("unused")
+        public boolean postMetrics(final Object metrics) {
+            System.out.println("Posting : " + metrics);
+            TRANSPORT_INVOCATIONS.incrementAndGet();
+            return Boolean.TRUE;
+        }
+
+    }
+
+    private Reaper reaper;
+
+    @BeforeClass
+    public static void beforeClass() {
+        new Thread(() -> {
+            NetworkSocketInvoker networkSocketInvoker = new NetworkSocketInvoker();
+            //noinspection InfiniteLoopStatement
+            while (true) {
+                networkSocketInvoker.writeAndReadFromSocket();
+                THREAD.sleep(1000);
+            }
+        }).start();
+        new TransportMock();
+    }
+
+    @Before
+    public void before() {
+        reaper = new Reaper();
+        TRANSPORT_INVOCATIONS.set(0);
     }
 
     @Test
-    @Ignore
+    public void main() {
+        final AtomicBoolean finished = new AtomicBoolean(Boolean.FALSE);
+        new Thread(() -> {
+            THREAD.sleep(1000);
+            if (!finished.get()) {
+                throw new RuntimeException("Didn't finish on time : ");
+            }
+        }).start();
+        Reaper.main(new String[]{"250"});
+        finished.set(Boolean.TRUE);
+    }
+
+    @Test
     public void addNativeLibrariesToPath() throws IOException {
         String javaLibraryPath = Reaper.addNativeLibrariesToPath();
         String[] paths = StringUtils.split(javaLibraryPath, File.pathSeparatorChar);
@@ -44,28 +80,26 @@ public class ReaperIntegration {
     }
 
     @Test
-    @Ignore
     public void attachToOperatingSystem() {
         reaper.attachToOperatingSystem();
         THREAD.sleep(Constant.SLEEP_TIME * 3);
-        // Mockito.verify(transport, Mockito.atLeast(1)).postMetrics(Mockito.anyObject());
+        Assert.assertTrue(TRANSPORT_INVOCATIONS.get() > 0);
     }
 
     @Test
     public void attachToJavaProcesses() throws IOException, InterruptedException {
         reaper.attachToJavaProcesses();
-        THREAD.sleep(Constant.SLEEP_TIME * 4);
-        // new Compilation().getOutputStream();
-        new NetworkSocketInvoker().writeAndReadFromSocket();
-        THREAD.sleep(Constant.SLEEP_TIME);
-        // Mockito.verify(transport, Mockito.atLeast(1)).postMetrics(Mockito.anyObject());
+        THREAD.sleep(Constant.SLEEP_TIME * 3);
+        Assert.assertTrue(TRANSPORT_INVOCATIONS.get() > 0);
     }
 
     @Test
+    @Ignore
+    @Deprecated
     public void attachToJmxProcesses() {
+        // This functionality is deprecated
         reaper.attachToJmxProcesses();
         THREAD.sleep(Constant.SLEEP_TIME * 3);
-        // Mockito.verify(transport, Mockito.atLeast(1)).postMetrics(Mockito.anyObject());
     }
 
 }

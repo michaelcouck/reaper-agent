@@ -50,7 +50,7 @@ public class Reaper {
      * The entry method attaches to the local operating system, attaches to any java processes on the local operating system, and
      * also tries to attach to any process that is exposing jmx on the local machine on the defined port.
      *
-     * @param args not used
+     * @param args could contain the amount of time to sleep for in first argument, if not we run infinitely
      */
     public static void main(final String[] args) {
         Reaper reaper = new Reaper();
@@ -58,12 +58,16 @@ public class Reaper {
         reaper.attachToJavaProcesses();
         reaper.attachToJmxProcesses();
         // Either sleep for the period specified in the arguments list, or infinitely, almost...
-        long waitTime = Long.MAX_VALUE;
         //noinspection deprecation
         if (args != null && args.length >= 1 && NumberUtils.isNumber(args[0])) {
-            waitTime = Long.parseLong(args[0]);
+            long waitTime = Long.parseLong(args[0]);
+            THREAD.sleep(waitTime);
+        } else {
+            //noinspection InfiniteLoopStatement
+            while (true) {
+                THREAD.sleep(Long.MAX_VALUE);
+            }
         }
-        THREAD.sleep(waitTime);
     }
 
     /**
@@ -94,7 +98,7 @@ public class Reaper {
 
     private PropertiesInjector propertiesInjector;
 
-    private Reaper() {
+    Reaper() {
         propertiesInjector = PropertiesInjectorBuilder.aNewPropertiesInjector();
         String vmName = ManagementFactory.getRuntimeMXBean().getName();
         log.log(Level.FINEST, "Reaper virtual machine name : " + vmName);
@@ -125,6 +129,7 @@ public class Reaper {
     /**
      * Java process metrics gathering JMX attach action.
      */
+    @SuppressWarnings("deprecation")
     void attachToJmxProcesses() {
         // Start the action to attach to the Java processes via JMX gather metrics from the JVM(s)
         ReaperActionJmxMetrics reaperActionJmxMetrics = new ReaperActionJmxMetrics();

@@ -24,7 +24,6 @@ public class JMetrics extends Metrics {
      * The PID/name of the JVM.
      */
     private String pid;
-    private String userDir;
     private long upTime;
     private long startTime;
     private short availableProcessors;

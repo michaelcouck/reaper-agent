@@ -47,6 +47,7 @@ import java.util.logging.Logger;
  * @since 21-10-2017
  */
 @Setter
+@Deprecated
 @SuppressWarnings("WeakerAccess")
 public class ReaperActionJmxMetrics extends ReaperActionMetrics {
 

@@ -61,12 +61,10 @@ public class ReaperActionOSMetrics extends AReaperActionMetrics {
             OSMetrics osMetrics = getMetrics();
             // log.info("Posting OS metrics : " + osMetrics);
             transport.postMetrics(osMetrics);
-        } catch (final SigarException e) {
+        } catch (final Exception e) {
             log.log(Level.SEVERE, e.getMessage(), e);
             terminate();
             init();
-        } catch (final Exception e) {
-            log.log(Level.SEVERE, e.getMessage(), e);
         } finally {
             SigarProxyCache.clear(sigarProxy);
         }
@@ -74,8 +72,8 @@ public class ReaperActionOSMetrics extends AReaperActionMetrics {
 
     public OSMetrics getMetrics() throws SigarException {
         OSMetrics osMetrics = new OSMetrics();
-        osMetrics.setIpAddress(HOST.hostname());
 
+        common(osMetrics);
         networkThroughput(osMetrics);
 
         Cpu[] cpu = cpu(sigarProxy);

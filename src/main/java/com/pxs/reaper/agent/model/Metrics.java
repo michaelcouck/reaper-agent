@@ -10,10 +10,10 @@ import lombok.ToString;
 public abstract class Metrics {
 
     protected String id;
-
-    private String codeBase;
-
     private String type = this.getClass().getName();
+
+    private String userDir;
+    private String codeBase;
 
     /**
      * Ip address of the local agent.
