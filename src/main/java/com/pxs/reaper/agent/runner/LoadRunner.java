@@ -1,6 +1,7 @@
 package com.pxs.reaper.agent.runner;
 
 import com.google.common.util.concurrent.AtomicDouble;
+import com.pxs.reaper.agent.toolkit.FILE;
 import edu.uci.ics.crawler4j.crawler.CrawlConfig;
 import edu.uci.ics.crawler4j.crawler.CrawlController;
 import edu.uci.ics.crawler4j.fetcher.PageFetcher;
@@ -9,6 +10,7 @@ import edu.uci.ics.crawler4j.robotstxt.RobotstxtServer;
 import org.apache.commons.math3.stat.descriptive.moment.Mean;
 import org.apache.commons.math3.stat.descriptive.moment.StandardDeviation;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.Map;
 
@@ -44,7 +46,14 @@ public class LoadRunner {
             System.exit(0);
         }).start();
 
-        String crawlStorageFolder = "/tmp/crawl/root";
+        File file = new File("./tmp/crawl/root");
+        if (!file.exists()) {
+            boolean createdFolders = file.mkdirs();
+            if (!createdFolders) {
+                throw new RuntimeException("Couldn't create folders : " + file.getAbsolutePath());
+            }
+        }
+        String crawlStorageFolder = FILE.cleanFilePath(file.getAbsolutePath());
 
         CrawlConfig config = new CrawlConfig();
         config.setCrawlStorageFolder(crawlStorageFolder);
