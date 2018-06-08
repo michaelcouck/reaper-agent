@@ -1,5 +1,7 @@
 package com.pxs.reaper.agent.action;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.Map;
 
 /**
@@ -10,6 +12,7 @@ import java.util.Map;
  * @version 01.00
  * @since 04-05-2018
  */
+@Slf4j
 @SuppressWarnings("WeakerAccess")
 public class UncaughtExceptionHandler implements Thread.UncaughtExceptionHandler {
 
@@ -32,6 +35,7 @@ public class UncaughtExceptionHandler implements Thread.UncaughtExceptionHandler
         count++;
         exceptions.put(exceptionName, count);
         parent.uncaughtException(t, e);
+        log.error(null, e);
     }
 
 }

@@ -11,7 +11,7 @@ import java.util.WeakHashMap;
 @SuppressWarnings("WeakerAccess")
 public class NetworkTrafficCollector {
 
-    public static boolean log = Boolean.TRUE;
+    public static boolean log = Boolean.FALSE;
 
     public static final NetworkNode NETWORK_NODE = new NetworkNode();
 
@@ -75,7 +75,9 @@ public class NetworkTrafficCollector {
 
     @SuppressWarnings("unused")
     public static void collectInputTraffic(final Socket socket, final byte[] bytes, final int off, final int len) {
-        System.out.println("Reaper : Socket input - " + socket + ", length : " + len + ", offset : " + off/* + ":" + Arrays.toString(bytes)*/);
+        if (log) {
+            System.out.println("Reaper : Socket input - " + socket + ", length : " + len + ", offset : " + off/* + ":" + Arrays.toString(bytes)*/);
+        }
     }
 
 }
