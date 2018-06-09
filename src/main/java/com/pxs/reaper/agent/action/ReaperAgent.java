@@ -92,6 +92,9 @@ public class ReaperAgent {
      * @return whether we should attach to this process or not
      */
     private static boolean shouldAttachToProcess() {
+        if (ManagementFactory.getRuntimeMXBean().getUptime() < 60000) {
+            return Boolean.FALSE;
+        }
         String classPath = ManagementFactory.getRuntimeMXBean().getClassPath();
         String bootClassPath = ManagementFactory.getRuntimeMXBean().getBootClassPath();
         /*System.out.println("        Class path : " + classPath);

@@ -32,14 +32,14 @@ import java.util.logging.Logger;
  * Parameters to allow JMX access.
  * <pre>
  *      -Djava.rmi.server.hostname=localhost
- *      -Dcom.sun.management.jmxremote.local.only=true
- *      -Dcom.sun.management.jmxremote.rmi.port=1100
+ *      -Dcom.sun.management.jmxremote.local.only=false
+ *      -Dcom.sun.management.jmxremote.rmi.port=7091
  *
  *      Automatically done by OpenShift
- *      -Dcom.sun.management.jmxremote=false *
- *      -Dcom.sun.management.jmxremote.ssl=false *
- *      -Dcom.sun.management.jmxremote.port=1099 *
- *      -Dcom.sun.management.jmxremote.authenticate=false *
+ *      -Dcom.sun.management.jmxremote=true
+ *      -Dcom.sun.management.jmxremote.ssl=false
+ *      -Dcom.sun.management.jmxremote.port=7091
+ *      -Dcom.sun.management.jmxremote.authenticate=false
  * </pre>
  *
  * @author Michael Couck
