@@ -1,4 +1,5 @@
 package com.pxs.reaper.agent.runner;
+/*
 
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
@@ -7,11 +8,13 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.net.URL;
 
+*/
 /**
  * @author Michael Couck
  * @version 01.00
  * @since 02-05-2018
- */
+ *//*
+
 @Slf4j
 public class MemoryRunner {
 
@@ -24,4 +27,4 @@ public class MemoryRunner {
         }
     }
 
-}
+}*/

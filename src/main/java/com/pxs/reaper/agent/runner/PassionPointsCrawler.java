@@ -1,5 +1,6 @@
 package com.pxs.reaper.agent.runner;
 
+/*
 import edu.uci.ics.crawler4j.crawler.Page;
 import edu.uci.ics.crawler4j.crawler.WebCrawler;
 import edu.uci.ics.crawler4j.parser.HtmlParseData;
@@ -77,10 +78,12 @@ public class PassionPointsCrawler extends WebCrawler {
                 && href.startsWith("https://www.proximus.be/music");
     }
 
-    /**
+    */
+/**
      * This function is called when a page is fetched and ready
      * to be processed by your program.
-     */
+     *//*
+
     @Override
     public void visit(final Page page) {
         endFetch(page.getWebURL().getURL());
@@ -89,13 +92,15 @@ public class PassionPointsCrawler extends WebCrawler {
         byte[] content = page.getContentData();
         System.out.println("URL : " + url + ", length : " + content.length);
 
-        /*if (page.getParseData() instanceof HtmlParseData) {
+        */
+/*if (page.getParseData() instanceof HtmlParseData) {
             HtmlParseData htmlParseData = (HtmlParseData) page.getParseData();
             String text = htmlParseData.getText();
             String html = htmlParseData.getHtml();
             Set<WebURL> links = htmlParseData.getOutgoingUrls();
             System.out.println("Text length : " + text.length() + ", html length : " + html.length() + ", links : " + links.size());
-        }*/
+        }*//*
+
     }
 
-}
+}*/
