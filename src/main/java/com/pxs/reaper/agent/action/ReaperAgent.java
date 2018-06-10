@@ -58,6 +58,9 @@ public class ReaperAgent {
      * @param instrumentation the instrumentation implementation of the JVM
      */
     public static void premain(final String args, final Instrumentation instrumentation) {
+        if (ManagementFactory.getRuntimeMXBean().getUptime() < 60000) {
+            return;
+        }
         if (!shouldAttach()) {
             return;
         }
@@ -92,17 +95,10 @@ public class ReaperAgent {
      * @return whether we should attach to this process or not
      */
     private static boolean shouldAttachToProcess() {
-        if (ManagementFactory.getRuntimeMXBean().getUptime() < 60000) {
-            return Boolean.FALSE;
-        }
         String classPath = ManagementFactory.getRuntimeMXBean().getClassPath();
         String bootClassPath = ManagementFactory.getRuntimeMXBean().getBootClassPath();
-        /*System.out.println("        Class path : " + classPath);
-        System.out.println("        Boot class path : " + bootClassPath);*/
-        String ideaUi = "idea-IU";
         String reaperAgentName = "reaper-agent";
-        if (classPath.contains(ideaUi) || bootClassPath.contains(ideaUi)
-                || classPath.contains(reaperAgentName) || bootClassPath.contains(reaperAgentName)) {
+        if (classPath.contains(reaperAgentName) || bootClassPath.contains(reaperAgentName)) {
             return Boolean.FALSE;
         }
         return Boolean.TRUE;
