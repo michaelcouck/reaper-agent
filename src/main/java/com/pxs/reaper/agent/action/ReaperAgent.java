@@ -13,6 +13,8 @@ import java.net.Socket;
 import java.net.SocketImpl;
 import java.net.URL;
 import java.security.ProtectionDomain;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.jar.JarFile;
 
@@ -47,8 +49,24 @@ public class ReaperAgent {
      */
     @SuppressWarnings("WeakerAccess")
     public static void agentmain(final String args, final Instrumentation instrumentation) throws Exception {
-        System.out.println("        Agent main : ");
-        premain(args, instrumentation);
+        long timeToWait = 60000;
+        long uptime = ManagementFactory.getRuntimeMXBean().getUptime();
+        if (uptime < timeToWait) {
+            System.out.println("        Waiting for uptime : " + uptime);
+            new Timer().schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    try {
+                        System.out.println("        Agent main : ");
+                        premain(args, instrumentation);
+                    } catch (final Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }, timeToWait);
+        } else {
+            premain(args, instrumentation);
+        }
     }
 
     /**
@@ -58,9 +76,6 @@ public class ReaperAgent {
      * @param instrumentation the instrumentation implementation of the JVM
      */
     public static void premain(final String args, final Instrumentation instrumentation) {
-        if (ManagementFactory.getRuntimeMXBean().getUptime() < 60000) {
-            return;
-        }
         if (!shouldAttach()) {
             return;
         }
