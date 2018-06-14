@@ -19,7 +19,7 @@ public class SocketClassVisitor extends ClassVisitor /* ClassVisitor, ClassNode 
             final String methodSignature,
             final String[] exceptions) {
         MethodVisitor methodVisitor = super.visitMethod(access, methodName, methodDescription, methodSignature, exceptions);
-        if (!methodName.startsWith("socketRead") && !methodName.startsWith("socketWrite")) {
+        if (!methodName.equals("socketRead") && !methodName.equals("socketWrite")) {
             return methodVisitor;
         }
         System.out.println("        Method name : " + methodName + " : " + methodDescription);
