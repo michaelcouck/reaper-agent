@@ -26,6 +26,8 @@ public class ReaperActionOSMetrics extends AReaperActionMetrics {
 
     private Logger log = Logger.getLogger(this.getClass().getSimpleName());
 
+    private boolean permissionDenied = Boolean.FALSE;
+
     /**
      * {@link Sigar} is the native operating system access to metrics and telemetry. It provides {@link Cpu},
      * {@link CpuInfo}, {@link Mem} information and several other metrics, some of which are quite low level.
@@ -212,6 +214,9 @@ public class ReaperActionOSMetrics extends AReaperActionMetrics {
 
     private FileSystemUsage[] getFileSystemUsage(final SigarProxy sigarProxy) throws SigarException {
         List<FileSystemUsage> fileSystemUsages = new ArrayList<>();
+        if (permissionDenied) {
+            return fileSystemUsages.toArray(new FileSystemUsage[fileSystemUsages.size()]);
+        }
         FileSystem[] fileSystems = sigarProxy.getFileSystemList();
         for (final FileSystem fileSystem : fileSystems) {
             try {
@@ -219,6 +224,9 @@ public class ReaperActionOSMetrics extends AReaperActionMetrics {
                 fileSystemUsages.add(fileSystemUsage);
             } catch (final Exception e) {
                 log.info("Exception accessing the file system : " + e.getMessage());
+                if (e.getMessage().contains("Permission denied")) {
+                    permissionDenied = Boolean.TRUE;
+                }
             }
         }
         return fileSystemUsages.toArray(new FileSystemUsage[fileSystemUsages.size()]);

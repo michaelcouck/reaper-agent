@@ -52,7 +52,8 @@ public class ReaperAgent {
         long timeToWait = 60000;
         long uptime = ManagementFactory.getRuntimeMXBean().getUptime();
         if (uptime < timeToWait) {
-            System.out.println("        Waiting for uptime : " + uptime);
+            long totalWaitTime = (timeToWait - uptime);
+            System.out.println("        Waiting for uptime : " + totalWaitTime);
             new Timer().schedule(new TimerTask() {
                 @Override
                 public void run() {
@@ -63,7 +64,7 @@ public class ReaperAgent {
                         e.printStackTrace();
                     }
                 }
-            }, timeToWait);
+            }, totalWaitTime);
         } else {
             premain(args, instrumentation);
         }
