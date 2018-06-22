@@ -8,16 +8,15 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.WeakHashMap;
 
-@SuppressWarnings("WeakerAccess")
 public class NetworkTrafficCollector {
 
     public static boolean log = Boolean.FALSE;
 
     public static final NetworkNode NETWORK_NODE = new NetworkNode();
 
-    public static final WeakHashMap<Integer, Integer> LOCAL_SOCKET_PORT = new WeakHashMap<>();
-    public static final WeakHashMap<Integer, Integer> REMOTE_SOCKET_PORT = new WeakHashMap<>();
-    public static final WeakHashMap<Integer, String> SOCKET_ADDRESS = new WeakHashMap<>();
+    private static final WeakHashMap<Integer, Integer> LOCAL_SOCKET_PORT = new WeakHashMap<>();
+    private static final WeakHashMap<Integer, Integer> REMOTE_SOCKET_PORT = new WeakHashMap<>();
+    private static final WeakHashMap<Integer, String> SOCKET_ADDRESS = new WeakHashMap<>();
 
     static {
         try {
@@ -27,7 +26,7 @@ public class NetworkTrafficCollector {
         }
     }
 
-    public static void collectOutputTraffic(final Socket socket, final int len) {
+    static void collectOutputTraffic(final Socket socket, final int len) {
         if (log) {
             System.out.println("Reaper : Socket output - " + socket + ", length : " + len);
         }
@@ -53,10 +52,15 @@ public class NetworkTrafficCollector {
         remotePort = REMOTE_SOCKET_PORT.get(socketHash);
         remoteAddress = SOCKET_ADDRESS.get(socketHash);
 
+        if (localPort == null || remotePort == null || remoteAddress == null) {
+            System.out.println("Null pointers, socket : " + socketHash + ", local port : " + localPort + ", remote port : " + remotePort + ", length : " + len);
+            return;
+        }
+
         collectOutputTraffic(socketHash, localPort, remotePort, remoteAddress, len);
     }
 
-    public static void collectOutputTraffic(final int socketHash, final int localPort, final int remotePort, final String remoteAddress, final long len) {
+    private static void collectOutputTraffic(final int socketHash, final int localPort, final int remotePort, final String remoteAddress, final long len) {
         if (!SOCKET_ADDRESS.containsKey(socketHash)) {
             LOCAL_SOCKET_PORT.put(socketHash, localPort);
             REMOTE_SOCKET_PORT.put(socketHash, remotePort);
@@ -69,7 +73,7 @@ public class NetworkTrafficCollector {
                 return;
             }
         }
-        Quadruple<Integer, String, Integer, Long> addressPortThroughPut = new Quadruple<>(localPort, remoteAddress, remotePort, (long) len);
+        Quadruple<Integer, String, Integer, Long> addressPortThroughPut = new Quadruple<>(localPort, remoteAddress, remotePort, len);
         NETWORK_NODE.getAddressPortThroughPut().add(addressPortThroughPut);
     }
 

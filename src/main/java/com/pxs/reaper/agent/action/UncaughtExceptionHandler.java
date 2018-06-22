@@ -1,8 +1,8 @@
 package com.pxs.reaper.agent.action;
 
-import lombok.extern.slf4j.Slf4j;
-
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * This is the exception handler interceptor, it collects and counts exceptions that happen in the jvm, and the types. These
@@ -12,9 +12,10 @@ import java.util.Map;
  * @version 01.00
  * @since 04-05-2018
  */
-@Slf4j
 @SuppressWarnings("WeakerAccess")
 public class UncaughtExceptionHandler implements Thread.UncaughtExceptionHandler {
+
+    private Logger logger = Logger.getLogger(this.getClass().getName());
 
     private Thread.UncaughtExceptionHandler parent;
     private ReaperActionJvmMetrics reaperActionJvmMetrics;
@@ -35,7 +36,7 @@ public class UncaughtExceptionHandler implements Thread.UncaughtExceptionHandler
         count++;
         exceptions.put(exceptionName, count);
         parent.uncaughtException(t, e);
-        log.error(null, e);
+        logger.log(Level.SEVERE, "Exception in uncaught exception handler", e);
     }
 
 }

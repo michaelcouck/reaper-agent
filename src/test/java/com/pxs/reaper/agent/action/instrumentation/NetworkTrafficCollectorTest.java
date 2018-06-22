@@ -38,6 +38,7 @@ public class NetworkTrafficCollectorTest {
         NetworkTrafficCollector.log = Boolean.FALSE;
         double iterations = 1000000;
         double start = System.currentTimeMillis();
+        System.out.println(socket);
         for (int i = 0; i < iterations; i++) {
             NetworkTrafficCollector.collectOutputTraffic(socket, 1024);
         }
