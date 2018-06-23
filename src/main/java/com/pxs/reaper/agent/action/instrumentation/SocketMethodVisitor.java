@@ -17,17 +17,12 @@ public class SocketMethodVisitor extends MethodVisitor {
     private final Type integer = Type.getType(int.class);
     private final Type bytes = Type.getType(byte[].class);
     private final Type socket = Type.getType(Socket.class);
-
     private final String collectorClassName = Type.getInternalName(NetworkTrafficCollector.class);
+    private final String collectorMethodDescription = Type.getMethodDescriptor(Type.VOID_TYPE, socket, integer);
 
-    private final String collectOutputTraffic = "collectOutputTraffic";
-    private final String collectInputTraffic = "collectInputTraffic";
-
-    private final String collectorOutputMethodDescription = Type.getMethodDescriptor(Type.VOID_TYPE, socket, integer);
-    private final String collectorInputMethodDescription = Type.getMethodDescriptor(Type.VOID_TYPE, socket, bytes, integer, integer);
-
-    private String methodName;
-    private String methodDescription;
+    private final String methodName;
+    private final String methodDescription;
+    private final String collectTraffic = "collectTraffic";
 
     SocketMethodVisitor(final MethodVisitor methodVisitor, final String methodName, final String methodDescription) {
         super(Opcodes.ASM5, methodVisitor);
@@ -37,29 +32,25 @@ public class SocketMethodVisitor extends MethodVisitor {
 
     @Override
     public void visitInsn(int opcode) {
-        // System.out.println("        visitInsn : " + opcode);
         if (methodName.equals("socketRead")) {
-            insertInputCollectInstructions(collectorClassName, collectInputTraffic, collectorInputMethodDescription);
+            insertInputCollectInstructions(collectorClassName, collectTraffic, collectorMethodDescription);
         } else if (methodName.equals("socketWrite") && opcode == Opcodes.IADD) {
-            // First instruction for output
-            insertOutputCollectInstructions(collectorClassName, collectOutputTraffic, collectorOutputMethodDescription);
+            insertOutputCollectInstructions(collectorClassName, collectTraffic, collectorMethodDescription);
         }
         super.visitInsn(opcode);
+    }
+
+    private void insertInputCollectInstructions(final String collectorClassName, final String collectorMethodName, final String collectorMethodDescription) {
+        mv.visitVarInsn(Opcodes.ALOAD, 0); // Load 'this on the stack'
+        mv.visitFieldInsn(Opcodes.GETFIELD, "java/net/SocketInputStream", "socket", "Ljava/net/Socket;"); // Load the socket on the stack
+        mv.visitVarInsn(Opcodes.ILOAD, 4); // The length of the data ont the stack too
+        mv.visitMethodInsn(Opcodes.INVOKESTATIC, collectorClassName, collectorMethodName, collectorMethodDescription, false);
     }
 
     private void insertOutputCollectInstructions(final String collectorClassName, final String collectorMethodName, final String collectorMethodDescription) {
         mv.visitVarInsn(Opcodes.ALOAD, 0);
         mv.visitFieldInsn(Opcodes.GETFIELD, "java/net/SocketOutputStream", "socket", "Ljava/net/Socket;");
         mv.visitVarInsn(Opcodes.ILOAD, 3);
-        mv.visitMethodInsn(Opcodes.INVOKESTATIC, collectorClassName, collectorMethodName, collectorMethodDescription, false);
-    }
-
-    private void insertInputCollectInstructions(final String collectorClassName, final String collectorMethodName, final String collectorMethodDescription) {
-        mv.visitVarInsn(Opcodes.ALOAD, 0);
-        mv.visitFieldInsn(Opcodes.GETFIELD, "java/net/SocketInputStream", "socket", "Ljava/net/Socket;");
-        mv.visitVarInsn(Opcodes.ALOAD, 2);
-        mv.visitVarInsn(Opcodes.ILOAD, 3);
-        mv.visitVarInsn(Opcodes.ILOAD, 4);
         mv.visitMethodInsn(Opcodes.INVOKESTATIC, collectorClassName, collectorMethodName, collectorMethodDescription, false);
     }
 

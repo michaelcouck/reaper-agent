@@ -23,7 +23,7 @@ public class SocketClassFileTransformer implements ClassFileTransformer {
             // TODO: Need to intercept the nio classes, including but probably not limited to NativeDispatcher/SocketDispatcher
             if ((className.equals("java/net/SocketInputStream") || className.equals("java/net/SocketOutputStream"))
                     && !redefinedClasses.contains(className)) {
-                System.out.println("        Transforming class : " + className + ", with loader : " + loader);
+                System.out.println("   Transforming class : " + className + ", with loader : " + loader);
                 redefinedClasses.add(className);
                 ClassWriter classWriter = VisitorFactory.getClassVisitor(classfileBuffer);
                 return classWriter.toByteArray();

@@ -29,6 +29,7 @@ import java.util.jar.JarFile;
  */
 public class ReaperAgent {
 
+    private static final String INDENTATION = "   ";
     private static final AtomicBoolean LOADED = new AtomicBoolean(Boolean.FALSE);
 
     /**
@@ -53,12 +54,12 @@ public class ReaperAgent {
         long uptime = ManagementFactory.getRuntimeMXBean().getUptime();
         if (uptime < timeToWait) {
             long totalWaitTime = (timeToWait - uptime);
-            System.out.println("        Waiting for uptime : " + totalWaitTime);
+            System.out.println(INDENTATION + "Waiting for uptime : " + totalWaitTime);
             new Timer().schedule(new TimerTask() {
                 @Override
                 public void run() {
                     try {
-                        System.out.println("        Agent main : ");
+                        System.out.println(INDENTATION + "Agent main : ");
                         premain(args, instrumentation);
                     } catch (final Exception e) {
                         e.printStackTrace();
@@ -80,10 +81,7 @@ public class ReaperAgent {
         if (!shouldAttach()) {
             return;
         }
-        if (!shouldAttachToProcess()) {
-            return;
-        }
-        System.out.println("        Pre main : ");
+        System.out.println(INDENTATION + "Pre main : ");
         retransformClasses(instrumentation);
         startHeartbeatThread(ManagementFactory.getRuntimeMXBean().getName());
     }
@@ -97,7 +95,7 @@ public class ReaperAgent {
     private static boolean shouldAttach() {
         synchronized (LOADED) {
             if (LOADED.get()) {
-                System.out.println("        Pre-main already called : ");
+                System.out.println(INDENTATION + "Pre-main already called : ");
                 return !LOADED.get();
             }
             LOADED.set(Boolean.TRUE);
@@ -110,6 +108,7 @@ public class ReaperAgent {
      *
      * @return whether we should attach to this process or not
      */
+    @SuppressWarnings("unused")
     private static boolean shouldAttachToProcess() {
         String classPath = ManagementFactory.getRuntimeMXBean().getClassPath();
         String bootClassPath = ManagementFactory.getRuntimeMXBean().getBootClassPath();
@@ -141,9 +140,9 @@ public class ReaperAgent {
     @SuppressWarnings("InfiniteLoopStatement")
     private static void startHeartbeatThread(final String pid) {
         new Thread(() -> {
-            System.out.println("        Starting the reaper agent in the target jvm : " + pid);
+            System.out.println(INDENTATION + "Starting the reaper agent in the target jvm : " + pid);
             URL[] urls = MANIFEST.getClassPathUrls();
-            System.out.println("        URLs for class loader : " + urls.length);
+            System.out.println(INDENTATION + "URLs for class loader : " + urls.length);
             ChildFirstClassLoader childFirstClassLoader = new ChildFirstClassLoader(urls);
             Thread.currentThread().setContextClassLoader(childFirstClassLoader);
             ReaperActionJvmMetrics reaperActionJvmMetrics = new ReaperActionJvmMetrics();
@@ -152,10 +151,10 @@ public class ReaperAgent {
             Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler(uncaughtExceptionHandler, reaperActionJvmMetrics));
 
             Runtime.getRuntime().addShutdownHook(new Thread(reaperActionJvmMetrics::terminate));
-            System.out.println("        Started the reaper agent in the target jvm : " + pid);
+            System.out.println(INDENTATION + "Started the reaper agent in the target jvm : " + pid);
             while (true) {
                 try {
-                    Thread.sleep(Constant.SLEEP_TIME);
+                    Thread.sleep(Constant.WAIT_TO_POST_METRICS);
                 } catch (final InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -181,7 +180,7 @@ public class ReaperAgent {
             final ProtectionDomain protectionDomain,
             final byte[] classBytes)
             throws IllegalClassFormatException {
-        System.out.println("        Transform : " + loader + ":" + className);
+        System.out.println(INDENTATION + "Transform : " + loader + ":" + className);
         // Return the original bytes for the class for now... We dynamically attach, so this method is not called.
         return classBytes;
     }

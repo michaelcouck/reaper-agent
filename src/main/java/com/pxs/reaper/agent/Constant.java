@@ -35,9 +35,11 @@ public interface Constant {
     String WEB_SOCKET_URI = "reaper-web-socket-uri";
     String REST_URI_J_METRICS = "reaper-rest-uri-j-metrics";
     String REST_URI_O_METRICS = "reaper-rest-uri-o-metrics";
+
     /**
      * Sleep time hard coded, no way to parameterize (make dynamic) this on all platforms.
      */
-    long SLEEP_TIME = 10000;
+    long WAIT_TO_ATTACH_FOR = 15000;
+    long WAIT_TO_POST_METRICS = 900;
 
 }

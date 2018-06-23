@@ -22,7 +22,7 @@ public class SocketClassVisitor extends ClassVisitor /* ClassVisitor, ClassNode 
         if (!methodName.equals("socketRead") && !methodName.equals("socketWrite")) {
             return methodVisitor;
         }
-        System.out.println("        Method name : " + methodName + " : " + methodDescription);
+        System.out.println("   Method name : " + methodName + " : " + methodDescription);
         // We test for interfaces and abstract classes, of course these methods do
         // not have bodies so we can't add instructions to these methods or the Jvm
         // will not like it, class format exceptions

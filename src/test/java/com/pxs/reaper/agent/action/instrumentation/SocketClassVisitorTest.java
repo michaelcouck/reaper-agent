@@ -106,6 +106,6 @@ class SocketOutputStream extends ByteArrayOutputStream {
     }
 
     public void socketWrite(final byte[] b, final int off, final int len) {
-        NetworkTrafficCollector.collectOutputTraffic(socket, len);
+        NetworkTrafficCollector.collectTraffic(socket, len);
     }
 }

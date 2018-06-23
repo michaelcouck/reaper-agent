@@ -26,16 +26,17 @@ public class NetworkTrafficCollector {
         }
     }
 
-    static void collectOutputTraffic(final Socket socket, final int len) {
+    @SuppressWarnings("WeakerAccess")
+    public static void collectTraffic(final Socket socket, final int len) {
         if (log) {
             System.out.println("Reaper : Socket output - " + socket + ", length : " + len);
         }
 
+        int socketHash = socket.hashCode();
+
         Integer localPort;
         Integer remotePort;
         String remoteAddress;
-
-        int socketHash = socket.hashCode();
 
         if (!SOCKET_ADDRESS.containsKey(socketHash)) {
             InetSocketAddress localInetSocketAddress = (InetSocketAddress) socket.getLocalSocketAddress();
@@ -45,22 +46,23 @@ public class NetworkTrafficCollector {
             remotePort = remoteInetSocketAddress.getPort();
             remoteAddress = remoteInetSocketAddress.getAddress().getHostAddress();
 
-            collectOutputTraffic(socketHash, localPort, remotePort, remoteAddress, len);
+            collectTraffic(socketHash, localPort, remotePort, remoteAddress, len);
         }
 
         localPort = LOCAL_SOCKET_PORT.get(socketHash);
         remotePort = REMOTE_SOCKET_PORT.get(socketHash);
         remoteAddress = SOCKET_ADDRESS.get(socketHash);
 
+        collectTraffic(socketHash, localPort, remotePort, remoteAddress, len);
+    }
+
+    @SuppressWarnings("WeakerAccess")
+    public static void collectTraffic(final Integer socketHash, final Integer localPort, final Integer remotePort, final String remoteAddress, final long len) {
         if (localPort == null || remotePort == null || remoteAddress == null) {
             System.out.println("Null pointers, socket : " + socketHash + ", local port : " + localPort + ", remote port : " + remotePort + ", length : " + len);
             return;
         }
 
-        collectOutputTraffic(socketHash, localPort, remotePort, remoteAddress, len);
-    }
-
-    private static void collectOutputTraffic(final int socketHash, final int localPort, final int remotePort, final String remoteAddress, final long len) {
         if (!SOCKET_ADDRESS.containsKey(socketHash)) {
             LOCAL_SOCKET_PORT.put(socketHash, localPort);
             REMOTE_SOCKET_PORT.put(socketHash, remotePort);
@@ -68,20 +70,14 @@ public class NetworkTrafficCollector {
         }
 
         for (final Quadruple<Integer, String, Integer, Long> mutableTriple : NETWORK_NODE.getAddressPortThroughPut()) {
-            if (remoteAddress.equals(mutableTriple.getLeftCentre()) && Integer.valueOf(remotePort).equals(mutableTriple.getRightCentre())) {
+            if (remoteAddress.equals(mutableTriple.getLeftCentre()) && remotePort.equals(mutableTriple.getRightCentre())) {
                 mutableTriple.setRight(mutableTriple.getRight() + len);
                 return;
             }
         }
+
         Quadruple<Integer, String, Integer, Long> addressPortThroughPut = new Quadruple<>(localPort, remoteAddress, remotePort, len);
         NETWORK_NODE.getAddressPortThroughPut().add(addressPortThroughPut);
-    }
-
-    @SuppressWarnings("unused")
-    public static void collectInputTraffic(final Socket socket, final byte[] bytes, final int off, final int len) {
-        if (log) {
-            System.out.println("Reaper : Socket input - " + socket + ", length : " + len + ", offset : " + off/* + ":" + Arrays.toString(bytes)*/);
-        }
     }
 
 }

@@ -25,18 +25,27 @@ public class UncaughtExceptionHandler implements Thread.UncaughtExceptionHandler
         this.reaperActionJvmMetrics = reaperActionJvmMetrics;
     }
 
+    @SuppressWarnings("ThrowablePrintedToSystemOut")
     @Override
     public void uncaughtException(final Thread t, final Throwable e) {
-        Map<String, Integer> exceptions = reaperActionJvmMetrics.getExceptions();
-        String exceptionName = e.getClass().getName();
-        Integer count = exceptions.get(exceptionName);
-        if (count == null) {
-            count = 0;
+        try {
+            Map<String, Integer> exceptions = reaperActionJvmMetrics.getExceptions();
+
+            String exceptionName = e.getClass().getName();
+            Integer count = exceptions.get(exceptionName);
+            if (count == null) {
+                count = 0;
+            }
+            count++;
+            exceptions.put(exceptionName, count);
+            logger.log(Level.SEVERE, "Exception in uncaught exception handler", e);
+            if (parent != null) {
+                parent.uncaughtException(t, e);
+            }
+        } catch (final Throwable ignore) {
+            ignore.printStackTrace();
         }
-        count++;
-        exceptions.put(exceptionName, count);
-        parent.uncaughtException(t, e);
-        logger.log(Level.SEVERE, "Exception in uncaught exception handler", e);
+
     }
 
 }

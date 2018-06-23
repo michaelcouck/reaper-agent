@@ -56,7 +56,6 @@ public class Reaper {
         Reaper reaper = new Reaper();
         reaper.attachToOperatingSystem();
         reaper.attachToJavaProcesses();
-        reaper.attachToJmxProcesses();
         // Either sleep for the period specified in the arguments list, or infinitely, almost...
         //noinspection deprecation
         if (args != null && args.length >= 1 && NumberUtils.isNumber(args[0])) {
@@ -112,7 +111,7 @@ public class Reaper {
         ReaperActionOSMetrics reaperActionOSMetrics = new ReaperActionOSMetrics();
         propertiesInjector.injectProperties(reaperActionOSMetrics);
         Runtime.getRuntime().addShutdownHook(new Thread(reaperActionOSMetrics::terminate));
-        THREAD.scheduleAtFixedRate(reaperActionOSMetrics, Constant.SLEEP_TIME, Constant.SLEEP_TIME);
+        THREAD.scheduleAtFixedRate(reaperActionOSMetrics, Constant.WAIT_TO_POST_METRICS, Constant.WAIT_TO_POST_METRICS);
     }
 
     /**
@@ -123,7 +122,7 @@ public class Reaper {
         ReaperActionAgentMetrics reaperActionAgentMetrics = new ReaperActionAgentMetrics();
         propertiesInjector.injectProperties(reaperActionAgentMetrics);
         Runtime.getRuntime().addShutdownHook(new Thread(reaperActionAgentMetrics::terminate));
-        THREAD.scheduleAtFixedRate(reaperActionAgentMetrics, Constant.SLEEP_TIME, Constant.SLEEP_TIME);
+        THREAD.scheduleAtFixedRate(reaperActionAgentMetrics, Constant.WAIT_TO_ATTACH_FOR, Constant.WAIT_TO_ATTACH_FOR);
     }
 
     /**
@@ -135,7 +134,7 @@ public class Reaper {
         ReaperActionJmxMetrics reaperActionJmxMetrics = new ReaperActionJmxMetrics();
         propertiesInjector.injectProperties(reaperActionJmxMetrics);
         Runtime.getRuntime().addShutdownHook(new Thread(reaperActionJmxMetrics::terminate));
-        THREAD.scheduleAtFixedRate(reaperActionJmxMetrics, Constant.SLEEP_TIME, Constant.SLEEP_TIME);
+        THREAD.scheduleAtFixedRate(reaperActionJmxMetrics, Constant.WAIT_TO_ATTACH_FOR, Constant.WAIT_TO_ATTACH_FOR);
     }
 
 }

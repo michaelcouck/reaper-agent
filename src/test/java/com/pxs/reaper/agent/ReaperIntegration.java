@@ -82,14 +82,14 @@ public class ReaperIntegration {
     @Test
     public void attachToOperatingSystem() {
         reaper.attachToOperatingSystem();
-        THREAD.sleep(Constant.SLEEP_TIME * 3);
+        THREAD.sleep(Constant.WAIT_TO_POST_METRICS * 3);
         Assert.assertTrue(TRANSPORT_INVOCATIONS.get() > 0);
     }
 
     @Test
     public void attachToJavaProcesses() throws IOException, InterruptedException {
         reaper.attachToJavaProcesses();
-        THREAD.sleep(Constant.SLEEP_TIME * 3);
+        THREAD.sleep(Constant.WAIT_TO_POST_METRICS * 3);
         Assert.assertTrue(TRANSPORT_INVOCATIONS.get() > 0);
     }
 
@@ -99,7 +99,7 @@ public class ReaperIntegration {
     public void attachToJmxProcesses() {
         // This functionality is deprecated
         reaper.attachToJmxProcesses();
-        THREAD.sleep(Constant.SLEEP_TIME * 3);
+        THREAD.sleep(Constant.WAIT_TO_POST_METRICS * 3);
     }
 
 }

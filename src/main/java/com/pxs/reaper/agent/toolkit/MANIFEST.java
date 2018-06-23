@@ -117,7 +117,7 @@ public class MANIFEST {
             // If not finally try to get the path from the protection domain
             if (MANIFEST.class.getProtectionDomain().getCodeSource() != null) {
                 String agentJarPath = MANIFEST.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
-                System.out.println("        Own jar path : " + agentJarPath);
+                System.out.println("   Own jar path : " + agentJarPath);
                 return PATH_TO_AGENT = FILE.cleanFilePath(new File(agentJarPath).getAbsolutePath());
             }
         } catch (final Exception e) {
