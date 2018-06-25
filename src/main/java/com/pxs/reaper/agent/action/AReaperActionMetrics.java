@@ -18,7 +18,9 @@ abstract class AReaperActionMetrics implements ReaperAction {
 
     void common(final Metrics metrics) {
         metrics.setIpAddress(HOST.hostname());
-        metrics.setUserDir(System.getProperty("user.dir"));
+        metrics.setType(metrics.getClass().getName());
+        metrics.setCreated(System.currentTimeMillis());
+        metrics.setUserDir("(" + metrics.getClass().getSimpleName() + ") " + System.getProperty("user.dir"));
     }
 
     /**

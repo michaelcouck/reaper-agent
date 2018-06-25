@@ -118,9 +118,6 @@ public class ReaperActionOSMetrics extends AReaperActionMetrics {
         osMetrics.setFileSystemUsages(fileSystemUsages);
         // osMetrics.setOperatingSystem(operatingSystem);
 
-        osMetrics.setType(OSMetrics.class.getName());
-        osMetrics.setCreated(System.currentTimeMillis());
-
         return osMetrics;
     }
 

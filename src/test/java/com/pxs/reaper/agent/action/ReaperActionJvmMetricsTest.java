@@ -37,13 +37,13 @@ public class ReaperActionJvmMetricsTest {
 
     @Test
     public void run() throws IOException {
-        AtomicReference<Object> objectAtomicReference = new AtomicReference<>();
+        AtomicReference<JMetrics> objectAtomicReference = new AtomicReference<>();
         //noinspection Duplicates
         Mockito.doAnswer(invocation -> {
             Object[] metrics = invocation.getArguments();
             for (final Object metric : metrics) {
                 if (metric != null && JMetrics.class.isAssignableFrom(metric.getClass())) {
-                    objectAtomicReference.set(metric);
+                    objectAtomicReference.set((JMetrics) metric);
                     JMetrics jMetrics = (JMetrics) metric;
                     log.info("Metric : " + jMetrics.getCodeBase());
                 }
@@ -52,6 +52,8 @@ public class ReaperActionJvmMetricsTest {
         }).when(transport).postMetrics(Mockito.any(Object.class));
         reaperActionJvmMetrics.run();
         Assert.assertNotNull(objectAtomicReference.get());
+        Assert.assertNotNull(objectAtomicReference.get().getIpAddress());
+        Assert.assertTrue(objectAtomicReference.get().getUserDir().contains(JMetrics.class.getSimpleName()));
     }
 
     @Test

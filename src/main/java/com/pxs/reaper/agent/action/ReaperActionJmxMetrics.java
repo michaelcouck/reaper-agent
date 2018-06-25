@@ -105,6 +105,7 @@ public class ReaperActionJmxMetrics extends ReaperActionMetrics {
         }
 
         JMetrics jMetrics = new JMetrics();
+        common(jMetrics);
         for (final ObjectName objectName : objectNames) {
             try {
                 MBeanInfo mBeanInfo = mbeanConn.getMBeanInfo(objectName);
