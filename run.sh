@@ -8,4 +8,4 @@
 
 # java -jar $JMX_PARAMETERS target/reaper-agent-1.0-SNAPSHOT.jar
 
-java -jar reaper-agent-1.0-SNAPSHOT.jar
+java -jar target/reaper-agent-1.0-SNAPSHOT.jar

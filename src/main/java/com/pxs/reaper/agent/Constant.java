@@ -40,6 +40,6 @@ public interface Constant {
      * Sleep time hard coded, no way to parameterize (make dynamic) this on all platforms.
      */
     long WAIT_TO_ATTACH_FOR = 15000;
-    long WAIT_TO_POST_METRICS = 900;
+    long WAIT_TO_POST_METRICS = 10000;
 
 }
