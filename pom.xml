@@ -491,6 +491,14 @@
 
     <repositories>
         <repository>
+            <id>libs-release</id>
+            <name>Releases</name>
+            <url>http://192.168.1.74:8081/artifactory/libs-release</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <repository>
             <id>spring-libs-release</id>
             <name>Spring Releases</name>
             <url>https://repo.spring.io/libs-release</url>
