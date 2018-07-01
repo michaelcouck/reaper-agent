@@ -1,5 +1,6 @@
 package com.pxs.reaper.agent;
 
+import com.pxs.reaper.agent.model.Metrics;
 import com.pxs.reaper.agent.toolkit.NetworkSocketInvoker;
 import com.pxs.reaper.agent.toolkit.THREAD;
 import com.pxs.reaper.agent.transport.RestTransport;
@@ -26,7 +27,7 @@ public class ReaperIntegration {
         @Mock
         @SuppressWarnings("unused")
         public boolean postMetrics(final Object metrics) {
-            System.out.println("Posting : " + metrics);
+            System.out.println("Posting : " + ((Metrics) metrics).getId());
             TRANSPORT_INVOCATIONS.incrementAndGet();
             return Boolean.TRUE;
         }

@@ -3,6 +3,7 @@ package com.pxs.reaper.agent;
 import com.pxs.reaper.agent.action.ReaperActionAgentMetrics;
 import com.pxs.reaper.agent.action.ReaperActionJmxMetrics;
 import com.pxs.reaper.agent.action.ReaperActionOSMetrics;
+import com.pxs.reaper.agent.action.ReaperAgent;
 import com.pxs.reaper.agent.toolkit.FILE;
 import com.pxs.reaper.agent.toolkit.THREAD;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -53,6 +54,9 @@ public class Reaper {
      * @param args could contain the amount of time to sleep for in first argument, if not we run infinitely
      */
     public static void main(final String[] args) {
+        // We don't attach to our selves
+        ReaperAgent.LOADED.set(Boolean.TRUE);
+
         Reaper reaper = new Reaper();
         reaper.attachToOperatingSystem();
         reaper.attachToJavaProcesses();

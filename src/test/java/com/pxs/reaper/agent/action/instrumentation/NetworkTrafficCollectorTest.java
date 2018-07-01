@@ -7,22 +7,18 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.openjdk.jmh.annotations.OutputTimeUnit;
-import org.openjdk.jmh.runner.RunnerException;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.concurrent.TimeUnit;
 
-@OutputTimeUnit(TimeUnit.NANOSECONDS)
 public class NetworkTrafficCollectorTest {
 
     private Socket socket;
     private ServerSocket serverSocket;
 
     @Before
-    public void before() throws IOException, RunnerException {
+    public void before() throws IOException {
         serverSocket = new ServerSocket(8100);
         socket = new Socket("localhost", 8100);
     }

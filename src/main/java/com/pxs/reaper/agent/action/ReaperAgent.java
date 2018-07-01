@@ -29,8 +29,8 @@ import java.util.jar.JarFile;
  */
 public class ReaperAgent {
 
+    public static final AtomicBoolean LOADED = new AtomicBoolean(Boolean.FALSE);
     private static final String INDENTATION = "   ";
-    private static final AtomicBoolean LOADED = new AtomicBoolean(Boolean.FALSE);
 
     /**
      * Note to self, don't use anything in here other than java base classes.
@@ -50,7 +50,7 @@ public class ReaperAgent {
      */
     @SuppressWarnings("WeakerAccess")
     public static void agentmain(final String args, final Instrumentation instrumentation) throws Exception {
-        long timeToWait = 60000;
+        long timeToWait = Constant.WAIT_TO_ATTACH_FOR;
         long uptime = ManagementFactory.getRuntimeMXBean().getUptime();
         if (uptime < timeToWait) {
             long totalWaitTime = (timeToWait - uptime);

@@ -26,7 +26,7 @@ public class SocketClassVisitorTest {
         InputStream stream = ClassLoader.getSystemClassLoader().getResourceAsStream(classAsPath);
         byte[] classFileBytes = IOUtils.toByteArray(stream);
         logger.info("Class byte size : " + classFileBytes.length);
-        ClassWriter classWriter = VisitorFactory.getClassVisitor(classFileBytes);
+        ClassWriter classWriter = VisitorFactory.getSocketStreamClassVisitor(classFileBytes);
         byte[] redefinedClassFileBytes = classWriter.toByteArray();
         logger.info("Redefined class byte size : " + redefinedClassFileBytes.length);
 

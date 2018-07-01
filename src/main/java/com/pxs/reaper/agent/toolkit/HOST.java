@@ -57,7 +57,7 @@ public class HOST {
                 try {
                     // Return a uuid that is at least unique to this vm/pod
                     HOSTNAME = UUID.fromString(InetAddress.getLocalHost().getCanonicalHostName()).toString();
-                } catch (final UnknownHostException e) {
+                } catch (final Exception e) {
                     log.warning("Couldn't find internet address : " + e);
                     HOSTNAME = UUID.randomUUID().toString();
                 }
