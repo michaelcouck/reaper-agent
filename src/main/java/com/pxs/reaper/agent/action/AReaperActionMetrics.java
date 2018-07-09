@@ -30,11 +30,15 @@ abstract class AReaperActionMetrics implements ReaperAction {
      * @param metrics the metrics to post to the analysis service
      */
     void networkThroughput(final Metrics metrics) {
-        synchronized (NetworkTrafficCollector.NETWORK_NODE) {
+        synchronized (this) {
             NetworkNode networkNode = new NetworkNode();
-            networkNode.setLocalAddress(NetworkTrafficCollector.NETWORK_NODE.getLocalAddress());
-            networkNode.setAddressPortThroughPut(new TreeSet<>(NetworkTrafficCollector.NETWORK_NODE.getAddressPortThroughPut()));
-            metrics.setNetworkNode(networkNode);
+            try {
+                networkNode.setLocalAddress(NetworkTrafficCollector.NETWORK_NODE.getLocalAddress());
+                networkNode.setAddressPortThroughPut(new TreeSet<>(NetworkTrafficCollector.NETWORK_NODE.getAddressPortThroughPut()));
+                metrics.setNetworkNode(networkNode);
+            } catch (final Exception e) {
+                System.err.println(e.getMessage());
+            }
             NetworkTrafficCollector.NETWORK_NODE.getAddressPortThroughPut().clear();
         }
     }
