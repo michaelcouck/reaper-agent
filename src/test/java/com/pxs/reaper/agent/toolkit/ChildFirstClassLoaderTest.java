@@ -26,6 +26,8 @@ public class ChildFirstClassLoaderTest {
         File dotDirectory = new File(".");
         logger.severe("Dot directory : " + dotDirectory.getAbsolutePath());
         File file = FILE.findFileRecursively(new File("."), "xpp3_min-1.1.4c.jar");
+
+        assert file != null;
         String path = FILE.cleanFilePath(file.getAbsolutePath());
         URL[] urls = MANIFEST.getClassPathUrls(path);
         urls = ArrayUtils.addAll(urls, file.toURI().toURL());
