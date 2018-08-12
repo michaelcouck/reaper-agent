@@ -17,7 +17,6 @@ public class SocketClassVisitorTest {
     @SuppressWarnings("unused")
     private Logger logger = Logger.getLogger(this.getClass().getName());
 
-    @SuppressWarnings("ConstantConditions")
     @Test
     public void getClassVisitor() throws IOException {
         Class clazz = Socket.class;
@@ -30,7 +29,7 @@ public class SocketClassVisitorTest {
         byte[] redefinedClassFileBytes = classWriter.toByteArray();
         logger.info("Redefined class byte size : " + redefinedClassFileBytes.length);
 
-        File file = FILE.findFileRecursively(new File("."), "Socket.class");
+        File file = FILE.getOrCreateFile(new File("./target", "Socket.class"));
         IOUtils.write(redefinedClassFileBytes, new FileOutputStream(file));
 
         // TODO: Check the byte code with the reader

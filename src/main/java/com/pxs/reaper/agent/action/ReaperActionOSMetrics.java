@@ -203,8 +203,12 @@ public class ReaperActionOSMetrics extends AReaperActionMetrics {
                 continue;
             }
             // System.out.println("Name : " + fileSystem.getDirName() + ":" + fileSystem.getType());
-            DiskUsage diskUsage = sigarProxy.getDiskUsage(fileSystem.getDirName());
-            diskUsages.add(diskUsage);
+            try {
+                DiskUsage diskUsage = sigarProxy.getDiskUsage(fileSystem.getDirName());
+                diskUsages.add(diskUsage);
+            } catch (final Exception e) {
+                log.severe("Exception getting disk usage : " + fileSystem.getDirName() + ", message :" + e.getMessage());
+            }
         }
         return diskUsages.toArray(new DiskUsage[diskUsages.size()]);
     }

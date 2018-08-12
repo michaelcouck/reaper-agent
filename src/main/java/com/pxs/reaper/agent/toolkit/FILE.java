@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -85,6 +86,7 @@ public final class FILE {
      * @param file the file to read into a string
      * @return the contents of the file or null if there was an exception reading the file
      */
+    @SuppressWarnings("unused")
     public static String getContent(final File file) {
         // FileInputStream fileInputStream = null;
         try (FileInputStream fileInputStream = new FileInputStream(file)) {
@@ -96,6 +98,65 @@ public final class FILE {
             log.log(Level.SEVERE, "Exception getting contents from file : " + file, e);
         }
         return "";
+    }
+
+    /**
+     * Gets a single file. First looking to find it, if it can not be found then it is created.
+     *
+     * @param file the file that is requested
+     * @return the found or newly created {@link File} or <code>null</code> if something went wrong.
+     */
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    public static synchronized File getOrCreateFile(final File file) {
+        try {
+            if (file.exists() && file.isFile()) {
+                return file;
+            }
+            File parent = file.getParentFile();
+            if (parent != null) {
+                if (!parent.exists()) {
+                    parent = getOrCreateDirectory(parent);
+                }
+            }
+            if (parent != null) {
+                try {
+                    String parentPath = cleanFilePath(parent.getAbsolutePath());
+                    File createdFile = new File(parentPath, file.getName());
+                    log.fine("Creating file : " + file.getAbsolutePath());
+                    createdFile.createNewFile();
+                    return createdFile;
+                } catch (final IOException e) {
+                    log.log(Level.SEVERE, "Exception creating file : " + file, e);
+                }
+            }
+            return file;
+        } finally {
+            FILE.class.notifyAll();
+        }
+    }
+
+    /**
+     * Gets a single directory. First looking to find it, if it can not be found then it is created.
+     *
+     * @param directory the directory that is requested
+     * @return the found or newly created {@link File} or <code>null</code> if something went wrong.
+     */
+    @SuppressWarnings("WeakerAccess")
+    public static synchronized File getOrCreateDirectory(final File directory) {
+        try {
+            if (directory.exists() && directory.isDirectory()) {
+                return directory;
+            }
+            String directoryPath = cleanFilePath(directory.getPath());
+            File createdDirectory = new File(directoryPath);
+            boolean created = createdDirectory.mkdirs();
+            if (!created || !directory.exists()) {
+                log.severe("Couldn't create directory(ies) " + directory.getAbsolutePath());
+            }
+            return createdDirectory;
+        } finally {
+            FILE.class.notifyAll();
+        }
     }
 
     /**

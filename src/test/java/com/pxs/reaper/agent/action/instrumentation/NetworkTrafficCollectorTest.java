@@ -19,8 +19,8 @@ public class NetworkTrafficCollectorTest {
 
     @Before
     public void before() throws IOException {
-        serverSocket = new ServerSocket(8100);
-        socket = new Socket("localhost", 8100);
+        serverSocket = new ServerSocket(8101);
+        socket = new Socket("localhost", 8101);
     }
 
     @After

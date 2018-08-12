@@ -8,6 +8,7 @@ import org.junit.Test;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.logging.Logger;
 
 /**
  * @author Michael Couck
@@ -16,11 +17,14 @@ import java.net.URL;
  */
 public class ChildFirstClassLoaderTest {
 
+    private Logger logger = Logger.getLogger(this.getClass().getName());
+
     private ChildFirstClassLoader childFirstClassLoader;
 
     @Before
-    @SuppressWarnings("ConstantConditions")
     public void before() throws MalformedURLException {
+        File dotDirectory = new File(".");
+        logger.severe("Dot directory : " + dotDirectory.getAbsolutePath());
         File file = FILE.findFileRecursively(new File("."), "xpp3_min-1.1.4c.jar");
         String path = FILE.cleanFilePath(file.getAbsolutePath());
         URL[] urls = MANIFEST.getClassPathUrls(path);
