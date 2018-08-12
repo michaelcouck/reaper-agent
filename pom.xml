@@ -314,7 +314,7 @@
                     <!--suppress MavenModelInspection -->
                     <argLine>${headless-parameters} ${memory-parameters}</argLine>
                     <testFailureIgnore>true</testFailureIgnore>
-                    <argLine>-Dintegration-test=true</argLine>
+                    <!--<argLine>-Dintegration-test=true</argLine>-->
                 </configuration>
                 <executions>
                     <execution>
