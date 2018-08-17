@@ -16,7 +16,6 @@ import java.util.List;
 public class MemoryCpuTest {
 
     @Test
-    @Ignore
     public void memory() {
         ReaperActionJvmMetrics actionJvmMetrics = new ReaperActionJvmMetrics();
         List<double[]> doubles = new ArrayList<>();
