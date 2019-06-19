@@ -5,7 +5,6 @@ import com.pxs.reaper.agent.model.JMetrics;
 import com.pxs.reaper.agent.toolkit.HOST;
 import com.pxs.reaper.agent.toolkit.Retry;
 import com.pxs.reaper.agent.toolkit.RetryIncreasingDelay;
-import com.pxs.reaper.agent.transport.RestTransport;
 import com.pxs.reaper.agent.transport.Transport;
 import lombok.Setter;
 import org.jeasy.props.annotations.Property;
@@ -83,7 +82,7 @@ public class ReaperActionJmxMetrics extends ReaperActionMetrics {
     /**
      * Transport of the data over the wire.
      */
-    private Transport transportRest = new RestTransport();
+    private Transport transportRest = Constant.TRANSPORT;
 
     public ReaperActionJmxMetrics() {
         retryWithIncreasingDelay = new RetryIncreasingDelay();

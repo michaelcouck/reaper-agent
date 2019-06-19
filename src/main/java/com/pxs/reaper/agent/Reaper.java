@@ -59,7 +59,7 @@ public class Reaper {
 
         Reaper reaper = new Reaper();
         reaper.attachToOperatingSystem();
-        reaper.attachToJavaProcesses();
+        // reaper.attachToJavaProcesses();
         // Either sleep for the period specified in the arguments list, or infinitely, almost...
         //noinspection deprecation
         if (args != null && args.length >= 1 && NumberUtils.isNumber(args[0])) {

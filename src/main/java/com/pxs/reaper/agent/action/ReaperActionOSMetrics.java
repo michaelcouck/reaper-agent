@@ -1,9 +1,9 @@
 package com.pxs.reaper.agent.action;
 
+import com.pxs.reaper.agent.Constant;
 import com.pxs.reaper.agent.model.OSMetrics;
 import com.pxs.reaper.agent.toolkit.HOST;
 import com.pxs.reaper.agent.toolkit.OS;
-import com.pxs.reaper.agent.transport.RestTransport;
 import com.pxs.reaper.agent.transport.Transport;
 import org.hyperic.sigar.*;
 
@@ -40,7 +40,7 @@ public class ReaperActionOSMetrics extends AReaperActionMetrics {
     /**
      * Transport of the data over the wire.
      */
-    private Transport transport;
+    private Transport transport = Constant.TRANSPORT;
 
     public ReaperActionOSMetrics() {
         init();
@@ -50,7 +50,6 @@ public class ReaperActionOSMetrics extends AReaperActionMetrics {
     private void init() {
         sigar = new Sigar();
         sigarProxy = SigarProxyCache.newInstance(sigar, 1000);
-        transport = new RestTransport();
     }
 
     /**

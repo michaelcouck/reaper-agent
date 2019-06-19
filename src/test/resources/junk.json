@@ -1,0 +1,17 @@
+{
+  "settings": {
+    "number_of_shards": 1
+  },
+  "mappings": {
+    "properties": {
+      "localAddress": {
+        "type": "text",
+        "fielddata": true
+      },
+      "remoteAddress": {
+        "type": "text",
+        "fielddata": true
+      }
+    }
+  }
+}

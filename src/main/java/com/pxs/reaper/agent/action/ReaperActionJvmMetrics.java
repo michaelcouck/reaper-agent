@@ -1,7 +1,7 @@
 package com.pxs.reaper.agent.action;
 
+import com.pxs.reaper.agent.Constant;
 import com.pxs.reaper.agent.model.JMetrics;
-import com.pxs.reaper.agent.transport.RestTransport;
 import com.pxs.reaper.agent.transport.Transport;
 import lombok.Getter;
 
@@ -28,11 +28,7 @@ public class ReaperActionJvmMetrics extends ReaperActionMetrics {
     /**
      * Transport of the data over the wire.
      */
-    private Transport transport;
-
-    public ReaperActionJvmMetrics() {
-        transport = new RestTransport();
-    }
+    private Transport transport = Constant.TRANSPORT;
 
     /**
      * {@inheritDoc}
@@ -40,7 +36,7 @@ public class ReaperActionJvmMetrics extends ReaperActionMetrics {
     @Override
     public void run() {
         JMetrics jMetrics = getMetrics();
-        synchronized(exceptions) {
+        synchronized (exceptions) {
             Map<String, Integer> exceptions = new HashMap<>();
             exceptions.putAll(this.exceptions);
             jMetrics.setExceptions(exceptions);

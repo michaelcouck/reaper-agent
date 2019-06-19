@@ -1,5 +1,8 @@
 package com.pxs.reaper.agent;
 
+import com.pxs.reaper.agent.transport.ElasticTransport;
+import com.pxs.reaper.agent.transport.Transport;
+
 /**
  * Note to self, don't put anything in here that is not {@link java}, i.e. nothing
  * that is not from rt.jar/tools.jar, and certainly nothing functional, only scalar
@@ -36,10 +39,14 @@ public interface Constant {
     String REST_URI_J_METRICS = "reaper-rest-uri-j-metrics";
     String REST_URI_O_METRICS = "reaper-rest-uri-o-metrics";
 
+    String ELASTIC_URI = "reaper-elastic-uri";
+
     /**
      * Sleep time hard coded, no way to parameterize (make dynamic) this on all platforms.
      */
     long WAIT_TO_ATTACH_FOR = 60000;
-    long WAIT_TO_POST_METRICS = 900;
+    long WAIT_TO_POST_METRICS = 15000;
+
+    Transport TRANSPORT = new ElasticTransport();
 
 }
