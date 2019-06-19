@@ -16,3 +16,7 @@ current implementations of the JVM.
 
 The agent can also be started as a -javaagent:reaper-agent-SNAPSHOT.1.0.jar, in this way only the target JVM will be intercepted
 and attached to rather than all the JVMs on the operating system. This type of connection is not continuously tested, and might need some fiddling to get it to work again.
+
+The agent pushed data to the reaper micro service over rest. Consequently to collect the data you need an endpoint that is defined to accept that data type.
+
+Questions? michael dot couck at gmail dot com
