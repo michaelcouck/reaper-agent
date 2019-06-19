@@ -56,14 +56,12 @@ public class ElasticTransport implements Transport {
             for (final NetConnection netConnection : osMetrics.getNetConnections()) {
                 String localAddress = osMetrics.getIpAddress();
                 String remoteAddress = netConnection.getRemoteAddress();
-                if (!remoteAddress.startsWith("0") && !remoteAddress.startsWith("127") && !remoteAddress.startsWith("192.168") && !remoteAddress.startsWith(":")) {
-                    netMetrics.setLocalAddress(localAddress);
-                    netMetrics.setRemoteAddress(remoteAddress);
-                    post(netMetrics);
-                    netMetrics.setLocalAddress(remoteAddress);
-                    netMetrics.setRemoteAddress(localAddress);
-                    post(netMetrics);
-                }
+                netMetrics.setLocalAddress(localAddress);
+                netMetrics.setRemoteAddress(remoteAddress);
+                post(netMetrics);
+                netMetrics.setLocalAddress(remoteAddress);
+                netMetrics.setRemoteAddress(localAddress);
+                post(netMetrics);
             }
             return Boolean.TRUE;
         } catch (final Exception e) {
